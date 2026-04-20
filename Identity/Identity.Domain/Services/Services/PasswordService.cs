@@ -19,6 +19,7 @@ namespace Module.Identity.Domain.Services.Services
 
         public bool Verify(string password, string passwordHash)
         {
+          var pass =  _hasher.HashPassword(null,password);
             var result = _hasher.VerifyHashedPassword(
                 null,
                 passwordHash,

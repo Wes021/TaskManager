@@ -10,7 +10,7 @@ namespace TaskManager.Controllers
     public class IdentityController(ILoginHandler _loginHandler) : ControllerBase
     {
 
-        [HttpPost("login")]
+        [HttpPost("/api/v1/auth/login")]
         public async Task<IActionResult> Login(LoginModel model)
         {
             var result = await _loginHandler.Handle(model);

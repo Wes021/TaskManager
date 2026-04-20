@@ -17,13 +17,14 @@ namespace Module.Identity.Domain.Services.Services
         {
             var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString())
+            new Claim(JwtRegisteredClaimNames.NameId, userId.ToString())
         };
             // Add role/s
             
             
 
             claims.Add(new Claim(ClaimTypes.Role, role));
+            
 
             var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_config["Jwt:Key"]));

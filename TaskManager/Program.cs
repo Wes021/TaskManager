@@ -2,6 +2,7 @@
 using Module.Identity.Infrastructure.DbSettings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.OpenApi.Models;
 namespace TaskManager
 {
     public class Program
@@ -14,7 +15,9 @@ namespace TaskManager
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
             builder.Services.AddModules(builder.Configuration);
 
@@ -26,11 +29,18 @@ namespace TaskManager
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.MapOpenApi();
-            }
+            //Configure the HTTP request pipeline.
+            //if (app.Environment.IsDevelopment())
+            //{
+            //    app.UseSwagger();
+            //    app.UseSwaggerUI();
+                
+            //}
+            
+                app.UseSwagger();
+                app.UseSwaggerUI();
+                
+            
 
             app.UseHttpsRedirection();
 
