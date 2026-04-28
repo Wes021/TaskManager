@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskManager.SharedLayer.RequestModels;
+using TaskManager.SharedLayer.ResponseModels;
 
 namespace Module.Identity.Infrastructure.Repositories
 {
@@ -18,6 +20,19 @@ namespace Module.Identity.Infrastructure.Repositories
         public UserRepository(AppDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<User?> GetById(int Id, Func<IQueryable<User>, IQueryable<User>>? include = null, bool isTracked = true)
+        {
+            IQueryable<User> query = _context.Users;
+
+            if (!isTracked)
+                query = query.AsNoTracking();
+
+            if (include != null)
+                query = include(query);
+
+            return await query.FirstOrDefaultAsync(x => x.Id == Id);
         }
 
         public async Task<User?> GetByUsername(
@@ -34,6 +49,68 @@ namespace Module.Identity.Infrastructure.Repositories
                 query = include(query);
 
             return await query.FirstOrDefaultAsync(x => x.UserName == username);
+        }
+
+        public async Task<PagedResult<UserInfoDTO>> GetUsersAsync(GetUsersRequest request, Func<IQueryable<User>, IQueryable<User>>? include = null, bool isTracked = true)
+        {
+            IQueryable<User> query = _context.Users;
+
+            if (!isTracked)
+                query = query.AsNoTracking();
+
+            if (include != null)
+                query = include(query);
+
+
+            //Use Later For Search
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                query = query.Where(x => x.FullName.Contains(request.Search) ||
+                x.Email.Contains(request.Search)
+                );
+            }
+
+            //Filter by Role
+            if (!string.IsNullOrWhiteSpace(request.Role))
+                query = query.Where(x => x.RoleId == request.RoleId);
+
+            //Filter by active or inactive
+            if (request.IsActive.HasValue)
+                query = query.Where(x => x.IsActive == request.IsActive.Value);
+
+
+            //Sort by
+            query = request.SortDir == "asc"
+                ? query.OrderBy(x => x.CreatedDate)
+                : query.OrderByDescending(x => x.CreatedDate);
+
+
+            var totalCount = await query.CountAsync();
+
+
+            // pagination
+            var items = await query
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .Select(x => new UserInfoDTO
+            {
+                Id = x.Id,
+                FullName = x.FullName,
+                Email = x.Email,
+
+            })
+            .ToListAsync();
+
+
+            return new PagedResult<UserInfoDTO>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                PageNumber = request.PageNumber,
+                PageSize = request.PageSize,
+                TotalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize)
+            };
+
         }
     }
 }

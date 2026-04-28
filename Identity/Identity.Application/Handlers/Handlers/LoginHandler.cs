@@ -1,4 +1,5 @@
-﻿using Identity.Identity.Application.Handlers.IHandlers;
+﻿using AutoMapper;
+using Identity.Identity.Application.Handlers.IHandlers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -13,12 +14,13 @@ using System.Threading.Tasks;
 using TaskManager.SharedLayer.Localizer;
 using TaskManager.SharedLayer.RequestModels;
 using TaskManager.SharedLayer.ResponseModel;
+using TaskManager.SharedLayer.ResponseModels;
 
 namespace Identity.Identity.Application.Handlers.Handlers
 {
     public class LoginHandler(IUserRepository _userRepo, IJwtService _jwt,
          IStringLocalizer<SharedResource> _localizer,
-         IPasswordService _hasher) : ILoginHandler
+         IPasswordService _hasher, IMapper _mapper) : ILoginHandler
     {
         
 
@@ -44,11 +46,11 @@ namespace Identity.Identity.Application.Handlers.Handlers
 
 
 
-
+            var mapperData = _mapper.Map<JwtTokenData>(user);
 
             var loginResponse = new LoginResponseDTO
             {
-                Token = _jwt.GenerateToken(user.Id, user.Role.Name),
+                Token = _jwt.GenerateToken(mapperData),
             };
 
 

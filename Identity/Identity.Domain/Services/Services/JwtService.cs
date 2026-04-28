@@ -8,23 +8,23 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using TaskManager.SharedLayer.ResponseModels;
 
 namespace Module.Identity.Domain.Services.Services
 {
     public class JwtService(IConfiguration _config) : IJwtService
     {
-        public string GenerateToken(int userId, string role)
+        public string GenerateToken(JwtTokenData userInfoDTO)
         {
             var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.NameId, userId.ToString())
-        };
-            // Add role/s
-            
-            
 
-            claims.Add(new Claim(ClaimTypes.Role, role));
+            new Claim(ClaimTypes.NameIdentifier, userInfoDTO.Id.ToString()),
+            new Claim(ClaimTypes.Role, userInfoDTO.Role),
             
+        };
+          
+
 
             var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_config["Jwt:Key"]));

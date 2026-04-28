@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskManager.SharedLayer.RequestModels;
+using TaskManager.SharedLayer.ResponseModels;
 
 namespace Module.Identity.Domain.IRepositories
 {
@@ -14,5 +16,20 @@ namespace Module.Identity.Domain.IRepositories
    string username,
    Func<IQueryable<User>, IQueryable<User>>? include = null,
    bool isTracked = true);
+
+
+         Task<User?> GetById(
+   int Id,
+   Func<IQueryable<User>, IQueryable<User>>? include = null,
+   bool isTracked = true);
+
+
+
+Task<PagedResult<UserInfoDTO>> GetUsersAsync(
+     GetUsersRequest request,
+     Func<IQueryable<User>, IQueryable<User>>? include = null,
+     bool isTracked = true);
     }
+
+
 }

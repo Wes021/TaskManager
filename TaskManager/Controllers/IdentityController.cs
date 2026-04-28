@@ -1,4 +1,5 @@
 ﻿using Identity.Identity.Application.Handlers.IHandlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaskManager.SharedLayer.RequestModels;
@@ -7,13 +8,37 @@ namespace TaskManager.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class IdentityController(ILoginHandler _loginHandler) : ControllerBase
+    public class IdentityController(ILoginHandler _loginHandler, IProfileHandler _profileHandler, IUsersHandlers _userHnadler) : ControllerBase
     {
 
         [HttpPost("/api/v1/auth/login")]
         public async Task<IActionResult> Login(LoginModel model)
         {
             var result = await _loginHandler.Handle(model);
+
+            if (!result.Success)
+                return Unauthorized(result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPost("/api/v1/auth/profile")]
+        public async Task<IActionResult> profile()
+        {
+            var result = await _profileHandler.GetProfileAsync();
+
+            if (!result.Success)
+                return Unauthorized(result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPost("/api/v1/auth/Users")]
+        public async Task<IActionResult> Users([FromQuery] GetUsersRequest request)
+        {
+            var result = await _userHnadler.GetUserAsync(request);
 
             if (!result.Success)
                 return Unauthorized(result);
