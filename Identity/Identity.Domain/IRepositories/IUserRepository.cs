@@ -29,6 +29,10 @@ Task<PagedResult<UserInfoDTO>> GetUsersAsync(
      GetUsersRequest request,
      Func<IQueryable<User>, IQueryable<User>>? include = null,
      bool isTracked = true);
+
+
+Task<bool> CheckUserExistsAsync(
+     AddNewUserDTO request);
     }
 
 

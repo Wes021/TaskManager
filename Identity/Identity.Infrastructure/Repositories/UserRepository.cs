@@ -22,6 +22,13 @@ namespace Module.Identity.Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task<bool> CheckUserExistsAsync(AddNewUserDTO request)
+        {
+            return await _context.Users
+        .AsNoTracking()
+        .AnyAsync(x => x.UserName == request.UserName || x.Email == request.Email || x.phonenumber == request.phonenumber );
+        }
+
         public async Task<User?> GetById(int Id, Func<IQueryable<User>, IQueryable<User>>? include = null, bool isTracked = true)
         {
             IQueryable<User> query = _context.Users;
@@ -112,5 +119,6 @@ namespace Module.Identity.Infrastructure.Repositories
             };
 
         }
+
     }
 }

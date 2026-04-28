@@ -12,5 +12,9 @@ namespace Identity.Identity.Domain.Services.IServices
     public interface IManageUserService
     {
         Task<ResponseModel<PagedResult<UserInfoDTO>>> GetUsers(GetUsersRequest model);
+
+        Task<ResponseModel<bool>> AddUser(AddNewUserDTO model);
+
+
     }
 }
