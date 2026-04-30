@@ -1,7 +1,11 @@
 ﻿using Identity.Identity.Application.Handlers.Handlers;
 using Identity.Identity.Application.Handlers.IHandlers;
+using Identity.Identity.Domain.IRepositories;
+using Identity.Identity.Domain.IUnitOfWork;
 using Identity.Identity.Domain.Services.IServices;
 using Identity.Identity.Domain.Services.Services;
+using Identity.Identity.Infrastructure.Repositories;
+using Identity.Identity.Infrastructure.UnitOfWork;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Module.Identity.Domain.IRepositories;
@@ -22,6 +26,8 @@ namespace Identity
         {
             //Repositories:
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IIdentityMouduleUoW, IdentityMouduleUoW>();
             
 
             //Serives

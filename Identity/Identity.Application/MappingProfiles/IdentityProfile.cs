@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskManager.SharedLayer.RequestModels;
 using TaskManager.SharedLayer.ResponseModels;
 
 namespace Identity.Identity.Application.MappingProfiles
@@ -18,6 +19,8 @@ namespace Identity.Identity.Application.MappingProfiles
 
             CreateMap<User, JwtTokenData>()
                 .ForMember(o => o.Role, opt => opt.MapFrom(src => src.Role.Name));
+
+            CreateMap<AddNewUserDTO, User>();
         }
     }
 }

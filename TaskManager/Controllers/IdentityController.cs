@@ -17,7 +17,7 @@ namespace TaskManager.Controllers
             var result = await _loginHandler.Handle(model);
 
             if (!result.Success)
-                return Unauthorized(result);
+                return Ok(result);
 
             return Ok(result);
         }
@@ -29,19 +29,31 @@ namespace TaskManager.Controllers
             var result = await _profileHandler.GetProfileAsync();
 
             if (!result.Success)
-                return Unauthorized(result);
+                return Ok(result);
 
             return Ok(result);
         }
 
         [Authorize]
-        [HttpPost("/api/v1/auth/Users")]
+        [HttpGet("/api/v1/auth/users")]
         public async Task<IActionResult> Users([FromQuery] GetUsersRequest request)
         {
             var result = await _userHnadler.GetUserAsync(request);
 
             if (!result.Success)
-                return Unauthorized(result);
+                return Ok(result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPost("/api/v1/auth/users")]
+        public async Task<IActionResult> Users(AddNewUserDTO request)
+        {
+            var result = await _userHnadler.AddUserAsync(request);
+
+            if (!result.Success)
+                return Ok(result);
 
             return Ok(result);
         }

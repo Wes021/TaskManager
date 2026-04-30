@@ -12,8 +12,8 @@ namespace Identity.Identity.Domain.Models
     public class User : IEntity, IAuditedEntity
     {
         public int Id { get; set; }
-        public bool IsDeleted { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public bool IsActive { get; set; } = true;
 
 
         public string FullName { get; set; }
@@ -25,13 +25,30 @@ namespace Identity.Identity.Domain.Models
         public Role Role { get; set; }
 
 
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
         public int? CreatedUser { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public int? ModifiedUser { get; set; }
-        
+
+        private User() { }
 
 
+        public static User Create(string userName, string email, string password, string fullName, int roleId, int createdUser, string phonenumber)
+        {
+            return new User
+            {
+                FullName = fullName,
+                UserName = userName.Trim().Replace(" ", ""),
+                Email = email.Trim().ToLower().Replace(" ", ""),
+                Password = password,
+                RoleId = roleId,
+                phonenumber = phonenumber.Trim().Replace(" ", ""),
+                CreatedUser = createdUser,
+                CreatedDate = DateTime.Now,
+                
+
+            };
+        }
 
         public bool CanLogin()
        => !IsDeleted && IsActive;

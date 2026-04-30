@@ -12,5 +12,10 @@ namespace Identity.Identity.Application.Handlers.IHandlers
     public interface IUsersHandlers
     {
         Task<ResponseModel<PagedResult<UserInfoDTO>>> GetUserAsync(GetUsersRequest model);
+
+
+        Task<ResponseModel<bool>> AddUserAsync(AddNewUserDTO model);
+
+
     }
 }

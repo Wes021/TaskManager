@@ -13,6 +13,13 @@ namespace Identity.Identity.Application.Handlers.Handlers
 {
     public class UsersHandlers(IManageUserService _userService) : IUsersHandlers
     {
+        public async Task<ResponseModel<bool>> AddUserAsync(AddNewUserDTO model)
+        {
+            var response = await _userService.AddUser(model);
+
+            return response;
+        }
+
         public async Task<ResponseModel<PagedResult<UserInfoDTO>>> GetUserAsync(GetUsersRequest model)
         {
             var users = await _userService.GetUsers(model);

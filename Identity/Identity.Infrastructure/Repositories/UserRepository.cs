@@ -22,6 +22,12 @@ namespace Module.Identity.Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task<User> Add(User entity)
+        {
+            _context.Users.Add(entity);
+            return entity;
+        }
+
         public async Task<bool> CheckUserExistsAsync(AddNewUserDTO request)
         {
             return await _context.Users
@@ -104,6 +110,10 @@ namespace Module.Identity.Infrastructure.Repositories
                 Id = x.Id,
                 FullName = x.FullName,
                 Email = x.Email,
+                UserName = x.UserName,
+                CreatedDate = x.CreatedDate,
+                ModifiedDate = x.ModifiedDate,
+                Role = x.Role.Name
 
             })
             .ToListAsync();
