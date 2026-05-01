@@ -57,5 +57,29 @@ namespace TaskManager.Controllers
 
             return Ok(result);
         }
+
+        [Authorize]
+        [HttpPatch("/api/users/{id}/status")]
+        public async Task<IActionResult> UserStatus(int id ,UpdateUserStatus request)
+        {
+            var result = await _userHnadler.UpdateUserStatusAsync(id,request);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPatch("/api/users/{id}/delete")]
+        public async Task<IActionResult> DeleteUser(int id ,UpdateUserStatus request)
+        {
+            var result = await _userHnadler.DeleteUserAsync(id,request);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
     }
 }

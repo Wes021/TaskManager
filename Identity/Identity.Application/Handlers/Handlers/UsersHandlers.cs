@@ -20,15 +20,26 @@ namespace Identity.Identity.Application.Handlers.Handlers
             return response;
         }
 
+        public async Task<ResponseModel<bool>> DeleteUserAsync(int Id, UpdateUserStatus model)
+        {
+            var users = await _userService.DeleteUser(Id, model);
+
+            return users;
+            
+        }
+
         public async Task<ResponseModel<PagedResult<UserInfoDTO>>> GetUserAsync(GetUsersRequest model)
         {
             var users = await _userService.GetUsers(model);
-            return new ResponseModel<PagedResult<UserInfoDTO>>
-            {
-                Data = users.Data,
-                Success = users.Success,
-                Message = users.Message
-            };
+
+            return users;
+        }
+
+        public async Task<ResponseModel<bool>> UpdateUserStatusAsync(int Id, UpdateUserStatus model)
+        {
+            var users = await _userService.UpdateUserStatus(Id, model);
+
+            return users;
         }
     }
 }

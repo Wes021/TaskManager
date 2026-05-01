@@ -17,5 +17,10 @@ namespace Identity.Identity.Application.Handlers.IHandlers
         Task<ResponseModel<bool>> AddUserAsync(AddNewUserDTO model);
 
 
+        Task<ResponseModel<bool>> UpdateUserStatusAsync(int Id, UpdateUserStatus model);
+
+        Task<ResponseModel<bool>> DeleteUserAsync(int Id, UpdateUserStatus model);
+
+
     }
 }

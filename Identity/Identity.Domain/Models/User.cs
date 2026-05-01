@@ -6,6 +6,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using TaskManager.SharedLayer.Interfaces;
+using TaskManager.SharedLayer.ResponseModels;
 
 namespace Identity.Identity.Domain.Models
 {
@@ -48,6 +49,44 @@ namespace Identity.Identity.Domain.Models
                 
 
             };
+        }
+
+        public DomainResponseModel SetIsActive(bool isActive, int modifiedUser)
+        {
+            if (IsActive == isActive)
+                return DomainResponseModel.Fail("NoChangesDetected");
+
+            if (Id == modifiedUser)
+                return DomainResponseModel.Fail("CannotModifyOwnStatus");
+
+            if (IsDeleted)
+                return DomainResponseModel.Fail("DeletedUserStatusBlocked");
+
+            IsActive = isActive;
+            ModifiedDate = DateTime.UtcNow;
+            ModifiedUser = modifiedUser;
+
+            return DomainResponseModel.Success();
+        }
+
+        public DomainResponseModel SetIsDeleted(bool isDeleted, int modifiedUser)
+        {
+            if (IsDeleted == isDeleted)
+                return DomainResponseModel.Fail("NoChangesDetected");
+
+            if (!isDeleted)
+                return DomainResponseModel.Fail("CantRestoreUser");
+
+            if (Id == modifiedUser)
+                return DomainResponseModel.Fail("CannotModifyOwnStatus");
+
+
+            IsDeleted = isDeleted;
+            IsActive = false;
+            ModifiedDate = DateTime.UtcNow;
+            ModifiedUser = modifiedUser;
+
+            return DomainResponseModel.Success();
         }
 
         public bool CanLogin()

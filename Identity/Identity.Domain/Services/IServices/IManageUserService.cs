@@ -15,6 +15,10 @@ namespace Identity.Identity.Domain.Services.IServices
 
         Task<ResponseModel<bool>> AddUser(AddNewUserDTO model);
 
+        Task<ResponseModel<bool>> UpdateUserStatus(int Id,UpdateUserStatus model);
+
+        Task<ResponseModel<bool>> DeleteUser(int Id, UpdateUserStatus model);
+
 
     }
 }

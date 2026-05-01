@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.Localizer;
 using TaskManager.SharedLayer.RequestModels;
 using TaskManager.SharedLayer.ResponseModel;
@@ -70,6 +71,7 @@ namespace Identity.Identity.Domain.Services.Services
             };
         }
 
+        
 
         public async Task<ResponseModel<PagedResult<UserInfoDTO>>> GetUsers(GetUsersRequest model)
         {
@@ -78,5 +80,95 @@ namespace Identity.Identity.Domain.Services.Services
 
             return new ResponseModel<PagedResult<UserInfoDTO>> { Success = true, Data = result, Message = _localizer["DataRetunedSuccssefully"] };
         }
+
+        public async Task<ResponseModel<bool>> UpdateUserStatus(int userId, UpdateUserStatus model)
+        {
+            var user = await _user.GetById(userId);
+            var currentUserId = _currentUserService.UserId;
+            var currectUserRole = _currentUserService.Role;
+
+            if (user is null)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["UserDoesNotExist"]
+                };
+
+            if (currectUserRole != SystemEnums.UserType.Admin.ToString())
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["UserNotAllowed"]
+                };
+
+
+
+
+            var result = user.SetIsActive(model.IsActive, currentUserId);
+
+            if (!result.Succeeded)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer[result.Error]
+                };
+
+            await _UoW.SaveChangesAsync();
+
+            return new ResponseModel<bool>
+            {
+                Success = true,
+                Data = true,
+                Message = _localizer["UserUpdatedSuccessfully"]
+            };
+        }
+
+
+        public async Task<ResponseModel<bool>> DeleteUser(int userId, UpdateUserStatus model)
+        {
+            var user = await _user.GetById(userId);
+            var currentUserId = _currentUserService.UserId;
+            var currectUserRole = _currentUserService.Role;
+
+            if (user is null)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["UserDoesNotExist"]
+                };
+
+            if (currectUserRole != SystemEnums.UserType.Admin.ToString())
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["UserNotAllowed"]
+                };
+
+            var result = user.SetIsDeleted(model.IsDeleted, currentUserId);
+
+            if (!result.Succeeded)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer[result.Error]
+                };
+
+            await _UoW.SaveChangesAsync();
+
+            return new ResponseModel<bool>
+            {
+                Success = true,
+                Data = true,
+                Message = _localizer["UserDeletedSuccessfully"]
+            };
+
+        }
+
     }
 }
