@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskManager.SharedLayer.RequestModels.Identity;
+using TaskManager.SharedLayer.RequestModels.Projects;
 using TaskManager.SharedLayer.ResponseModel;
 
-namespace Identity.Identity.Application.Handlers.IHandlers
+namespace Projects.Projects.Application.Handlers.IHandler
 {
-    public interface ILoginHandler
+    public interface IProjectHandler
     {
-        Task<ResponseModel<LoginResponseDTO>> Handle(LoginModel model);
+        Task<ResponseModel<bool>> AddProjectAsync(CreateProjectDto model);
     }
 }

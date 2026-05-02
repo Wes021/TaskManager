@@ -1,4 +1,5 @@
 ﻿using Identity;
+using Projects;
 namespace TaskManager
 
 {
@@ -9,6 +10,7 @@ namespace TaskManager
         IConfiguration configuration)
         {
             services.AddIdentityModule(configuration);
+            services.AddProjectsModule(configuration);
 
 
 

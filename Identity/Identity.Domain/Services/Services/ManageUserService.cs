@@ -13,8 +13,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskManager.SharedLayer.Enums;
+using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
-using TaskManager.SharedLayer.RequestModels;
+using TaskManager.SharedLayer.RequestModels.Identity;
 using TaskManager.SharedLayer.ResponseModel;
 using TaskManager.SharedLayer.ResponseModels;
 
@@ -51,10 +52,16 @@ namespace Identity.Identity.Domain.Services.Services
                     Message = _localizer["CheckRole"]
                 };
             }
-            //model.UserName.Trim();
-            //var newUser = _mapper.Map<User>(model);
-            //newUser.CreatedUser = _currentUserService.UserId;
-            //newUser.Password = _passwordService.Hash(model.Password);
+
+            var currectUserRole = _currentUserService.Role;
+
+            if (currectUserRole != SystemEnums.UserType.Admin.ToString())
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["UserNotAllowed"]
+                };
 
 
             var newUser = User.Create(model.UserName, model.Email, _passwordService.Hash(model.Password), model.FullName, model.RoleId, _currentUserService.UserId, model.phonenumber);

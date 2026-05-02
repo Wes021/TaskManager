@@ -15,5 +15,15 @@ namespace TaskManager.SharedLayer.Enums
             ManagerAndLeader = 7 
 
         }
+
+
+        public enum ProjectStatus
+        {
+            Draft = 0,
+            Active = 1,
+            OnHold = 2,
+            Completed = 3,
+            Cancelled = 4
+        }
     }
 }

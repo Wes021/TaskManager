@@ -33,7 +33,7 @@ namespace Identity
             //Serives
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IJwtService, JwtService>();
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
+           // services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IManageUserService, ManageUserService>();
 
             //Handlers

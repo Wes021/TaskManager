@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using TaskManager.SharedLayer.RequestModels;
+using TaskManager.SharedLayer.RequestModels.Identity;
 
 namespace TaskManager.Controllers
 {
@@ -71,7 +71,7 @@ namespace TaskManager.Controllers
         }
 
         [Authorize]
-        [HttpPatch("/api/users/{id}/delete")]
+        [HttpPatch("/api/users/{id}")]
         public async Task<IActionResult> DeleteUser(int id ,UpdateUserStatus request)
         {
             var result = await _userHnadler.DeleteUserAsync(id,request);

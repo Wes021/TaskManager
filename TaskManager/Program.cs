@@ -1,5 +1,6 @@
 
 using AutoMapper;
+using Identity.Identity.Domain.Services.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
@@ -7,7 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Module.Identity.Infrastructure.DbSettings;
 using System.Security.Claims;
-using System.Text; // Add this using directive
+using System.Text;
+using TaskManager.SharedLayer.Interfaces; // Add this using directive
 
 
 namespace TaskManager
@@ -22,6 +24,10 @@ namespace TaskManager
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
