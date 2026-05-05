@@ -10,9 +10,9 @@ namespace Identity.Identity.Infrastructure.UnitOfWork
 {
     public class IdentityMouduleUoW : IIdentityMouduleUoW
     {
-        private readonly AppDbContext _context;
+        private readonly IdentityDbContext _context;
 
-        public IdentityMouduleUoW(AppDbContext context)
+        public IdentityMouduleUoW(IdentityDbContext context)
         {
             _context = context;
         }

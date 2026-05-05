@@ -6,11 +6,13 @@ using Identity.Identity.Domain.Services.IServices;
 using Identity.Identity.Domain.Services.Services;
 using Identity.Identity.Infrastructure.Repositories;
 using Identity.Identity.Infrastructure.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Module.Identity.Domain.IRepositories;
 using Module.Identity.Domain.Services.IServices;
 using Module.Identity.Domain.Services.Services;
+using Module.Identity.Infrastructure.DbSettings;
 using Module.Identity.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
@@ -41,6 +43,9 @@ namespace Identity
             services.AddScoped<IProfileHandler, ProfileHandler>();
             services.AddScoped<IUsersHandlers, UsersHandlers>();
 
+
+            services.AddDbContext<IdentityDbContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("SqlCon")));
 
             services.AddAutoMapper(typeof(IdentityModule).Assembly);
             return services;

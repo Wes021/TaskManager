@@ -10,7 +10,7 @@ using Module.Identity.Infrastructure.DbSettings;
 
 namespace Identity.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(IdentityDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

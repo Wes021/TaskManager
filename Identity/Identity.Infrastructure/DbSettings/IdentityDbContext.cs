@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Module.Identity.Infrastructure.DbSettings
 {
-    public class AppDbContext : DbContext
+    public class IdentityDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options)
+        public IdentityDbContext(DbContextOptions<IdentityDbContext> options)
                   : base(options)
         {
 

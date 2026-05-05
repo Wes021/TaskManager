@@ -8,6 +8,8 @@ namespace Projects.Projects.Domain.Models
 {
     public class ProjectMember
     {
+
+
         public int ProjectId { get; private set; }
         public int UserId { get; private set; }
 

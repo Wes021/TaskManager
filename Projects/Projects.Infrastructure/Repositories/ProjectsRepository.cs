@@ -13,9 +13,9 @@ namespace Projects.Projects.Infrastructure.Repositories
 {
     public class ProjectsRepository : IProjectsRepository
     {
-        private readonly AppDbContext _context;
+        private readonly ProjectsDbContext _context;
 
-        public ProjectsRepository(AppDbContext context)
+        public ProjectsRepository(ProjectsDbContext context)
         {
             _context = context;
         }

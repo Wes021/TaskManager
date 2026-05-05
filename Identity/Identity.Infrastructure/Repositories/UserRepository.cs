@@ -15,9 +15,9 @@ namespace Module.Identity.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly AppDbContext _context;
+        private readonly IdentityDbContext _context;
 
-        public UserRepository(AppDbContext context)
+        public UserRepository(IdentityDbContext context)
         {
             _context = context;
         }

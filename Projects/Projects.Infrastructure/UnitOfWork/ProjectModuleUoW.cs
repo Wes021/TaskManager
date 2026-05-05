@@ -10,9 +10,9 @@ namespace Projects.Projects.Infrastructure.UnitOfWork
 {
     public class ProjectModuleUoW : IProjectModuleUoW
     {
-        private readonly AppDbContext _context;
+        private readonly ProjectsDbContext _context;
 
-        public ProjectModuleUoW(AppDbContext context)
+        public ProjectModuleUoW(ProjectsDbContext context)
         {
             _context = context;
         }

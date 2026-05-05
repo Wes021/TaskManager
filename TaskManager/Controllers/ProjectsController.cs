@@ -12,7 +12,7 @@ namespace TaskManager.Controllers
     {
 
         [HttpPost("/api/v1/projects")]
-        public async Task<IActionResult> AddProject(CreateProjectDto model)
+        public async Task<IActionResult> AddProject([FromBody] CreateProjectDto model)
         {
             var result = await _projectHandler.AddProjectAsync(model);
 

@@ -13,15 +13,16 @@ namespace Projects.Projects.Infrastructure.Repositories
 {
     public class ProjectStatusRepository : IProjectStatusRepository
     {
-        private readonly AppDbContext _context;
+        private readonly ProjectsDbContext _context;
 
-        public ProjectStatusRepository(AppDbContext context)
+        public ProjectStatusRepository(ProjectsDbContext context)
         {
             _context = context;
         }
 
         public async Task<bool> CheckProjectStatusExists(int StatusId)
         {
+           
             return await _context.ProjectStatus.AsNoTracking()
                 .AnyAsync(x => x.Id == StatusId && x.IsDeleted != true && x.IsActive != false);
             

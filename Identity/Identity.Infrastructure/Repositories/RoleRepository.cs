@@ -11,9 +11,9 @@ namespace Identity.Identity.Infrastructure.Repositories
 {
     public class RoleRepository : IRoleRepository
     {
-        private readonly AppDbContext _context;
+        private readonly IdentityDbContext _context;
 
-        public RoleRepository(AppDbContext context)
+        public RoleRepository(IdentityDbContext context)
         {
             _context = context;
         }

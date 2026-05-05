@@ -28,10 +28,10 @@ namespace Projects.Projects.Domain.Services.Services
 
             var statusExists = await _projectStatusRepository.CheckProjectStatusExists(model.StatusId);
 
-            if (statusExists)
+            if (!statusExists)
                 return new ResponseModel<bool> { Success = false, Message = _localizer["StatusNotExists"] };
 
-            if (_currentUserService.Roles.ToString() != SystemEnums.UserType.ManagerAndLeader.ToString())
+            if (_currentUserService.Role.ToString() != SystemEnums.UserType.ManagerAndLeader.ToString())
                 return new ResponseModel<bool>
                 {
                     Success = false,
@@ -40,7 +40,7 @@ namespace Projects.Projects.Domain.Services.Services
                 };
 
 
-            var newProject = Project.Create(model.Name, model.Description, model.StartDate, model.EndDate, model.ManagerId, model.StatusId, _currentUserService.UserId);
+            var newProject = Project.Create(model.Name, model.Description, model.StartDate, model.EndDate, _currentUserService.UserId, model.StatusId, _currentUserService.UserId);
 
 
             await _projectsRepository.Add(newProject.Data);

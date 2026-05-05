@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Module.Projects.Infrastructure.DbSettings
 {
-    public class AppDbContext : DbContext
+    public class ProjectsDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options)
+        public ProjectsDbContext(DbContextOptions<ProjectsDbContext> options)
                   : base(options)
         {
 
@@ -20,6 +20,9 @@ namespace Module.Projects.Infrastructure.DbSettings
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ProjectMember>()
+    .HasKey(x => new { x.ProjectId, x.UserId });
         }
 
 

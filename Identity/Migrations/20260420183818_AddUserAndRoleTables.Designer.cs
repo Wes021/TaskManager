@@ -11,7 +11,7 @@ using Module.Identity.Infrastructure.DbSettings;
 
 namespace Identity.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(IdentityDbContext))]
     [Migration("20260420183818_AddUserAndRoleTables")]
     partial class AddUserAndRoleTables
     {
