@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Projects.Projects.Application.Handlers.IHandler;
 using TaskManager.SharedLayer.RequestModels.Identity;
@@ -10,7 +11,7 @@ namespace TaskManager.Controllers
     [ApiController]
     public class ProjectsController(IProjectHandler _projectHandler) : ControllerBase
     {
-
+        [Authorize]
         [HttpPost("/api/v1/projects")]
         public async Task<IActionResult> AddProject([FromBody] CreateProjectDto model)
         {

@@ -60,7 +60,9 @@ namespace Projects.Projects.Domain.Models
             if (createdUser <= 0)
                 return GenericDomainResponseModel<Project>.Fail("InvalidUser");
 
-            if (endDate.HasValue && endDate.Value < startDate)
+           
+
+            if (endDate.HasValue && endDate.Value <= startDate)
                 return GenericDomainResponseModel<Project>.Fail("EndDateBeforeStartDate");
 
             var project = new Project

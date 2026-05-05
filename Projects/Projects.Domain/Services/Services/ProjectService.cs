@@ -42,6 +42,14 @@ namespace Projects.Projects.Domain.Services.Services
 
             var newProject = Project.Create(model.Name, model.Description, model.StartDate, model.EndDate, _currentUserService.UserId, model.StatusId, _currentUserService.UserId);
 
+            if (!newProject.Succeeded)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = newProject.Error
+                };
+            
 
             await _projectsRepository.Add(newProject.Data);
             await _projectModuleUoW.SaveChangesAsync();
