@@ -130,5 +130,20 @@ namespace Module.Identity.Infrastructure.Repositories
 
         }
 
+
+
+        public async Task<List<UserLookupDto>> GetUsersByIdsAsync(
+    List<int> userIds)
+        {
+            return await _context.Users
+                .AsNoTracking()
+                .Where(x => userIds.Contains(x.Id))
+                .Select(x => new UserLookupDto
+                {
+                    Id = x.Id,
+                    FullName = x.FullName
+                })
+                .ToListAsync();
+        }
     }
 }

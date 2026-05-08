@@ -22,5 +22,17 @@ namespace TaskManager.Controllers
 
             return Ok(result);
         }
+
+        [Authorize]
+        [HttpGet("/api/v1/projects")]
+        public async Task<IActionResult> GetProject([FromQuery] GetProjectsRequest model)
+        {
+            var result = await _projectHandler.GetProjectsAsync(model);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
     }
 }

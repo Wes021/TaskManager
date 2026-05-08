@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskManager.SharedLayer.Interfaces;
 
 namespace Identity
 {
@@ -37,6 +38,7 @@ namespace Identity
             services.AddScoped<IJwtService, JwtService>();
            // services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IManageUserService, ManageUserService>();
+            services.AddScoped<IUserLookupService, UserLookupService>();
 
             //Handlers
             services.AddScoped<ILoginHandler, LoginHandler>();

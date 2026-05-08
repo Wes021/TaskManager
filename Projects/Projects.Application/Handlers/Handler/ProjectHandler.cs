@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using TaskManager.SharedLayer.RequestModels.Projects;
 using TaskManager.SharedLayer.ResponseModel;
+using TaskManager.SharedLayer.ResponseModels;
+using TaskManager.SharedLayer.ResponseModels.Projects;
 
 namespace Projects.Projects.Application.Handlers.Handler
 {
@@ -18,6 +20,13 @@ namespace Projects.Projects.Application.Handlers.Handler
 
             return project;
             
+        }
+
+        public async Task<ResponseModel<PagedResult<ProjectInfoDto>>> GetProjectsAsync(GetProjectsRequest model)
+        {
+            var project = await _projectService.GetProjects(model);
+
+            return project;
         }
     }
 }

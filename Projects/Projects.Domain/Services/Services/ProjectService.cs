@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using Projects.Projects.Domain.IRepositories;
 using Projects.Projects.Domain.IUnitOfWork;
 using Projects.Projects.Domain.Models;
@@ -13,11 +15,14 @@ using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
 using TaskManager.SharedLayer.RequestModels.Projects;
 using TaskManager.SharedLayer.ResponseModel;
+using TaskManager.SharedLayer.ResponseModels;
+using TaskManager.SharedLayer.ResponseModels.Projects;
 
 namespace Projects.Projects.Domain.Services.Services
 {
     public class ProjectService(IProjectsRepository _projectsRepository, IStringLocalizer<SharedResource> _localizer
-        ,IProjectStatusRepository _projectStatusRepository, ICurrentUserService _currentUserService, IProjectModuleUoW _projectModuleUoW) : IProjectService
+        ,IProjectStatusRepository _projectStatusRepository, ICurrentUserService _currentUserService,
+        IProjectModuleUoW _projectModuleUoW, IMapper _mapper, IUserLookupService _userLookupService) : IProjectService
     {
         public async Task<ResponseModel<bool>> AddProject(CreateProjectDto model)
         {
@@ -60,6 +65,56 @@ namespace Projects.Projects.Domain.Services.Services
                 Data = true,
                 Message = _localizer["ProjectAddedSuccessfully"]
             };
+        }
+
+
+        public async Task<ResponseModel<PagedResult<ProjectInfoDto>>> GetProjects(GetProjectsRequest model)
+        {
+            var projects = await _projectsRepository.GetProjectsAsync(model);
+
+            var managerIds = projects.Items
+      .Select(x => x.ManagerId)
+      .Distinct()
+      .ToList();
+           
+
+            var managers = await _userLookupService
+    .GetUsersByIdsAsync(managerIds);
+
+            var managersDictionary = managers
+    .ToDictionary(x => x.Id);
+
+
+
+            var CreatedUsersIds = projects.Items.Select(x => x.CreatedUserId).Distinct().ToList();
+
+            var createdUsers = await _userLookupService
+    .GetUsersByIdsAsync(CreatedUsersIds);
+
+            var CreatedUsersDictionary = createdUsers.ToDictionary(x => x.Id);
+
+
+
+
+            foreach (var project in projects.Items)
+            {
+                if (managersDictionary.TryGetValue(project.ManagerId, out var manager))
+                {
+                    project.Manager = manager.FullName;
+                }
+            }
+
+
+            foreach (var project in projects.Items)
+            {
+                if (CreatedUsersDictionary.TryGetValue(project.CreatedUserId, out var manager))
+                {
+                    project.CreatedUser = manager.FullName;
+                }
+            }
+
+            return new ResponseModel<PagedResult<ProjectInfoDto>> { Success = true, Data = projects, Message = _localizer["DataRetunedSuccssefully"] };
+
         }
     }
 }

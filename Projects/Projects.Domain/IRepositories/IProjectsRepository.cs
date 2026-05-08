@@ -4,7 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskManager.SharedLayer.RequestModels.Identity;
 using TaskManager.SharedLayer.RequestModels.Projects;
+using TaskManager.SharedLayer.ResponseModels;
+using TaskManager.SharedLayer.ResponseModels.Projects;
 
 namespace Projects.Projects.Domain.IRepositories
 {
@@ -13,5 +16,10 @@ namespace Projects.Projects.Domain.IRepositories
         Task<bool> CheckProjectExists(CreateProjectDto entity);
 
         Task<Project> Add(Project entity);
+
+        Task<PagedResult<ProjectInfoDto>> GetProjectsAsync(
+             GetProjectsRequest request,
+             Func<IQueryable<Project>, IQueryable<Project>>? include = null,
+             bool isTracked = true);
     }
 }

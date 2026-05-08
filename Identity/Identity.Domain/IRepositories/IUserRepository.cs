@@ -23,12 +23,11 @@ namespace Module.Identity.Domain.IRepositories
   Func<IQueryable<User>, IQueryable<User>>? include = null,
   bool isTracked = true);
 
+        
 
 
-        Task<PagedResult<UserInfoDTO>> GetUsersAsync(
-             GetUsersRequest request,
-             Func<IQueryable<User>, IQueryable<User>>? include = null,
-             bool isTracked = true);
+        public Task<List<UserLookupDto>> GetUsersByIdsAsync(
+            List<int> userIds);
 
 
         Task<bool> CheckUserExistsAsync(
@@ -37,6 +36,12 @@ namespace Module.Identity.Domain.IRepositories
 
 
         Task<User> Add(User entity);
+
+
+        Task<PagedResult<UserInfoDTO>> GetUsersAsync(
+           GetUsersRequest request,
+           Func<IQueryable<User>, IQueryable<User>>? include = null,
+           bool isTracked = true);
     }
 
 
