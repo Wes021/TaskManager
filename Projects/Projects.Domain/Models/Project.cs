@@ -83,6 +83,51 @@ namespace Projects.Projects.Domain.Models
         }
 
 
+        public GenericDomainResponseModel<Project> Update(
+     string name,
+     string description,
+     DateTime startDate,
+     DateTime? endDate,
+     int managerId,
+     int statusId,
+     int modifiedUser)
+        {
+            if (managerId <= 0)
+                return GenericDomainResponseModel<Project>
+                    .Fail("InvalidManager");
+
+            if (statusId <= 0)
+                return GenericDomainResponseModel<Project>
+                    .Fail("InvalidStatus");
+
+            if (modifiedUser <= 0)
+                return GenericDomainResponseModel<Project>
+                    .Fail("InvalidUser");
+
+            if (endDate.HasValue && endDate.Value <= startDate)
+                return GenericDomainResponseModel<Project>
+                    .Fail("EndDateBeforeStartDate");
+
+            Name = name.Trim();
+
+            Description = description.Trim();
+
+            StartDate = startDate;
+
+            EndDate = endDate;
+
+            ManagerId = managerId;
+
+            StatusId = statusId;
+
+            ModifiedDate = DateTime.UtcNow;
+
+            ModifiedUser = modifiedUser;
+
+            return GenericDomainResponseModel<Project>
+                .Success(this);
+        }
+
 
         public DomainResponseModel SetIsActive(bool isActive, int modifiedUser)
         {
