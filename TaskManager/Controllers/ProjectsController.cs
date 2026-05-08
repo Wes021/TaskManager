@@ -34,5 +34,41 @@ namespace TaskManager.Controllers
 
             return Ok(result);
         }
+
+        [Authorize]
+        [HttpGet("/api/v1/projects/{Id}")]
+        public async Task<IActionResult> GetProjectById( int Id)
+        {
+            var result = await _projectHandler.GetProjectByIdAsync(Id);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPatch("/api/v1/projects/{Id}/Status")]
+        public async Task<IActionResult> UpdateProjectStatus(int Id, UpdateProjectStatus request)
+        {
+            var result = await _projectHandler.UpdateProjectStatusAsync(Id, request);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpDelete("/api/v1/projects/{Id}")]
+        public async Task<IActionResult> DeletProject(int Id, UpdateProjectStatus request)
+        {
+            var result = await _projectHandler.DeleteProjectAsync(Id, request);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
     }
 }

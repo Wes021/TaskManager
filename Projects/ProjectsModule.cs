@@ -41,7 +41,7 @@ namespace Projects
             services.AddDbContext<ProjectsDbContext>(options =>
           options.UseSqlServer(configuration.GetConnectionString("SqlCon")));
 
-
+            services.AddAutoMapper(typeof(ProjectsModule).Assembly);
             return services;
         }
     }

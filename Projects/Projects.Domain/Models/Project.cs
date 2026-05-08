@@ -81,5 +81,42 @@ namespace Projects.Projects.Domain.Models
 
             return GenericDomainResponseModel<Project>.Success(project);
         }
+
+
+
+        public DomainResponseModel SetIsActive(bool isActive, int modifiedUser)
+        {
+            if (IsActive == isActive)
+                return DomainResponseModel.Fail("NoChangesDetected");
+
+            
+
+            if (IsDeleted)
+                return DomainResponseModel.Fail("DeletedProjectStatusBlocked");
+
+            IsActive = isActive;
+            ModifiedDate = DateTime.UtcNow;
+            ModifiedUser = modifiedUser;
+
+            return DomainResponseModel.Success();
+        }
+
+        public DomainResponseModel SetIsDeleted(bool isDeleted, int modifiedUser)
+        {
+            if (IsDeleted == isDeleted)
+                return DomainResponseModel.Fail("NoChangesDetected");
+
+            if (!isDeleted)
+                return DomainResponseModel.Fail("CantRestoreProject");
+
+      
+
+            IsDeleted = isDeleted;
+            IsActive = false;
+            ModifiedDate = DateTime.UtcNow;
+            ModifiedUser = modifiedUser;
+
+            return DomainResponseModel.Success();
+        }
     }
 }

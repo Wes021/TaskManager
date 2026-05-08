@@ -10,5 +10,7 @@ namespace TaskManager.SharedLayer.RequestModels.Identity
     {
         public int Id { get; set; }
         public string FullName { get; set; }
+        public bool IsDeleted { get; set; }
+        public bool IsActive { get; set; }
     }
 }

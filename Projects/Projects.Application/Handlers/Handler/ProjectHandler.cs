@@ -22,11 +22,33 @@ namespace Projects.Projects.Application.Handlers.Handler
             
         }
 
+        public Task<ResponseModel<bool>> DeleteProjectAsync(int Id, UpdateProjectStatus model)
+        {
+            var result = _projectService.DeleteProject(Id, model);
+
+            return result;
+        }
+
+        public Task<ResponseModel<ProjectInfoDto>> GetProjectByIdAsync(int Id)
+        {
+            var project = _projectService.GetProjectById(Id);
+
+            return project;
+            
+        }
+
         public async Task<ResponseModel<PagedResult<ProjectInfoDto>>> GetProjectsAsync(GetProjectsRequest model)
         {
             var project = await _projectService.GetProjects(model);
 
             return project;
+        }
+
+        public Task<ResponseModel<bool>> UpdateProjectStatusAsync(int Id, UpdateProjectStatus model)
+        {
+            var result = _projectService.UpdateProjectStatus(Id, model);
+
+            return result;
         }
     }
 }

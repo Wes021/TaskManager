@@ -21,5 +21,10 @@ namespace Projects.Projects.Domain.IRepositories
              GetProjectsRequest request,
              Func<IQueryable<Project>, IQueryable<Project>>? include = null,
              bool isTracked = true);
+
+        Task<Project> GetProjectByIdAsync(
+             int Id,
+             Func<IQueryable<Project>, IQueryable<Project>>? include = null,
+             bool isTracked = true);
     }
 }

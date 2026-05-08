@@ -21,7 +21,10 @@ namespace Identity.Identity.Domain.Services.Services
             var UserData = new UserLookupDto
             {
                 Id = user.Id,
-                FullName = user.FullName
+                FullName = user.FullName,
+                IsActive = user.IsActive,
+                IsDeleted = user.IsDeleted
+
             };
             return UserData;
         }

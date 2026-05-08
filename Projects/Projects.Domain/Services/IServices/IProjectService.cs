@@ -17,5 +17,13 @@ namespace Projects.Projects.Domain.Services.IServices
 
 
         Task<ResponseModel<PagedResult<ProjectInfoDto>>> GetProjects(GetProjectsRequest model);
+
+
+        Task<ResponseModel<ProjectInfoDto>> GetProjectById(int Id);
+
+
+        Task<ResponseModel<bool>> DeleteProject(int ProjectId, UpdateProjectStatus model);
+
+        Task<ResponseModel<bool>> UpdateProjectStatus(int ProjectId, UpdateProjectStatus model);
     }
 }

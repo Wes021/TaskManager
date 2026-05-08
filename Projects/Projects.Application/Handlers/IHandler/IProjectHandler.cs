@@ -16,5 +16,11 @@ namespace Projects.Projects.Application.Handlers.IHandler
         Task<ResponseModel<bool>> AddProjectAsync(CreateProjectDto model);
 
         Task<ResponseModel<PagedResult<ProjectInfoDto>>> GetProjectsAsync(GetProjectsRequest model);
+
+        Task<ResponseModel<ProjectInfoDto>> GetProjectByIdAsync(int Id);
+
+        Task<ResponseModel<bool>> UpdateProjectStatusAsync(int Id, UpdateProjectStatus model);
+
+        Task<ResponseModel<bool>> DeleteProjectAsync(int Id, UpdateProjectStatus model);
     }
 }

@@ -37,6 +37,8 @@ namespace Projects.Projects.Infrastructure.Repositories
             
         }
 
+       
+
         public async Task<PagedResult<ProjectInfoDto>> GetProjectsAsync(GetProjectsRequest request, Func<IQueryable<Project>, IQueryable<Project>>? include = null, bool isTracked = true)
         {
             IQueryable<Project> query = _context.Project;
@@ -100,6 +102,21 @@ namespace Projects.Projects.Infrastructure.Repositories
                 PageSize = request.PageSize,
                 TotalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize)
             };
+        }
+
+        public async Task<Project> GetProjectByIdAsync(int Id, Func<IQueryable<Project>, IQueryable<Project>>? include = null, bool isTracked = true)
+        {
+
+            IQueryable<Project> query = _context.Project;
+
+            if (!isTracked)
+                query = query.AsNoTracking();
+
+            if (include != null)
+                query = include(query);
+
+
+            return await query.FirstOrDefaultAsync(x => x.Id == Id);
         }
     }
 }

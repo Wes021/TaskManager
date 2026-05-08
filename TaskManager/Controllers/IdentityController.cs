@@ -23,7 +23,7 @@ namespace TaskManager.Controllers
         }
 
         [Authorize]
-        [HttpPost("/api/v1/auth/profile")]
+        [HttpGet("/api/v1/users/profile")]
         public async Task<IActionResult> profile()
         {
             var result = await _profileHandler.GetProfileAsync();
@@ -35,7 +35,7 @@ namespace TaskManager.Controllers
         }
 
         [Authorize]
-        [HttpGet("/api/v1/auth/users")]
+        [HttpGet("/api/v1/users")]
         public async Task<IActionResult> Users([FromQuery] GetUsersRequest request)
         {
             var result = await _userHnadler.GetUserAsync(request);
@@ -47,7 +47,7 @@ namespace TaskManager.Controllers
         }
 
         [Authorize]
-        [HttpPost("/api/v1/auth/users")]
+        [HttpPost("/api/v1/users")]
         public async Task<IActionResult> Users(AddNewUserDTO request)
         {
             var result = await _userHnadler.AddUserAsync(request);
@@ -71,7 +71,7 @@ namespace TaskManager.Controllers
         }
 
         [Authorize]
-        [HttpPatch("/api/users/{id}")]
+        [HttpDelete("/api/users/{id}")]
         public async Task<IActionResult> DeleteUser(int id ,UpdateUserStatus request)
         {
             var result = await _userHnadler.DeleteUserAsync(id,request);
