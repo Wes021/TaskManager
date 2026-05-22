@@ -18,12 +18,14 @@ using TaskManager.SharedLayer.RequestModels.Projects;
 using TaskManager.SharedLayer.ResponseModel;
 using TaskManager.SharedLayer.ResponseModels;
 using TaskManager.SharedLayer.ResponseModels.Projects;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Projects.Projects.Domain.Services.Services
 {
     public class ProjectService(IProjectsRepository _projectsRepository, IStringLocalizer<SharedResource> _localizer
         , IProjectStatusRepository _projectStatusRepository, ICurrentUserService _currentUserService,
-        IProjectModuleUoW _projectModuleUoW, IMapper _mapper, IUserLookupService _userLookupService) : IProjectService
+        IProjectModuleUoW _projectModuleUoW, IMapper _mapper, IUserLookupService _userLookupService,
+        IProjectMemberRepository _projectMemberRepository) : IProjectService
     {
         public async Task<ResponseModel<bool>> AddProject(CreateProjectDto model)
         {
@@ -124,7 +126,7 @@ namespace Projects.Projects.Domain.Services.Services
         public async Task<ResponseModel<ProjectInfoDto>> GetProjectById(int id)
         {
 
-            
+
 
 
             var project = await _projectsRepository.GetProjectByIdAsync(
@@ -152,7 +154,7 @@ namespace Projects.Projects.Domain.Services.Services
                     _userLookupService.GetUserByIdAsync(project.CreatedUser.Value);
             }
 
-            
+
 
             var mappedData = _mapper.Map<ProjectInfoDto>(project);
 
@@ -232,7 +234,7 @@ namespace Projects.Projects.Domain.Services.Services
 
         }
 
-        
+
 
         public async Task<ResponseModel<bool>> UpdateProjectStatus(int ProjectId, UpdateProjectStatus model)
         {
@@ -322,5 +324,73 @@ namespace Projects.Projects.Domain.Services.Services
                 Message = _localizer["ProjectUpdatedSuccessfully"]
             };
         }
+
+        public async Task<ResponseModel<bool>> AddMembersToProject(int ProjectId, AddProjectMembersDto model)
+        {
+            var project = await _projectsRepository.GetProjectByIdAsync(ProjectId);
+            var ProjectMembers = await _projectMemberRepository.GetAssignedUserIdsAsync(model.MemberIds);
+
+            var currentUserId = _currentUserService.UserId;
+            var currectUserRole = _currentUserService.Role;
+
+            if (model.MemberIds == null || !model.MemberIds.Any())
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["InvalidInput"]
+                };
+
+            if (currectUserRole != SystemEnums.UserType.Admin.ToString() && currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString())
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["UserNotAllowed"]
+                };
+
+            if (project is null)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["ProjectDoesNotExist"]
+                };
+
+
+           
+            if (ProjectMembers.Any())
+            {
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["OneOrMoreUsersAreAlreadyAssignedToAnExistingProject"]
+                };
+
+            }
+
+
+
+            project.AddMembers(model.MemberIds, currentUserId);
+
+            await _projectModuleUoW.SaveChangesAsync();
+
+            return new ResponseModel<bool>
+            {
+                Success = true,
+                Data = true,
+                Message = _localizer["ProjectMembersSuccessfully"]
+            };
+
+
+
+
+
+        }
+
+
+
+
     }
 }

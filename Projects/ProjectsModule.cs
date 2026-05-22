@@ -27,6 +27,7 @@ namespace Projects
             services.AddScoped<IProjectsRepository, ProjectsRepository>();
             services.AddScoped<IProjectStatusRepository, ProjectStatusRepository>();
             services.AddScoped<IProjectModuleUoW, ProjectModuleUoW>();
+            services.AddScoped<IProjectMemberRepository, ProjectMemberRepository>();
 
 
             //Serives
