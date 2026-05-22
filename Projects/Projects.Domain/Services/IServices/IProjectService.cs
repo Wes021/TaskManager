@@ -25,5 +25,7 @@ namespace Projects.Projects.Domain.Services.IServices
         Task<ResponseModel<bool>> DeleteProject(int ProjectId, UpdateProjectStatus model);
 
         Task<ResponseModel<bool>> UpdateProjectStatus(int ProjectId, UpdateProjectStatus model);
+
+        Task<ResponseModel<bool>> UpdateProjectInfo(int ProjectId, UpdateProjectInfo model);
     }
 }

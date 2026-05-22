@@ -37,6 +37,8 @@ namespace Projects.Projects.Application.Handlers.Handler
             
         }
 
+
+
         public async Task<ResponseModel<PagedResult<ProjectInfoDto>>> GetProjectsAsync(GetProjectsRequest model)
         {
             var project = await _projectService.GetProjects(model);
@@ -44,9 +46,20 @@ namespace Projects.Projects.Application.Handlers.Handler
             return project;
         }
 
+
+
+
         public Task<ResponseModel<bool>> UpdateProjectStatusAsync(int Id, UpdateProjectStatus model)
         {
             var result = _projectService.UpdateProjectStatus(Id, model);
+
+            return result;
+        }
+
+
+        public Task<ResponseModel<bool>> UpdateProjectAsync(int Id, UpdateProjectInfo model)
+        {
+            var result = _projectService.UpdateProjectInfo(Id, model);
 
             return result;
         }

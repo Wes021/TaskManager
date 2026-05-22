@@ -140,14 +140,6 @@ namespace Identity.Identity.Domain.Services.Services
             var currentUserId = _currentUserService.UserId;
             var currectUserRole = _currentUserService.Role;
 
-            if (user is null)
-                return new ResponseModel<bool>
-                {
-                    Success = false,
-                    Data = false,
-                    Message = _localizer["UserDoesNotExist"]
-                };
-
             if (currectUserRole != SystemEnums.UserType.Admin.ToString())
                 return new ResponseModel<bool>
                 {

@@ -70,5 +70,17 @@ namespace TaskManager.Controllers
 
             return Ok(result);
         }
+
+        [Authorize]
+        [HttpPut("/api/v1/projects/{Id}")]
+        public async Task<IActionResult> UpdateProject(int Id, UpdateProjectInfo request)
+        {
+            var result = await _projectHandler.UpdateProjectAsync(Id, request);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
     }
 }

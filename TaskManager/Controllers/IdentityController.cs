@@ -59,7 +59,7 @@ namespace TaskManager.Controllers
         }
 
         [Authorize]
-        [HttpPatch("/api/users/{id}/status")]
+        [HttpPatch("/api/v1/users/{id}/status")]
         public async Task<IActionResult> UserStatus(int id ,UpdateUserStatus request)
         {
             var result = await _userHnadler.UpdateUserStatusAsync(id,request);
@@ -71,7 +71,7 @@ namespace TaskManager.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/api/users/{id}")]
+        [HttpDelete("/api/v1/users/{id}")]
         public async Task<IActionResult> DeleteUser(int id ,UpdateUserStatus request)
         {
             var result = await _userHnadler.DeleteUserAsync(id,request);

@@ -232,6 +232,8 @@ namespace Projects.Projects.Domain.Services.Services
 
         }
 
+        
+
         public async Task<ResponseModel<bool>> UpdateProjectStatus(int ProjectId, UpdateProjectStatus model)
         {
             var project = await _projectsRepository.GetProjectByIdAsync(ProjectId);
@@ -255,6 +257,52 @@ namespace Projects.Projects.Domain.Services.Services
                 };
 
             var result = project.SetIsActive(model.IsActive, currentUserId);
+
+
+            if (!result.Succeeded)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer[result.Error]
+                };
+
+            await _projectModuleUoW.SaveChangesAsync();
+
+            return new ResponseModel<bool>
+            {
+                Success = true,
+                Data = true,
+                Message = _localizer["ProjectUpdatedSuccessfully"]
+            };
+        }
+
+
+        public async Task<ResponseModel<bool>> UpdateProjectInfo(int ProjectId, UpdateProjectInfo model)
+        {
+            var project = await _projectsRepository.GetProjectByIdAsync(ProjectId);
+            var currentUserId = _currentUserService.UserId;
+            var currectUserRole = _currentUserService.Role;
+
+            if (project is null)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["ProjectDoesNotExist"]
+                };
+
+            if (currectUserRole != SystemEnums.UserType.Admin.ToString() && currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString())
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["UserNotAllowed"]
+                };
+
+
+            var result = project.Update(model.Name, model.Description, model.StartDate, model.EndDate, model.ManagerId, model.StatusId, currentUserId);
+
 
 
             if (!result.Succeeded)
