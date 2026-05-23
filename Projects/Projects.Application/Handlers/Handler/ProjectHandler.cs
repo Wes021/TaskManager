@@ -95,8 +95,9 @@ namespace Projects.Projects.Application.Handlers.Handler
 
         public async Task<ResponseModel<PagedResult<ProjectInfoDto>>> GetProjectsAsync(GetProjectsRequest model)
         {
+            var currectUserRole = _currentUserService.Role;
 
-            if (_currentUserService.Role != SystemEnums.UserType.ManagerAndLeader.ToString() || _currentUserService.Role != SystemEnums.UserType.Admin.ToString())
+            if (currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString() && currectUserRole != SystemEnums.UserType.Admin.ToString())
                 return new ResponseModel<PagedResult<ProjectInfoDto>>
                 {
                     Success = false,
@@ -152,7 +153,7 @@ namespace Projects.Projects.Application.Handlers.Handler
         public async Task<ResponseModel<bool>> UpdateProjectAsync(int Id, UpdateProjectInfo model)
         {
 
-            if (model == null || Id <= 0
+            if (model == null || Id <= 0)
                 return new ResponseModel<bool>
                 {
                     Success = false,

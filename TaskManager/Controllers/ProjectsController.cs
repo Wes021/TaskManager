@@ -82,5 +82,31 @@ namespace TaskManager.Controllers
 
             return Ok(result);
         }
+
+
+        [Authorize]
+        [HttpPost("/api/v1/projects/{projectId}/members")]
+        public async Task<IActionResult> AddMembers(int projectId, [FromBody] AddProjectMembersDto request)
+        {
+            var result = await _projectHandler.AddMembersToProject(projectId, request);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpDelete("/api/v1/projects/{projectId}/members")]
+        public async Task<IActionResult> RemoveMembers(int projectId, [FromBody] RemoveProjectMembersDto request)
+        {
+            var result = await _projectHandler.RemoveMembersFromProject(projectId, request);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
+
     }
 }

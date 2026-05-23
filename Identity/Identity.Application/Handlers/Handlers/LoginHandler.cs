@@ -6,6 +6,7 @@ using Microsoft.Extensions.Localization;
 using Module.Identity.Domain.IRepositories;
 
 using Module.Identity.Domain.Services.IServices;
+using Module.Identity.Domain.Services.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,10 +27,11 @@ namespace Identity.Identity.Application.Handlers.Handlers
 
         public async Task<ResponseModel<LoginResponseDTO>> Handle(LoginModel model)
         {
+       
             var user = await _userRepo.GetByUsername(model.Username, x => x.Include(r => r.Role));
 
-            if (user == null)
-                return new ResponseModel<LoginResponseDTO> { Success = false, Message = _localizer["WrongUserNameOrPassword"], Data = null };
+            //if (user == null)
+            //    return new ResponseModel<LoginResponseDTO> { Success = false, Message = _localizer["WrongUserNameOrPassword"], Data = null };
 
 
             if (!_hasher.Verify(model.Password, user.Password))

@@ -12,18 +12,18 @@ namespace TaskManager.SharedLayer.Enums
         {
             Employee = 1, 
             Admin = 2,
-            ManagerAndLeader = 7 
-
+            ManagerAndLeader = 3
+            
         }
 
 
         public enum ProjectStatus
         {
-            Draft = 0,
-            Active = 1,
-            OnHold = 2,
-            Completed = 3,
-            Cancelled = 4
+            Draft = 1,
+            Active = 2,
+            OnHold = 3,
+            Completed = 4,
+            Cancelled = 5
         }
     }
 }

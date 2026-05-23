@@ -19,6 +19,13 @@ namespace Projects.Projects.Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task<ProjectMember> Add(ProjectMember entity)
+        {
+            _context.ProjectMember.Add(entity);
+
+            return entity;
+        }
+
         public async Task<List<ProjectMember>> GetAssignedUserIdsAsync(List<int> userIds)
         {
             return await _context.ProjectMember
@@ -26,6 +33,7 @@ namespace Projects.Projects.Infrastructure.Repositories
      .Include(x => x.Project)
      .Where(x =>
          userIds.Contains(x.UserId) &&
+         
          !x.Project.IsDeleted &&
          x.Project.IsActive &&
          x.Project.EndDate > DateTime.UtcNow)

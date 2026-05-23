@@ -19,6 +19,9 @@ namespace Module.Projects.Infrastructure.DbSettings
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfigurationsFromAssembly(
+        typeof(ProjectsDbContext).Assembly);
+
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<ProjectMember>()

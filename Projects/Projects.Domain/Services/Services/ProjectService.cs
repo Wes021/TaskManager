@@ -344,16 +344,17 @@ namespace Projects.Projects.Domain.Services.Services
 
             }
 
-           var result = project.AddMembers(model.MemberIds, currentUserId);
 
 
-            if (!result.Succeeded)
+            var NewMembers =  ProjectMember.AddMembers(project.Id, model.MemberIds, currentUserId);
+           
+            if (!NewMembers.Succeeded)
             {
                 return new ResponseModel<bool>
                 {
                     Success = false,
                     Data = false,
-                    Message = result.Error
+                    Message = NewMembers.Error
                 };
             }
 
@@ -361,7 +362,7 @@ namespace Projects.Projects.Domain.Services.Services
 
             return new ResponseModel<bool>
             {
-                Success = result.Succeeded,
+                Success = NewMembers.Succeeded,
                 Data = true,
                 Message = _localizer["UserAddedToProjectMembersSuccessfully"]
             };

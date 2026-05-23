@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Module.Projects.Infrastructure.DbSettings;
 
@@ -11,9 +12,11 @@ using Module.Projects.Infrastructure.DbSettings;
 namespace Projects.Migrations
 {
     [DbContext(typeof(ProjectsDbContext))]
-    partial class ProjectsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260523153308_AddMembers")]
+    partial class AddMembers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,43 +136,6 @@ namespace Projects.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProjectStatus");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Draft"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Active"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "OnHold"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Completed"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Cancelled"
-                        });
                 });
 
             modelBuilder.Entity("Projects.Projects.Domain.Models.Project", b =>

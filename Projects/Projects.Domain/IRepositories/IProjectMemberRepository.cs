@@ -12,7 +12,8 @@ namespace Projects.Projects.Domain.IRepositories
 {
     public interface IProjectMemberRepository
     {
-        
+
+        Task<ProjectMember> Add(ProjectMember entity);
 
         Task<List<ProjectMember>> GetProjectByProjectIdAsync(
              int Id,

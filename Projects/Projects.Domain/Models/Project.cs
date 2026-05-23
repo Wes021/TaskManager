@@ -168,39 +168,6 @@ namespace Projects.Projects.Domain.Models
 
 
 
-        public DomainResponseModel AddMembers(List<int> userIds, int assignedBy)
-        {
-            foreach (var userId in userIds.Distinct())
-            {
-                if (Members.Any(x => x.UserId == userId))
-                    continue;
-
-                Members.Add(new ProjectMember(
-                    Id,
-                    userId,
-                    assignedBy));
-
-               
-            }
-            return DomainResponseModel.Success();
-        }
-
-
-        public DomainResponseModel RemoveMembers(List<int> userIds, int modifiedUser)
-        {
-            var membersToRemove = Members.Where(x => userIds.Contains(x.UserId) && x.IsActive).ToList();
-
-
-            if (!membersToRemove.Any())
-            {
-                DomainResponseModel.Fail("Users not found");
-            }
-
-            foreach (var member in membersToRemove)
-            {
-                member.RemoveProjectMember(modifiedUser);
-            }
-            return DomainResponseModel.Success();
-        }
+       
     }
 }

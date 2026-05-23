@@ -21,6 +21,9 @@ namespace Module.Identity.Infrastructure.DbSettings
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfigurationsFromAssembly(
+        typeof(IdentityDbContext).Assembly);
+
             base.OnModelCreating(modelBuilder);
         }
 

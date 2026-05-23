@@ -12,6 +12,8 @@ namespace TaskManager.SharedLayer.ResponseModels
      
 
         public string Role { get; set; }
-     
+
+        public int RoleId { get; set; }
+
     }
 }
