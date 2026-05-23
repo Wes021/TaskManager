@@ -29,5 +29,7 @@ namespace Projects.Projects.Domain.Services.IServices
         Task<ResponseModel<bool>> UpdateProjectInfo(int ProjectId, UpdateProjectInfo model);
 
         Task<ResponseModel<bool>> AddMembersToProject(int ProjectId, AddProjectMembersDto model);
+
+        Task<ResponseModel<bool>> RemoveMembersFromProject(int ProjectId, RemoveProjectMembersDto model);
     }
 }

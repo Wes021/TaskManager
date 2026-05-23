@@ -24,5 +24,9 @@ namespace Projects.Projects.Application.Handlers.IHandler
         Task<ResponseModel<bool>> DeleteProjectAsync(int Id, UpdateProjectStatus model);
 
         Task<ResponseModel<bool>> UpdateProjectAsync(int Id, UpdateProjectInfo model);
+
+        Task<ResponseModel<bool>> AddMembersToProject(int ProjectId, AddProjectMembersDto model);
+
+        Task<ResponseModel<bool>> RemoveMembersFromProject(int ProjectId, RemoveProjectMembersDto model);
     }
 }

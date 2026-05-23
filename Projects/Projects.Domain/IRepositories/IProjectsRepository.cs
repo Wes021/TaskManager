@@ -13,7 +13,7 @@ namespace Projects.Projects.Domain.IRepositories
 {
     public interface IProjectsRepository
     {
-        Task<bool> CheckProjectExists(CreateProjectDto entity);
+        Task<bool> ExistsByNameAsync(CreateProjectDto entity);
 
         Task<Project> Add(Project entity);
 

@@ -30,7 +30,7 @@ namespace Projects.Projects.Infrastructure.Repositories
             return entity;
         }
 
-        public async Task<bool> CheckProjectExists(CreateProjectDto entity)
+        public async Task<bool> ExistsByNameAsync(CreateProjectDto entity)
         {
             return await _context.Project.AsNoTracking()
                 .AnyAsync(x => x.Name == entity.Name && x.IsDeleted != true);

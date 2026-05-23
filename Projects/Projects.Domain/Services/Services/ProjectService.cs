@@ -29,46 +29,69 @@ namespace Projects.Projects.Domain.Services.Services
     {
         public async Task<ResponseModel<bool>> AddProject(CreateProjectDto model)
         {
-            var projectExists = await _projectsRepository.CheckProjectExists(model);
+            var projectExists =
+                await _projectsRepository.ExistsByNameAsync(model);
 
             if (projectExists)
-                return new ResponseModel<bool> { Success = false, Message = _localizer["ProjectNameAlreadyuExists"] };
-
-            var statusExists = await _projectStatusRepository.CheckProjectStatusExists(model.StatusId);
-
-            if (!statusExists)
-                return new ResponseModel<bool> { Success = false, Message = _localizer["StatusNotExists"] };
-
-
-            var userStatus = await _userLookupService.GetUserByIdAsync(_currentUserService.UserId);
-            if (!userStatus.IsActive || userStatus.IsDeleted)
-                return new ResponseModel<bool> { Success = false, Message = _localizer["UserNotActiveOrDeletedCantAdd"] };
-
-
-
-
-
-            if (_currentUserService.Role.ToString() != SystemEnums.UserType.ManagerAndLeader.ToString())
+            {
                 return new ResponseModel<bool>
                 {
                     Success = false,
                     Data = false,
-                    Message = _localizer["UserNotAllowed"]
+                    Message = _localizer["ProjectNameAlreadyExists"]
                 };
+            }
 
+            var statusExists =
+                await _projectStatusRepository
+                    .CheckProjectStatusExists(model.StatusId);
 
-            var newProject = Project.Create(model.Name, model.Description, model.StartDate, model.EndDate, _currentUserService.UserId, model.StatusId, _currentUserService.UserId);
+            if (!statusExists)
+            {
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["StatusNotExists"]
+                };
+            }
+
+            var currentUser =
+                await _userLookupService
+                    .GetUserByIdAsync(_currentUserService.UserId);
+
+            if (!currentUser.IsActive || currentUser.IsDeleted)
+            {
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer[
+                        "UserNotActiveOrDeletedCantAdd"]
+                };
+            }
+
+            var newProject = Project.Create(
+                model.Name,
+                model.Description,
+                model.StartDate,
+                model.EndDate,
+                _currentUserService.UserId,
+                model.StatusId,
+                _currentUserService.UserId);
 
             if (!newProject.Succeeded)
+            {
                 return new ResponseModel<bool>
                 {
                     Success = false,
                     Data = false,
                     Message = newProject.Error
                 };
-
+            }
 
             await _projectsRepository.Add(newProject.Data);
+
             await _projectModuleUoW.SaveChangesAsync();
 
             return new ResponseModel<bool>
@@ -84,7 +107,7 @@ namespace Projects.Projects.Domain.Services.Services
 
             var project = await _projectsRepository.GetProjectByIdAsync(ProjectId);
             var currentUserId = _currentUserService.UserId;
-            var currectUserRole = _currentUserService.Role;
+
 
             if (project is null)
                 return new ResponseModel<bool>
@@ -94,13 +117,7 @@ namespace Projects.Projects.Domain.Services.Services
                     Message = _localizer["ProjectDoesNotExist"]
                 };
 
-            if (currectUserRole != SystemEnums.UserType.Admin.ToString() && currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString())
-                return new ResponseModel<bool>
-                {
-                    Success = false,
-                    Data = false,
-                    Message = _localizer["UserNotAllowed"]
-                };
+
 
             var result = project.SetIsDeleted(model.IsDeleted, currentUserId);
 
@@ -125,9 +142,6 @@ namespace Projects.Projects.Domain.Services.Services
 
         public async Task<ResponseModel<ProjectInfoDto>> GetProjectById(int id)
         {
-
-
-
 
             var project = await _projectsRepository.GetProjectByIdAsync(
                 id,
@@ -177,15 +191,6 @@ namespace Projects.Projects.Domain.Services.Services
         public async Task<ResponseModel<PagedResult<ProjectInfoDto>>> GetProjects(GetProjectsRequest model)
         {
 
-            if (_currentUserService.Role != SystemEnums.UserType.ManagerAndLeader.ToString() || _currentUserService.Role != SystemEnums.UserType.Admin.ToString())
-                return new ResponseModel<PagedResult<ProjectInfoDto>>
-                {
-                    Success = false,
-
-                    Message = _localizer["UserNotAllowed"]
-                };
-
-
             var projects = await _projectsRepository.GetProjectsAsync(model);
 
             var managerIds = projects.Items
@@ -199,7 +204,6 @@ namespace Projects.Projects.Domain.Services.Services
 
             var managersDictionary = managers
     .ToDictionary(x => x.Id);
-
 
 
             var CreatedUsersIds = projects.Items.Select(x => x.CreatedUserId).Distinct().ToList();
@@ -240,7 +244,7 @@ namespace Projects.Projects.Domain.Services.Services
         {
             var project = await _projectsRepository.GetProjectByIdAsync(ProjectId);
             var currentUserId = _currentUserService.UserId;
-            var currectUserRole = _currentUserService.Role;
+
 
             if (project is null)
                 return new ResponseModel<bool>
@@ -250,13 +254,7 @@ namespace Projects.Projects.Domain.Services.Services
                     Message = _localizer["ProjectDoesNotExist"]
                 };
 
-            if (currectUserRole != SystemEnums.UserType.Admin.ToString() && currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString())
-                return new ResponseModel<bool>
-                {
-                    Success = false,
-                    Data = false,
-                    Message = _localizer["UserNotAllowed"]
-                };
+
 
             var result = project.SetIsActive(model.IsActive, currentUserId);
 
@@ -284,7 +282,7 @@ namespace Projects.Projects.Domain.Services.Services
         {
             var project = await _projectsRepository.GetProjectByIdAsync(ProjectId);
             var currentUserId = _currentUserService.UserId;
-            var currectUserRole = _currentUserService.Role;
+
 
             if (project is null)
                 return new ResponseModel<bool>
@@ -294,13 +292,7 @@ namespace Projects.Projects.Domain.Services.Services
                     Message = _localizer["ProjectDoesNotExist"]
                 };
 
-            if (currectUserRole != SystemEnums.UserType.Admin.ToString() && currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString())
-                return new ResponseModel<bool>
-                {
-                    Success = false,
-                    Data = false,
-                    Message = _localizer["UserNotAllowed"]
-                };
+
 
 
             var result = project.Update(model.Name, model.Description, model.StartDate, model.EndDate, model.ManagerId, model.StatusId, currentUserId);
@@ -328,26 +320,8 @@ namespace Projects.Projects.Domain.Services.Services
         public async Task<ResponseModel<bool>> AddMembersToProject(int ProjectId, AddProjectMembersDto model)
         {
             var project = await _projectsRepository.GetProjectByIdAsync(ProjectId);
-            var ProjectMembers = await _projectMemberRepository.GetAssignedUserIdsAsync(model.MemberIds);
 
             var currentUserId = _currentUserService.UserId;
-            var currectUserRole = _currentUserService.Role;
-
-            if (model.MemberIds == null || !model.MemberIds.Any())
-                return new ResponseModel<bool>
-                {
-                    Success = false,
-                    Data = false,
-                    Message = _localizer["InvalidInput"]
-                };
-
-            if (currectUserRole != SystemEnums.UserType.Admin.ToString() && currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString())
-                return new ResponseModel<bool>
-                {
-                    Success = false,
-                    Data = false,
-                    Message = _localizer["UserNotAllowed"]
-                };
 
             if (project is null)
                 return new ResponseModel<bool>
@@ -358,7 +332,7 @@ namespace Projects.Projects.Domain.Services.Services
                 };
 
 
-           
+            var ProjectMembers = await _projectMemberRepository.GetAssignedUserIdsAsync(model.MemberIds);
             if (ProjectMembers.Any())
             {
                 return new ResponseModel<bool>
@@ -370,27 +344,89 @@ namespace Projects.Projects.Domain.Services.Services
 
             }
 
+           var result = project.AddMembers(model.MemberIds, currentUserId);
 
 
-            project.AddMembers(model.MemberIds, currentUserId);
+            if (!result.Succeeded)
+            {
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = result.Error
+                };
+            }
 
             await _projectModuleUoW.SaveChangesAsync();
 
             return new ResponseModel<bool>
             {
-                Success = true,
+                Success = result.Succeeded,
                 Data = true,
-                Message = _localizer["ProjectMembersSuccessfully"]
+                Message = _localizer["UserAddedToProjectMembersSuccessfully"]
             };
-
-
-
 
 
         }
 
 
 
+        public async Task<ResponseModel<bool>> RemoveMembersFromProject(int ProjectId, RemoveProjectMembersDto model)
+        {
+            var project = await _projectsRepository.GetProjectByIdAsync(ProjectId);
+            var currentUserId = _currentUserService.UserId;
 
+
+
+
+
+            if (project is null)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["ProjectDoesNotExist"]
+                };
+
+            var ProjectMembers = await _projectMemberRepository.GetAssignedUserIdsAsync(model.MemberIds);
+
+            if (!ProjectMembers.Any())
+            {
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["NoUsersWereFoundInTheProject"]
+                };
+
+            }
+
+           var result = project.RemoveMembers(model.MemberIds, currentUserId);
+
+
+
+            if (!result.Succeeded)
+            {
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = result.Error
+                };
+            }
+
+            await _projectModuleUoW.SaveChangesAsync();
+
+
+
+
+            return new ResponseModel<bool>
+            {
+                Success = true,
+                Data = true,
+                Message = _localizer["UserRemovedFromProjectMembersSuccessfully"]
+            };
+
+        }
     }
 }
