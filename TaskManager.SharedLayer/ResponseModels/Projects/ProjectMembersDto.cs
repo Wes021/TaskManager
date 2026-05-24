@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TaskManager.SharedLayer.RequestModels.Identity
+namespace TaskManager.SharedLayer.ResponseModels.Projects
 {
-    public class UserLookupDto
+    public class ProjectMembersDto
     {
         public int Id { get; set; }
         public string FullName { get; set; }

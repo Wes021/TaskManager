@@ -24,8 +24,7 @@ namespace Module.Projects.Infrastructure.DbSettings
 
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<ProjectMember>()
-    .HasKey(x => new { x.ProjectId, x.UserId });
+
         }
 
 

@@ -31,5 +31,10 @@ namespace TaskManager.SharedLayer.ResponseModels.Projects
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
 
+        public List<ProjectMembersDto> ProjectMembers { get; set; }
+
+
+
+
     }
 }

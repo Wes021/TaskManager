@@ -26,19 +26,44 @@ namespace Projects.Projects.Infrastructure.Repositories
             return entity;
         }
 
-        public async Task<List<ProjectMember>> GetAssignedUserIdsAsync(List<int> userIds)
+        public async Task<List<ProjectMember>> AddRange(List<ProjectMember> entities)
+        {
+            await _context.ProjectMember.AddRangeAsync(entities);
+            return entities;
+        }
+
+        public async Task<List<ProjectMember>> GetAssignedUserIdsAsync(int projectId, List<int> userIds)
         {
             return await _context.ProjectMember
      .AsNoTracking()
-     .Include(x => x.Project)
+
      .Where(x =>
          userIds.Contains(x.UserId) &&
-         
-         !x.Project.IsDeleted &&
-         x.Project.IsActive &&
-         x.Project.EndDate > DateTime.UtcNow)
+         x.ProjectId != projectId &&
+x.IsDeleted == false &&
+x.IsActive == true
+)
      .ToListAsync();
         }
+
+        public async Task<List<ProjectMember>> GetAssignedUserIdsWithProjectIdAsync(int projectId, List<int> userIds, bool isTracked = true)
+        {
+            IQueryable<ProjectMember> query =
+        _context.ProjectMember;
+
+            if (!isTracked)
+                query = query.AsNoTracking();
+
+            return await query
+                .Where(x =>
+                    userIds.Contains(x.UserId) &&
+                    x.ProjectId == projectId &&
+                    !x.IsDeleted &&
+                    x.IsActive)
+                .ToListAsync();
+        }
+
+        
 
         public async Task<ProjectMember> GetProjectByMemberIdAsync(int Id, Func<IQueryable<ProjectMember>, IQueryable<ProjectMember>>? include = null, bool isTracked = true)
         {

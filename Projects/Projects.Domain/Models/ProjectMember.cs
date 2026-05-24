@@ -13,6 +13,7 @@ namespace Projects.Projects.Domain.Models
     public class ProjectMember : IEntity, IAuditedEntity
     {
         [Key]
+
         public int Id { get; set; }
         public int ProjectId { get; private set; }
         public Project Project { get; set; }
@@ -29,26 +30,7 @@ namespace Projects.Projects.Domain.Models
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
 
-        //public ProjectMember(int projectId, int userId, int assignedBy)
-        //{
-        //    ProjectId = projectId;
-        //    UserId = userId;
-        //    AssignedBy = assignedBy;
-        //    CreatedDate = DateTime.Now;
-        //    CreatedUser = assignedBy;
-        //    IsDeleted = false;
-        //    IsActive = true;
-        //}
 
-
-
-        //public void RemoveProjectMember(int ModifiedUserId)
-        //{
-        //    ModifiedDate = DateTime.Now;
-        //    ModifiedUser = ModifiedUserId;
-
-        //    IsActive = false;
-        //}
 
 
         public static GenericDomainResponseModel<List<ProjectMember>> AddMembers(
@@ -80,18 +62,12 @@ namespace Projects.Projects.Domain.Models
         }
 
 
-        public DomainResponseModel RemoveMembers(List<int> userIds, int modifiedUser)
+        public void Remove(int modifiedUser)
         {
-
-
-            foreach (var member in userIds)
-            {
-                ModifiedDate = DateTime.Now;
-                ModifiedUser = modifiedUser;
-
-                IsActive = false;
-            }
-            return DomainResponseModel.Success();
+            ModifiedDate = DateTime.UtcNow;
+            ModifiedUser = modifiedUser;
+            IsDeleted = true;
+            IsActive = false;
         }
 
 

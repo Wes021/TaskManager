@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Module.Projects.Infrastructure.DbSettings;
 
@@ -11,9 +12,11 @@ using Module.Projects.Infrastructure.DbSettings;
 namespace Projects.Migrations
 {
     [DbContext(typeof(ProjectsDbContext))]
-    partial class ProjectsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260524103601_RemoveProjectMembersTable")]
+    partial class RemoveProjectMembersTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,49 +75,7 @@ namespace Projects.Migrations
 
                     b.HasIndex("StatusId");
 
-                    b.ToTable("Project", (string)null);
-                });
-
-            modelBuilder.Entity("Projects.Projects.Domain.Models.ProjectMember", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AssignedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CreatedUser")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ModifiedUser")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("ProjectMember", (string)null);
+                    b.ToTable("Project");
                 });
 
             modelBuilder.Entity("Projects.Projects.Domain.Models.ProjectStatus", b =>
@@ -137,44 +98,7 @@ namespace Projects.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProjectStatus", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Draft"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Active"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "OnHold"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Completed"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Cancelled"
-                        });
+                    b.ToTable("ProjectStatus");
                 });
 
             modelBuilder.Entity("Projects.Projects.Domain.Models.Project", b =>
@@ -186,17 +110,6 @@ namespace Projects.Migrations
                         .IsRequired();
 
                     b.Navigation("Status");
-                });
-
-            modelBuilder.Entity("Projects.Projects.Domain.Models.ProjectMember", b =>
-                {
-                    b.HasOne("Projects.Projects.Domain.Models.Project", "Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
                 });
 #pragma warning restore 612, 618
         }

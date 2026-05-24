@@ -145,7 +145,7 @@ namespace Projects.Projects.Domain.Services.Services
 
             var project = await _projectsRepository.GetProjectByIdAsync(
                 id,
-                x => x.Include(x => x.Status),
+                x => x.Include(x => x.Status).Include(m => m.Members.Where(n => !n.IsDeleted && n.IsActive)),
                 false);
 
             if (project == null)
@@ -169,8 +169,9 @@ namespace Projects.Projects.Domain.Services.Services
             }
 
 
-
+            var MembersInfo = await _userLookupService.GetUsersByIdsAsync(project.Members.Select(x => x.UserId).ToList());
             var mappedData = _mapper.Map<ProjectInfoDto>(project);
+            mappedData.ProjectMembers = _mapper.Map<List<ProjectMembersDto>>(MembersInfo);
 
             mappedData.Manager = managerTask?.FullName;
 
@@ -332,8 +333,8 @@ namespace Projects.Projects.Domain.Services.Services
                 };
 
 
-            var ProjectMembers = await _projectMemberRepository.GetAssignedUserIdsAsync(model.MemberIds);
-            if (ProjectMembers.Any())
+            var ProjectMembersInOtherProjects = await _projectMemberRepository.GetAssignedUserIdsAsync(project.Id, model.MemberIds);
+            if (ProjectMembersInOtherProjects.Any())
             {
                 return new ResponseModel<bool>
                 {
@@ -344,10 +345,22 @@ namespace Projects.Projects.Domain.Services.Services
 
             }
 
+            var ProjectMembersInsameProject = await _projectMemberRepository.GetAssignedUserIdsWithProjectIdAsync(project.Id, model.MemberIds);
+            if (ProjectMembersInsameProject.Any())
+            {
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["OneOrMoreUsersAreAlreadyAssignedTotheSameProject"]
+                };
+
+            }
 
 
-            var NewMembers =  ProjectMember.AddMembers(project.Id, model.MemberIds, currentUserId);
-           
+
+            var NewMembers = ProjectMember.AddMembers(project.Id, model.MemberIds, currentUserId);
+
             if (!NewMembers.Succeeded)
             {
                 return new ResponseModel<bool>
@@ -358,11 +371,13 @@ namespace Projects.Projects.Domain.Services.Services
                 };
             }
 
+            await _projectMemberRepository.AddRange(NewMembers.Data);
+
             await _projectModuleUoW.SaveChangesAsync();
 
             return new ResponseModel<bool>
             {
-                Success = NewMembers.Succeeded,
+                Success = true,
                 Data = true,
                 Message = _localizer["UserAddedToProjectMembersSuccessfully"]
             };
@@ -389,7 +404,7 @@ namespace Projects.Projects.Domain.Services.Services
                     Message = _localizer["ProjectDoesNotExist"]
                 };
 
-            var ProjectMembers = await _projectMemberRepository.GetAssignedUserIdsAsync(model.MemberIds);
+            var ProjectMembers = await _projectMemberRepository.GetAssignedUserIdsWithProjectIdAsync(ProjectId, model.MemberIds, true);
 
             if (!ProjectMembers.Any())
             {
@@ -402,19 +417,12 @@ namespace Projects.Projects.Domain.Services.Services
 
             }
 
-           var result = project.RemoveMembers(model.MemberIds, currentUserId);
-
-
-
-            if (!result.Succeeded)
+            foreach (var member in ProjectMembers)
             {
-                return new ResponseModel<bool>
-                {
-                    Success = false,
-                    Data = false,
-                    Message = result.Error
-                };
+                member.Remove(currentUserId);
             }
+
+
 
             await _projectModuleUoW.SaveChangesAsync();
 

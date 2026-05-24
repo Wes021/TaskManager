@@ -141,7 +141,12 @@ namespace Module.Identity.Infrastructure.Repositories
                 .Select(x => new UserLookupDto
                 {
                     Id = x.Id,
-                    FullName = x.FullName
+                    FullName = x.FullName,
+                    UserName = x.UserName,
+                    Email = x.Email,
+                    phonenumber = x.phonenumber,
+                    IsActive = x.IsActive,
+                    IsDeleted = x.IsDeleted
                 })
                 .ToListAsync();
         }

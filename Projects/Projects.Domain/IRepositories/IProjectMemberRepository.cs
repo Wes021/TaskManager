@@ -13,7 +13,7 @@ namespace Projects.Projects.Domain.IRepositories
     public interface IProjectMemberRepository
     {
 
-        Task<ProjectMember> Add(ProjectMember entity);
+        Task<List<ProjectMember>> AddRange(List<ProjectMember> entities);
 
         Task<List<ProjectMember>> GetProjectByProjectIdAsync(
              int Id,
@@ -27,7 +27,11 @@ namespace Projects.Projects.Domain.IRepositories
              bool isTracked = true);
 
 
-        Task<List<ProjectMember>> GetAssignedUserIdsAsync(List<int> userIds);
+        Task<List<ProjectMember>> GetAssignedUserIdsAsync(int projectId, List<int> userIds);
+
+        Task<List<ProjectMember>> GetAssignedUserIdsWithProjectIdAsync(int projectId, List<int> userIds, bool isTracked = true);
+
+     
 
 
 
