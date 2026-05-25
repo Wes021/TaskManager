@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoMapper.Execution;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -62,7 +63,7 @@ namespace Projects.Projects.Domain.Models
             if (createdUser <= 0)
                 return GenericDomainResponseModel<Project>.Fail("InvalidUser");
 
-           
+
 
             if (endDate.HasValue && endDate.Value <= startDate)
                 return GenericDomainResponseModel<Project>.Fail("EndDateBeforeStartDate");
@@ -136,7 +137,7 @@ namespace Projects.Projects.Domain.Models
             if (IsActive == isActive)
                 return DomainResponseModel.Fail("NoChangesDetected");
 
-            
+
 
             if (IsDeleted)
                 return DomainResponseModel.Fail("DeletedProjectStatusBlocked");
@@ -156,7 +157,7 @@ namespace Projects.Projects.Domain.Models
             if (!isDeleted)
                 return DomainResponseModel.Fail("CantRestoreProject");
 
-      
+
 
             IsDeleted = isDeleted;
             IsActive = false;
@@ -168,6 +169,79 @@ namespace Projects.Projects.Domain.Models
 
 
 
-       
+
+
+        public GenericDomainResponseModel<List<int>> AddMembers(
+      List<int> userIds,
+      int assignedBy)
+        {
+            var duplicateIds = userIds
+                .Where(userId =>
+                    Members.Any(x =>
+                    x.ProjectId == Id &&
+                        x.UserId == userId &&
+                        !x.IsDeleted && x.IsActive))
+                .Distinct()
+                .ToList();
+
+            if (duplicateIds.Any())
+            {
+                return new GenericDomainResponseModel<List<int>>
+                {
+                    Succeeded = false,
+                    Error = "UsersAlreadyExist",
+                    Data = duplicateIds
+                };
+            }
+
+            foreach (var userId in userIds.Distinct())
+            {
+                Members.Add(
+                    new ProjectMember(
+                        Id,
+                        userId,
+                        assignedBy));
+            }
+
+            return new GenericDomainResponseModel<List<int>>
+            {
+                Succeeded = true,
+                Error = "UsersAddedSuccessfully"
+
+            };
+        }
+
+
+
+        public DomainResponseModel RemoveMembers(
+            List<int> userIds,
+            int modifiedUser)
+        {
+            var membersToRemove = Members
+                .Where(x =>
+                    userIds.Contains(x.UserId) &&
+                    !x.IsDeleted)
+                .ToList();
+
+            if (!membersToRemove.Any())
+            {
+                return DomainResponseModel
+                    .Fail("MembersNotFound");
+            }
+
+            foreach (var member in membersToRemove)
+            {
+                member.Remove(modifiedUser);
+            }
+
+            return DomainResponseModel.Success();
+        }
+
+
+
+
+
+
+
     }
 }

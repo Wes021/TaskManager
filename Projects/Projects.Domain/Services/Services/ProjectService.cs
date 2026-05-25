@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.Execution;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Projects.Projects.Domain.IRepositories;
@@ -320,7 +321,7 @@ namespace Projects.Projects.Domain.Services.Services
 
         public async Task<ResponseModel<bool>> AddMembersToProject(int ProjectId, AddProjectMembersDto model)
         {
-            var project = await _projectsRepository.GetProjectByIdAsync(ProjectId);
+            var project = await _projectsRepository.GetProjectByIdAsync(ProjectId, x => x.Include(x => x.Members));
 
             var currentUserId = _currentUserService.UserId;
 
@@ -345,21 +346,11 @@ namespace Projects.Projects.Domain.Services.Services
 
             }
 
-            var ProjectMembersInsameProject = await _projectMemberRepository.GetAssignedUserIdsWithProjectIdAsync(project.Id, model.MemberIds);
-            if (ProjectMembersInsameProject.Any())
-            {
-                return new ResponseModel<bool>
-                {
-                    Success = false,
-                    Data = false,
-                    Message = _localizer["OneOrMoreUsersAreAlreadyAssignedTotheSameProject"]
-                };
-
-            }
+            
 
 
 
-            var NewMembers = ProjectMember.AddMembers(project.Id, model.MemberIds, currentUserId);
+            var NewMembers = project.AddMembers(model.MemberIds, currentUserId);
 
             if (!NewMembers.Succeeded)
             {
@@ -371,7 +362,7 @@ namespace Projects.Projects.Domain.Services.Services
                 };
             }
 
-            await _projectMemberRepository.AddRange(NewMembers.Data);
+         
 
             await _projectModuleUoW.SaveChangesAsync();
 

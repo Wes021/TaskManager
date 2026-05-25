@@ -31,43 +31,39 @@ namespace Projects.Projects.Domain.Models
         public bool IsActive { get; set; }
 
 
+        private ProjectMember() { }
 
 
-        public static GenericDomainResponseModel<List<ProjectMember>> AddMembers(
-         int projectId,
-         List<int> userIds,
-         int assignedBy)
+        internal ProjectMember(
+            int projectId,
+            int userId,
+            int assignedBy)
         {
-            var members = new List<ProjectMember>();
+            ProjectId = projectId;
 
-            foreach (var userId in userIds.Distinct())
-            {
-                var projectMember = new ProjectMember
-                {
-                    ProjectId = projectId,
-                    UserId = userId,
+            UserId = userId;
 
-                    CreatedDate = DateTime.UtcNow,
-                    CreatedUser = assignedBy,
+            AssignedBy = assignedBy;
 
-                    IsActive = true,
-                    IsDeleted = false
-                };
+            CreatedDate = DateTime.UtcNow;
 
-                members.Add(projectMember);
-            }
+            CreatedUser = assignedBy;
 
-            return GenericDomainResponseModel<List<ProjectMember>>
-                .Success(members);
+            IsDeleted = false;
+
+            IsActive = true;
         }
 
 
-        public void Remove(int modifiedUser)
+        internal void Remove(int modifiedUser)
         {
-            ModifiedDate = DateTime.UtcNow;
-            ModifiedUser = modifiedUser;
             IsDeleted = true;
+
             IsActive = false;
+
+            ModifiedDate = DateTime.UtcNow;
+
+            ModifiedUser = modifiedUser;
         }
 
 
