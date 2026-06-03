@@ -23,6 +23,7 @@
     <ProjectReference Include="..\Identity\Identity.csproj" />
     <ProjectReference Include="..\Projects\Projects.csproj" />
     <ProjectReference Include="..\TaskManager.SharedLayer\TaskManager.SharedLayer.csproj" />
+    <ProjectReference Include="..\Tasks\Tasks.csproj" />
   </ItemGroup>
 
 </Project>

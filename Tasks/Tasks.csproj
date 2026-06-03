@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Tasks.Application\Handlers\" />
+    <Folder Include="Tasks.Application\MappingProfiles\" />
+    <Folder Include="Tasks.Domain\IRepositories\" />
+    <Folder Include="Tasks.Domain\IUnitOfWork\" />
+    <Folder Include="Tasks.Domain\Services\IServices\" />
+    <Folder Include="Tasks.Domain\Services\Services\" />
+    <Folder Include="Tasks.Infrastructure\UnitOfWork\" />
+    <Folder Include="Tasks.Infrastructure\Repositories\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TaskManager.SharedLayer\TaskManager.SharedLayer.csproj" />
+  </ItemGroup>
+
+</Project>
