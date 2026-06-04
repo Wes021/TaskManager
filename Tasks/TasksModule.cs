@@ -1,19 +1,19 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Module.Projects.Infrastructure.DbSettings;
-
+using Microsoft.EntityFrameworkCore.SqlServer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using Tasks.Tasks.Infrastructure.DbSettings;
 
 namespace Projects
 {
     public static class TasksModule
     {
-        public static IServiceCollection AddProjectsModule(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddTasksModule(this IServiceCollection services, IConfiguration configuration)
         {
 
             //Repositories:
@@ -29,7 +29,7 @@ namespace Projects
 
 
 
-            services.AddDbContext<ProjectsDbContext>(options =>
+            services.AddDbContext<TasksDbContext>(options =>
           options.UseSqlServer(configuration.GetConnectionString("SqlCon")));
 
             services.AddAutoMapper(typeof(TasksModule).Assembly);

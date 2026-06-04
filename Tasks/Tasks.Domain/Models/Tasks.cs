@@ -25,6 +25,8 @@ namespace Tasks.Tasks.Domain.Models
         public TasksStatus TasksStatus { get; set; }
 
 
+        public int ProjectId { get; set; }
+
         public TaskAttachments TaskAttachments { get; set; }
 
 

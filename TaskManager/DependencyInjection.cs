@@ -11,6 +11,7 @@ namespace TaskManager
         {
             services.AddIdentityModule(configuration);
             services.AddProjectsModule(configuration);
+            services.AddTasksModule(configuration);
 
 
 
