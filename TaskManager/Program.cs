@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Module.Identity.Infrastructure.DbSettings;
+using Projects.Projects.Domain.Services.Services;
 using System.Security.Claims;
 using System.Text;
 using TaskManager.SharedLayer.Interfaces; // Add this using directive
@@ -27,6 +28,7 @@ namespace TaskManager
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+            builder.Services.AddScoped<IProjectLookupService, ProjectLookupService>();
 
 
             builder.Services.AddEndpointsApiExplorer();
