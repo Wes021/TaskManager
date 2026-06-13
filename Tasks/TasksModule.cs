@@ -1,12 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore.SqlServer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TaskManager.SharedLayer.Interfaces;
+using Tasks.Tasks.Domain.Services.Services;
 using Tasks.Tasks.Infrastructure.DbSettings;
 
 namespace Projects
@@ -17,15 +13,15 @@ namespace Projects
         {
 
             //Repositories:
-            
+
 
 
             //Serives
-          
+            services.AddScoped<IFileManager, FileManager>();
 
 
             //Handlers
-           
+
 
 
 

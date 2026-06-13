@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TaskManager.SharedLayer.RequestModels.Tasks
+﻿namespace TaskManager.SharedLayer.RequestModels.Tasks
 {
     public class AddNewTaksDTO
     {
@@ -19,5 +13,7 @@ namespace TaskManager.SharedLayer.RequestModels.Tasks
         public FileValidateRequest Files { get; set; }
 
         public int ProjectId { get; set; }
+
+        public int ProjectStatus { get; set; }
     }
 }

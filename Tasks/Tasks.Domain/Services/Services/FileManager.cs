@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaskManager.SharedLayer.Interfaces;
+﻿using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.RequestModels.Tasks;
 using TaskManager.SharedLayer.ResponseModel;
 using TaskManager.SharedLayer.ResponseModels.Tasks;
@@ -14,7 +8,7 @@ namespace Tasks.Tasks.Domain.Services.Services
     public class FileManager : IFileManager
     {
 
-        public List<ResponseModel<List<FileHandlerResponse>>> FileHandlerService(List<FileRequestDTO> model)
+        public ResponseModel<List<FileHandlerResponse>> FileHandlerService(List<FileRequestDTO> model)
         {
             var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
 
@@ -28,7 +22,14 @@ namespace Tasks.Tasks.Domain.Services.Services
                 const long MaxFileSize = 5 * 1024 * 1024;
 
                 if (file.File.Length > MaxFileSize)
-                    throw new ValidationException("File size exceeds limit.");
+
+                    return new ResponseModel<List<FileHandlerResponse>>
+                    {
+
+                        Success = false,
+                        Message = "FileSizeLimitExceded"
+
+                    };
 
                 var allowedExtensions = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
 
@@ -36,12 +37,22 @@ namespace Tasks.Tasks.Domain.Services.Services
                     .ToLowerInvariant();
 
                 if (!allowedExtensions.Contains(extension))
-                    throw new ValidationException("Invalid file type.");
+                    return new ResponseModel<List<FileHandlerResponse>>
+                    {
+                        Success = false,
+                        Message = "InvalidFileType"
+
+                    };
 
                 var fileName = Path.GetFileName(file.File.FileName);
 
                 if (fileName.Count(c => c == '.') > 1)
-                    throw new ValidationException("File name contains multiple extensions.");
+                    return new ResponseModel<List<FileHandlerResponse>>
+                    {
+                        Success = false,
+                        Message = "FileContiansDoubleExtentions"
+
+                    };
 
                 var newFileName = $"{Guid.NewGuid()}{extension}";
                 var filePath = Path.Combine(uploadFolder, newFileName);
@@ -59,13 +70,13 @@ namespace Tasks.Tasks.Domain.Services.Services
                 });
             }
 
-            return new List<ResponseModel<List<FileHandlerResponse>>>
-    {
-        new ResponseModel<List<FileHandlerResponse>>
-        {
-            Data = handledFiles
-        }
-    };
+            return new ResponseModel<List<FileHandlerResponse>>
+            {
+
+                Success = true,
+                Data = handledFiles
+
+            };
         }
     }
 }

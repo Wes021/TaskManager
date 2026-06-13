@@ -1,10 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using TaskManager.SharedLayer.Interfaces;
 
 namespace Tasks.Tasks.Domain.Models
@@ -18,11 +12,13 @@ namespace Tasks.Tasks.Domain.Models
         public int TasksId { get; set; }
         public Tasks Tasks { get; set; }
 
-        public string AttactmentType { get; set; }
+        public string AttachmentType { get; set; }
 
-        public string AttacmentName { get; set; }
+        public string AttachmentName { get; set; }
 
-        public string AttachementPath { get; set; }
+        public string AttachmentPath { get; set; }
+
+        public string AttachmentSize { get; set; }
 
         public DateTime CreatedDate { get; set; }
         public int? CreatedUser { get; set; }
@@ -36,11 +32,11 @@ namespace Tasks.Tasks.Domain.Models
 
         private TaskAttachments() { }
 
-        internal TaskAttachments(int taskId, string attactmentType, string attacmentName, string attachementPath, int? createdUser)
+        internal TaskAttachments(int taskId, string attactmentType, string attacmentName, string attachementPath, string attachementSize, int? createdUser)
         {
             TasksId = taskId;
-            AttactmentType = attactmentType;
-            AttacmentName = attacmentName;
+            AttachmentType = attactmentType;
+            AttachmentName = attacmentName;
             CreatedUser = createdUser;
             CreatedDate = DateTime.Now;
             IsDeleted = false;

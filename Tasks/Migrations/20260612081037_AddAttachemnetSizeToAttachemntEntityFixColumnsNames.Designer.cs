@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tasks.Tasks.Infrastructure.DbSettings;
 
@@ -11,9 +12,11 @@ using Tasks.Tasks.Infrastructure.DbSettings;
 namespace Tasks.Migrations
 {
     [DbContext(typeof(TasksDbContext))]
-    partial class TasksDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260612081037_AddAttachemnetSizeToAttachemntEntityFixColumnsNames")]
+    partial class AddAttachemnetSizeToAttachemntEntityFixColumnsNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,7 +74,7 @@ namespace Tasks.Migrations
 
                     b.HasIndex("TasksId");
 
-                    b.ToTable("TaskAttachments", (string)null);
+                    b.ToTable("TaskAttachments");
                 });
 
             modelBuilder.Entity("Tasks.Tasks.Domain.Models.Tasks", b =>
@@ -121,7 +124,7 @@ namespace Tasks.Migrations
 
                     b.HasIndex("TasksStatusId");
 
-                    b.ToTable("Task", (string)null);
+                    b.ToTable("Task");
                 });
 
             modelBuilder.Entity("Tasks.Tasks.Domain.Models.TasksStatus", b =>
@@ -141,7 +144,7 @@ namespace Tasks.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TasksStatus", (string)null);
+                    b.ToTable("TasksStatus");
                 });
 
             modelBuilder.Entity("Tasks.Tasks.Domain.Models.UsersTasks", b =>
@@ -180,7 +183,7 @@ namespace Tasks.Migrations
 
                     b.HasIndex("TasksId");
 
-                    b.ToTable("UsersTasks", (string)null);
+                    b.ToTable("UsersTasks");
                 });
 
             modelBuilder.Entity("Tasks.Tasks.Domain.Models.TaskAttachments", b =>

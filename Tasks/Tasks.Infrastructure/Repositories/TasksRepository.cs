@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using TaskManager.SharedLayer.RequestModels.Tasks;
 using Tasks.Tasks.Domain.IRepositories;
 using Tasks.Tasks.Infrastructure.DbSettings;
 
@@ -21,6 +18,12 @@ namespace Tasks.Tasks.Infrastructure.Repositories
             await _context.Task.AddAsync(entity);
 
             return entity;
+        }
+
+        public async Task<bool> ExistsByTitleAsync(AddNewTaksDTO entity)
+        {
+            return await _context.Task.AsNoTracking()
+                .AnyAsync(x => x.Title == entity.Title && x.IsDeleted != true);
         }
     }
 }

@@ -1,16 +1,11 @@
-
-using AutoMapper;
 using Identity.Identity.Domain.Services.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Module.Identity.Infrastructure.DbSettings;
 using Projects.Projects.Domain.Services.Services;
 using System.Security.Claims;
 using System.Text;
-using TaskManager.SharedLayer.Interfaces; // Add this using directive
+using TaskManager.SharedLayer.Interfaces;
+using Tasks.Tasks.Domain.Services.Services; // Add this using directive
 
 
 namespace TaskManager
@@ -29,6 +24,7 @@ namespace TaskManager
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
             builder.Services.AddScoped<IProjectLookupService, ProjectLookupService>();
+            builder.Services.AddScoped<IFileManager, FileManager>();
 
 
             builder.Services.AddEndpointsApiExplorer();
@@ -64,10 +60,10 @@ namespace TaskManager
 
 
             builder.Services.AddLocalization();
-    //        builder.Services.AddDbContext<IdentityDbContext>(options =>
-    //options.UseSqlServer(
+            //        builder.Services.AddDbContext<IdentityDbContext>(options =>
+            //options.UseSqlServer(
 
-    //    builder.Configuration.GetConnectionString("SqlCon")));
+            //    builder.Configuration.GetConnectionString("SqlCon")));
 
 
 
@@ -109,7 +105,7 @@ namespace TaskManager
             }
 
 
-            
+
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();

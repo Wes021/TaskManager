@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using TaskManager.SharedLayer.Interfaces;
-using TaskManager.SharedLayer.RequestModels.Tasks;
 using TaskManager.SharedLayer.ResponseModels;
+using TaskManager.SharedLayer.ResponseModels.Tasks;
 
 namespace Tasks.Tasks.Domain.Models
 {
@@ -30,18 +24,18 @@ namespace Tasks.Tasks.Domain.Models
 
         public int ProjectId { get; set; }
 
-       
+
 
 
         public List<TaskAttachments> TaskAttachments { get; private set; } = [];
 
-        public DateTime CreatedDate { get ; set ; }
-        public int? CreatedUser { get ; set ; }
-        public DateTime? ModifiedDate { get ; set ; }
-        public int? ModifiedUser { get ; set ; }
-        
-        public bool IsDeleted { get ; set ; }
-        public bool IsActive { get ; set ; }
+        public DateTime CreatedDate { get; set; }
+        public int? CreatedUser { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+        public int? ModifiedUser { get; set; }
+
+        public bool IsDeleted { get; set; }
+        public bool IsActive { get; set; }
 
 
         public List<UsersTasks> Members { get; private set; } = [];
@@ -85,10 +79,22 @@ namespace Tasks.Tasks.Domain.Models
 
 
         public GenericDomainResponseModel<List<int>> AddAttachmentToTask(
-      List<TaskAttachmentDTO> attachmentDTOs,
+      List<FileHandlerResponse> attachmentDTOs,
       int addedBy)
         {
-            
+
+            foreach (var atttachement in attachmentDTOs)
+            {
+                TaskAttachments.Add(new TaskAttachments(Id, atttachement.FileType, atttachement.FileName, atttachement.FilePath, null, addedBy));
+            }
+
+
+            return new GenericDomainResponseModel<List<int>>
+            {
+                Succeeded = true,
+                Error = "AttachemnetsAddedSuccseefully"
+
+            };
         }
 
 

@@ -16,8 +16,6 @@
 
   <ItemGroup>
     <Folder Include="Tasks.Application\MappingProfiles\" />
-    <Folder Include="Tasks.Domain\IUnitOfWork\" />
-    <Folder Include="Tasks.Infrastructure\UnitOfWork\" />
   </ItemGroup>
 
   <ItemGroup>
