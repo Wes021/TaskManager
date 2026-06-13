@@ -14,7 +14,7 @@ namespace Tasks.Tasks.Application.Handlers.Handlers
         IFileManager _fileManager, ITasksService _tasksService
         ) : ITasksHandler
     {
-        public async Task<ResponseModel<bool>> AddNewTask(AddNewTaksDTO model, AddMembersToTask MembersModel, FileValidateRequest FilesModel)
+        public async Task<ResponseModel<bool>> AddNewTask(NewTaskRequestModel model)
         {
             if (model == null)
                 return new ResponseModel<bool>
@@ -25,7 +25,7 @@ namespace Tasks.Tasks.Application.Handlers.Handlers
                 };
 
 
-            if (MembersModel.MemberIds.Count < 1 && model.ProjectStatus != 2)
+            if (model.MembersModel.MemberIds.Count < 1 && model.TaskStatus != 2)
             {
                 return new ResponseModel<bool>
                 {
@@ -46,26 +46,39 @@ namespace Tasks.Tasks.Application.Handlers.Handlers
                 };
 
 
-            if (FilesModel.Files.Count > 3)
-            {
-                return new ResponseModel<bool>
-                {
-                    Success = false,
-                    Data = false,
-                    Message = _localizer["YouExceededTheLimiteAmountOfAllowedFiles"]
-                };
-            }
+
 
             var FilesResponse = new ResponseModel<List<FileHandlerResponse>>();
 
-            if (FilesModel.Files.Any())
+            if (model.Files?.Any() == true)
             {
-                FilesResponse = _fileManager.FileHandlerService(FilesModel.Files);
+
+                if (model.Files.Count > 3)
+                {
+                    return new ResponseModel<bool>
+                    {
+                        Success = false,
+                        Data = false,
+                        Message = _localizer["YouExceededTheLimiteAmountOfAllowedFiles"]
+                    };
+                }
+
+
+                FilesResponse = _fileManager.FileHandlerService(model.Files);
+
+                if (!FilesResponse.Success)
+                {
+                    return new ResponseModel<bool>
+                    {
+                        Success = false,
+                        Message = FilesResponse.Message
+                    };
+                }
             }
 
 
 
-            var response = await _tasksService.AddNewTask(model, MembersModel, FilesResponse.Data);
+            var response = await _tasksService.AddNewTask(model, model.MembersModel, FilesResponse.Data);
 
             return response;
         }

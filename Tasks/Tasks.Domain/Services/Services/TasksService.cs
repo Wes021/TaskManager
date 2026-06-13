@@ -3,6 +3,7 @@ using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
 using TaskManager.SharedLayer.RequestModels.Tasks;
 using TaskManager.SharedLayer.ResponseModel;
+using TaskManager.SharedLayer.ResponseModels;
 using TaskManager.SharedLayer.ResponseModels.Tasks;
 using Tasks.Tasks.Domain.IRepositories;
 using Tasks.Tasks.Domain.IUnitOfWork;
@@ -12,16 +13,17 @@ namespace Tasks.Tasks.Domain.Services.Services
 {
     public class TasksService(IUserLookupService userLookupService, IStringLocalizer<SharedResource> _localizer,
         IProjectLookupService projectLookupService, ITasksRepository _tasksRepository,
-        ICurrentUserService _currentUser, ITaskStatusRepository _taskStatusRepository, ITasksModuleUoW _tasksModuleUoW
+        ICurrentUserService _currentUser, ITaskStatusRepository _taskStatusRepository,
+        ITasksModuleUoW _tasksModuleUoW, IUsersTasks _usersTasks
         ) : ITasksService
 
     {
-        public async Task<ResponseModel<bool>> AddNewTask(AddNewTaksDTO model, AddMembersToTask MembersModel, List<FileHandlerResponse> fileHandlerResponses)
+        public async Task<ResponseModel<bool>> AddNewTask(NewTaskRequestModel model, AddMembersToTask MembersModel, List<FileHandlerResponse> fileHandlerResponses)
         {
             var projectInfo = await projectLookupService.GetProjectById(model.ProjectId);
 
 
-            if (projectInfo == null || projectInfo.Data.IsDeleted == true || projectInfo.Data.IsActive == false)
+            if (projectInfo.Data == null || projectInfo.Data.IsDeleted == true || projectInfo.Data.IsActive == false)
                 return new ResponseModel<bool>
                 {
                     Success = false,
@@ -38,11 +40,11 @@ namespace Tasks.Tasks.Domain.Services.Services
                 };
 
 
-            if (await _taskStatusRepository.CheckTaskStatusExists(model.ProjectStatus))
+            if (!await _taskStatusRepository.CheckTaskStatusExists(model.TaskStatus))
                 return new ResponseModel<bool>
                 {
                     Success = false,
-                    Message = "TitleAlreadyExists"
+                    Message = "StatusDoesNotExists"
                 };
 
 
@@ -53,7 +55,7 @@ namespace Tasks.Tasks.Domain.Services.Services
     model.Title,
     model.Description,
     model.DueDate,
-    model.ProjectStatus,
+    model.TaskStatus,
     model.ProjectId,
     _currentUser.UserId
 );
@@ -64,39 +66,48 @@ namespace Tasks.Tasks.Domain.Services.Services
                 {
                     Success = false,
                     Data = false,
-                    Message = "TaskCreationFailed"
+                    Message = newTaskResult.Error
                 };
             }
 
             var newTask = newTaskResult.Data;
 
             // Now call AddMembersToTask on the instance, not the class
-            var newTasksMembers = newTask.AddMembersToTask(MembersModel.MemberIds, _currentUser.UserId);
+            var addMembersResult = newTask.AddMembersToTask(MembersModel.MemberIds, _currentUser.UserId);
 
-            if (!newTasksMembers.Succeeded || newTasksMembers.Data == null)
+            if (!addMembersResult.Succeeded)
             {
                 return new ResponseModel<bool>
                 {
                     Success = false,
                     Data = false,
-                    Message = "TaskCreationFailed"
+                    Message = addMembersResult.Error
                 };
             }
 
 
-            var NewTasksAttachements = newTask.AddAttachmentToTask(fileHandlerResponses, _currentUser.UserId);
+            var addAttachmentsResult = new GenericDomainResponseModel<List<int>>();
 
-            if (!NewTasksAttachements.Succeeded || NewTasksAttachements.Data == null)
+            if (fileHandlerResponses?.Any() == true)
             {
-                return new ResponseModel<bool>
+                addAttachmentsResult = newTask.AddAttachmentToTask(fileHandlerResponses, _currentUser.UserId);
+
+                if (!addAttachmentsResult.Succeeded)
                 {
-                    Success = false,
-                    Data = false,
-                    Message = "TaskCreationFailed"
-                };
+                    return new ResponseModel<bool>
+                    {
+                        Success = false,
+                        Data = false,
+                        Message = addAttachmentsResult.Error
+                    };
+                }
             }
 
 
+
+
+
+            await _tasksRepository.Add(newTask);
 
             await _tasksModuleUoW.SaveChangesAsync();
 

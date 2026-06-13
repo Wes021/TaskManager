@@ -6,6 +6,6 @@ namespace Tasks.Tasks.Domain.Services.IServices
 {
     public interface ITasksService
     {
-        Task<ResponseModel<bool>> AddNewTask(AddNewTaksDTO model, AddMembersToTask MembersModel, List<FileHandlerResponse> fileHandlerResponses);
+        Task<ResponseModel<bool>> AddNewTask(NewTaskRequestModel model, AddMembersToTask MembersModel, List<FileHandlerResponse> fileHandlerResponses);
     }
 }

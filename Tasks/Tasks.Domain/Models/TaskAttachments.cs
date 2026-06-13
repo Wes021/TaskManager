@@ -37,6 +37,8 @@ namespace Tasks.Tasks.Domain.Models
             TasksId = taskId;
             AttachmentType = attactmentType;
             AttachmentName = attacmentName;
+            AttachmentSize = attachementSize;
+            AttachmentPath = attachementPath;
             CreatedUser = createdUser;
             CreatedDate = DateTime.Now;
             IsDeleted = false;

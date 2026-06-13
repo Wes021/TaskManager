@@ -8,6 +8,11 @@ namespace Tasks.Tasks.Infrastructure.Repositories
     {
         private readonly TasksDbContext _context;
 
+        public TaskStatusRepository(TasksDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<bool> CheckTaskStatusExists(int StatusId)
         {
             return await _context.TasksStatus.AsNoTracking()

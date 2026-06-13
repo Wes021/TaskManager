@@ -1,9 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TaskManager.SharedLayer.Interfaces;
+using Tasks.Tasks.Application.Handlers.Handlers;
+using Tasks.Tasks.Application.Handlers.IHandlers;
+using Tasks.Tasks.Domain.IRepositories;
+using Tasks.Tasks.Domain.IUnitOfWork;
+using Tasks.Tasks.Domain.Services.IServices;
 using Tasks.Tasks.Domain.Services.Services;
 using Tasks.Tasks.Infrastructure.DbSettings;
+using Tasks.Tasks.Infrastructure.Repositories;
+using Tasks.Tasks.Infrastructure.UnitOfWork;
 
 namespace Projects
 {
@@ -13,15 +19,19 @@ namespace Projects
         {
 
             //Repositories:
+            services.AddScoped<ITasksRepository, TasksRepository>();
+            services.AddScoped<ITaskStatusRepository, TaskStatusRepository>();
+            services.AddScoped<ITasksModuleUoW, TasksModuleUoW>();
+            services.AddScoped<IUsersTasks, UsersTasks>();
 
 
 
             //Serives
-            services.AddScoped<IFileManager, FileManager>();
+            services.AddScoped<ITasksService, TasksService>();
 
 
             //Handlers
-
+            services.AddScoped<ITasksHandler, TasksHandler>();
 
 
 

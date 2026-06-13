@@ -5,6 +5,6 @@ namespace Tasks.Tasks.Application.Handlers.IHandlers
 {
     public interface ITasksHandler
     {
-        Task<ResponseModel<bool>> AddNewTask(AddNewTaksDTO model, AddMembersToTask MembersModel, FileValidateRequest FilesModel);
+        Task<ResponseModel<bool>> AddNewTask(NewTaskRequestModel model);
     }
 }

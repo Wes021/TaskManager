@@ -1,5 +1,5 @@
-﻿using TaskManager.SharedLayer.Interfaces;
-using TaskManager.SharedLayer.RequestModels.Tasks;
+﻿using Microsoft.AspNetCore.Http;
+using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.ResponseModel;
 using TaskManager.SharedLayer.ResponseModels.Tasks;
 
@@ -8,7 +8,7 @@ namespace Tasks.Tasks.Domain.Services.Services
     public class FileManager : IFileManager
     {
 
-        public ResponseModel<List<FileHandlerResponse>> FileHandlerService(List<FileRequestDTO> model)
+        public ResponseModel<List<FileHandlerResponse>> FileHandlerService(List<IFormFile> model)
         {
             var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
 
@@ -21,7 +21,7 @@ namespace Tasks.Tasks.Domain.Services.Services
             {
                 const long MaxFileSize = 5 * 1024 * 1024;
 
-                if (file.File.Length > MaxFileSize)
+                if (file.Length > MaxFileSize)
 
                     return new ResponseModel<List<FileHandlerResponse>>
                     {
@@ -33,7 +33,7 @@ namespace Tasks.Tasks.Domain.Services.Services
 
                 var allowedExtensions = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
 
-                var extension = Path.GetExtension(file.File.FileName)
+                var extension = Path.GetExtension(file.FileName)
                     .ToLowerInvariant();
 
                 if (!allowedExtensions.Contains(extension))
@@ -44,7 +44,7 @@ namespace Tasks.Tasks.Domain.Services.Services
 
                     };
 
-                var fileName = Path.GetFileName(file.File.FileName);
+                var fileName = Path.GetFileName(file.FileName);
 
                 if (fileName.Count(c => c == '.') > 1)
                     return new ResponseModel<List<FileHandlerResponse>>
@@ -55,18 +55,23 @@ namespace Tasks.Tasks.Domain.Services.Services
                     };
 
                 var newFileName = $"{Guid.NewGuid()}{extension}";
-                var filePath = Path.Combine(uploadFolder, newFileName);
+                var relativePath = Path.Combine("Uploads", newFileName);
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                var physicalPath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    relativePath);
+
+                using (var stream = new FileStream(physicalPath, FileMode.Create))
                 {
-                    file.File.CopyTo(stream);
+                    file.CopyTo(stream);
                 }
 
                 handledFiles.Add(new FileHandlerResponse
                 {
                     FileType = extension,
                     FileName = newFileName,
-                    FilePath = filePath
+                    FilePath = relativePath,
+                    FileSize = $"{(double)file.Length / (1024 * 1024):0.##} MB"
                 });
             }
 
@@ -78,5 +83,8 @@ namespace Tasks.Tasks.Domain.Services.Services
 
             };
         }
+
+
+
     }
 }

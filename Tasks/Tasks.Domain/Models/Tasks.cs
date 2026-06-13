@@ -63,9 +63,9 @@ namespace Tasks.Tasks.Domain.Models
                 };
             }
 
-            foreach (var existingUserId in existingUserIds.Distinct())
+            foreach (var userId in userIds.Distinct())
             {
-                Members.Add(new UsersTasks(Id, existingUserId, assignedBy));
+                Members.Add(new UsersTasks(Id, userId, assignedBy));
             }
 
             return new GenericDomainResponseModel<List<int>>
@@ -85,7 +85,7 @@ namespace Tasks.Tasks.Domain.Models
 
             foreach (var atttachement in attachmentDTOs)
             {
-                TaskAttachments.Add(new TaskAttachments(Id, atttachement.FileType, atttachement.FileName, atttachement.FilePath, null, addedBy));
+                TaskAttachments.Add(new TaskAttachments(Id, atttachement.FileType, atttachement.FileName, atttachement.FilePath, atttachement.FileSize, addedBy));
             }
 
 

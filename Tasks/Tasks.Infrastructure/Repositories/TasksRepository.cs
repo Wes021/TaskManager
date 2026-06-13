@@ -20,7 +20,7 @@ namespace Tasks.Tasks.Infrastructure.Repositories
             return entity;
         }
 
-        public async Task<bool> ExistsByTitleAsync(AddNewTaksDTO entity)
+        public async Task<bool> ExistsByTitleAsync(NewTaskRequestModel entity)
         {
             return await _context.Task.AsNoTracking()
                 .AnyAsync(x => x.Title == entity.Title && x.IsDeleted != true);

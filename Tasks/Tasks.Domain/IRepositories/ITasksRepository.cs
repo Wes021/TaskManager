@@ -7,6 +7,7 @@ namespace Tasks.Tasks.Domain.IRepositories
         Task<Tasks.Domain.Models.Tasks> Add(Tasks.Domain.Models.Tasks entity);
 
 
-        Task<bool> ExistsByTitleAsync(AddNewTaksDTO entity);
+
+        Task<bool> ExistsByTitleAsync(NewTaskRequestModel entity);
     }
 }
