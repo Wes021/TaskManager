@@ -1,4 +1,6 @@
 ﻿using TaskManager.SharedLayer.RequestModels.Tasks;
+using TaskManager.SharedLayer.ResponseModels;
+using TaskManager.SharedLayer.ResponseModels.Tasks;
 
 namespace Tasks.Tasks.Domain.IRepositories
 {
@@ -9,5 +11,7 @@ namespace Tasks.Tasks.Domain.IRepositories
 
 
         Task<bool> ExistsByTitleAsync(NewTaskRequestModel entity);
+
+        Task<PagedResult<TaskInfoDto>> GetTasksByUserIdAsync(GetTasksRequest request, int UserId, Func<IQueryable<Tasks.Domain.Models.Tasks>, IQueryable<Tasks.Domain.Models.Tasks>>? include = null, bool isTracked = true);
     }
 }

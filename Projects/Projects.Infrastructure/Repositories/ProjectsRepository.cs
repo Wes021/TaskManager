@@ -2,12 +2,6 @@
 using Module.Projects.Infrastructure.DbSettings;
 using Projects.Projects.Domain.IRepositories;
 using Projects.Projects.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaskManager.SharedLayer.RequestModels.Identity;
 using TaskManager.SharedLayer.RequestModels.Projects;
 using TaskManager.SharedLayer.ResponseModels;
 using TaskManager.SharedLayer.ResponseModels.Projects;
@@ -34,10 +28,10 @@ namespace Projects.Projects.Infrastructure.Repositories
         {
             return await _context.Project.AsNoTracking()
                 .AnyAsync(x => x.Name == entity.Name && x.IsDeleted != true);
-            
+
         }
 
-       
+
 
         public async Task<PagedResult<ProjectInfoDto>> GetProjectsAsync(GetProjectsRequest request, Func<IQueryable<Project>, IQueryable<Project>>? include = null, bool isTracked = true)
         {
@@ -117,6 +111,25 @@ namespace Projects.Projects.Infrastructure.Repositories
 
 
             return await query.FirstOrDefaultAsync(x => x.Id == Id);
+        }
+
+
+
+        public async Task<List<ProjectInfoDto>> GetProjectsByIdsAsync(
+    List<int> projectIds)
+        {
+            return await _context.Project
+                .AsNoTracking()
+                .Where(x =>
+                    projectIds.Contains(x.Id) &&
+                    !x.IsDeleted &&
+                    x.IsActive)
+                .Select(x => new ProjectInfoDto
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                })
+                .ToListAsync();
         }
     }
 }

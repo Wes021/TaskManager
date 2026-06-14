@@ -3,11 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Projects.Projects.Domain.IRepositories;
 using Projects.Projects.Domain.IUnitOfWork;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
 using TaskManager.SharedLayer.RequestModels.Identity;
@@ -30,7 +25,7 @@ namespace Projects.Projects.Domain.Services.Services
                 x => x.Include(x => x.Status).Include(m => m.Members.Where(n => !n.IsDeleted && n.IsActive)),
                 false);
 
-            if (project == null )
+            if (project == null)
             {
                 return new ResponseModel<ProjectInfoDto>
                 {
@@ -68,6 +63,19 @@ namespace Projects.Projects.Domain.Services.Services
                 Success = true,
                 Data = mappedData,
                 Message = _localizer["DataReturnedSuccessfully"]
+            };
+        }
+
+
+        public async Task<ResponseModel<List<ProjectInfoDto>>> GetProjectsByIds(
+    List<int> ids)
+        {
+            var projects = await _projectsRepository.GetProjectsByIdsAsync(ids);
+
+            return new ResponseModel<List<ProjectInfoDto>>
+            {
+                Success = true,
+                Data = projects
             };
         }
     }

@@ -14,7 +14,7 @@ namespace Tasks.Tasks.Domain.Services.Services
     public class TasksService(IUserLookupService userLookupService, IStringLocalizer<SharedResource> _localizer,
         IProjectLookupService projectLookupService, ITasksRepository _tasksRepository,
         ICurrentUserService _currentUser, ITaskStatusRepository _taskStatusRepository,
-        ITasksModuleUoW _tasksModuleUoW, IUsersTasks _usersTasks
+        ITasksModuleUoW _tasksModuleUoW, IUsersTasks _usersTasks, IProjectLookupService _projectLookupService
         ) : ITasksService
 
     {
@@ -117,6 +117,28 @@ namespace Tasks.Tasks.Domain.Services.Services
                 Data = true,
                 Message = _localizer["TaskAddedSuccessfully"]
             };
+        }
+
+        public async Task<ResponseModel<PagedResult<TaskInfoDto>>> GetTasksByUserId(GetTasksRequest model, int UserId)
+        {
+            var tasksResult = await _tasksRepository.GetTasksByUserIdAsync(model, UserId);
+
+            var projectIds = tasksResult.Items.Select(x => x.ProjectId).Distinct().ToList();
+
+            var projects = await _projectLookupService
+    .GetProjectsByIds(projectIds);
+
+            var projectLookup = projects.Data.ToDictionary(x => x.Id, x => x.Name);
+
+            foreach (var task in tasksResult.Items)
+            {
+                task.ProjectName =
+                    projectLookup.GetValueOrDefault(task.ProjectId);
+            }
+
+
+            return new ResponseModel<PagedResult<TaskInfoDto>> { Success = true, Data = tasksResult, Message = _localizer["DataRetunedSuccssefully"] };
+
         }
     }
 }

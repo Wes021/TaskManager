@@ -4,6 +4,7 @@ using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
 using TaskManager.SharedLayer.RequestModels.Tasks;
 using TaskManager.SharedLayer.ResponseModel;
+using TaskManager.SharedLayer.ResponseModels;
 using TaskManager.SharedLayer.ResponseModels.Tasks;
 using Tasks.Tasks.Application.Handlers.IHandlers;
 using Tasks.Tasks.Domain.Services.IServices;
@@ -81,6 +82,34 @@ namespace Tasks.Tasks.Application.Handlers.Handlers
             var response = await _tasksService.AddNewTask(model, model.MembersModel, FilesResponse.Data);
 
             return response;
+        }
+
+
+
+        public async Task<ResponseModel<PagedResult<TaskInfoDto>>> GetTasks(GetTasksRequest model)
+        {
+            var currectUserRole = _currentUserService.Role;
+            var currentUserId = _currentUserService.UserId;
+            if (currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString() && currectUserRole != SystemEnums.UserType.Employee.ToString())
+                return new ResponseModel<PagedResult<TaskInfoDto>>
+                {
+                    Success = false,
+
+                    Message = _localizer["UserNotAllowed"]
+                };
+
+            if (model == null)
+                return new ResponseModel<PagedResult<TaskInfoDto>>
+                {
+                    Success = false,
+
+                    Message = _localizer["InvalidRequest"]
+                };
+
+
+            var project = await _tasksService.GetTasksByUserId(model, currentUserId);
+
+            return project;
         }
     }
 }

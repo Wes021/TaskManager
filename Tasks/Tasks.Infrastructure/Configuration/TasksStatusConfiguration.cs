@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tasks.Tasks.Domain.Models;
 
 namespace Tasks.Tasks.Infrastructure.Configuration
 {
-    public class TasksStatusConfiguration
+    public class TasksStatusConfiguration : IEntityTypeConfiguration<TasksStatus>
     {
         public void Configure(EntityTypeBuilder<TasksStatus> builder)
         {

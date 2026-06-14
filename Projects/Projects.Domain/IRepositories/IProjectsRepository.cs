@@ -1,10 +1,4 @@
 ﻿using Projects.Projects.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaskManager.SharedLayer.RequestModels.Identity;
 using TaskManager.SharedLayer.RequestModels.Projects;
 using TaskManager.SharedLayer.ResponseModels;
 using TaskManager.SharedLayer.ResponseModels.Projects;
@@ -26,5 +20,8 @@ namespace Projects.Projects.Domain.IRepositories
              int Id,
              Func<IQueryable<Project>, IQueryable<Project>>? include = null,
              bool isTracked = true);
+
+        Task<List<ProjectInfoDto>> GetProjectsByIdsAsync(
+    List<int> projectIds);
     }
 }
