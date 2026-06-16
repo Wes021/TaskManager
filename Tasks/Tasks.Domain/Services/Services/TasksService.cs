@@ -137,7 +137,15 @@ namespace Tasks.Tasks.Domain.Services.Services
             }
 
 
-            return new ResponseModel<PagedResult<TaskInfoDto>> { Success = true, Data = tasksResult, Message = _localizer["DataRetunedSuccssefully"] };
+
+            return new ResponseModel<PagedResult<TaskInfoDto>>
+            {
+                Success = true,
+                Data = tasksResult,
+                Message = tasksResult != null
+        ? _localizer["DataRetunedSuccssefully"]
+        : _localizer["NoDataFound"]
+            };
 
         }
     }
