@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Tasks.Application\MappingProfiles\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\TaskManager.SharedLayer\TaskManager.SharedLayer.csproj" />
   </ItemGroup>
 

@@ -11,5 +11,16 @@ namespace Tasks.Tasks.Domain.Services.IServices
 
 
         Task<ResponseModel<PagedResult<TaskInfoDto>>> GetTasksByUserId(GetTasksRequest model, int UserId);
+
+        Task<ResponseModel<PagedResult<TaskInfoDto>>> GetTasksByProjectId(GetTasksRequest model, int ProjectId);
+
+
+        Task<ResponseModel<TaskInfoDetails>> GetTaskById(int TaskId);
+
+
+        Task<ResponseModel<bool>> SetTaskStatus(UpdateTaskStatus model);
+
+
+
     }
 }

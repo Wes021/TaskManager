@@ -3,6 +3,7 @@ using System.Data;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.ResponseModels;
 using TaskManager.SharedLayer.ResponseModels.Tasks;
+using static TaskManager.SharedLayer.Enums.SystemEnums;
 
 namespace Tasks.Tasks.Domain.Models
 {
@@ -138,5 +139,91 @@ namespace Tasks.Tasks.Domain.Models
             return GenericDomainResponseModel<Tasks>.Success(task);
 
         }
+
+
+
+        public DomainResponseModel SetIsActive(bool isActive, int modifiedUser)
+        {
+            if (IsActive == isActive)
+                return DomainResponseModel.Fail("NoChangesDetected");
+
+
+
+            if (IsDeleted)
+                return DomainResponseModel.Fail("DeletedProjectStatusBlocked");
+
+            IsActive = isActive;
+            ModifiedDate = DateTime.UtcNow;
+            ModifiedUser = modifiedUser;
+
+            return DomainResponseModel.Success();
+        }
+
+        public DomainResponseModel SetIsDeleted(bool isDeleted, int modifiedUser)
+        {
+            if (IsDeleted == isDeleted)
+                return DomainResponseModel.Fail("NoChangesDetected");
+
+            if (!isDeleted)
+                return DomainResponseModel.Fail("CantRestoreProject");
+
+
+
+            IsDeleted = isDeleted;
+            IsActive = false;
+            ModifiedDate = DateTime.UtcNow;
+            ModifiedUser = modifiedUser;
+
+            return DomainResponseModel.Success();
+        }
+
+
+
+
+
+
+        public static class TaskStatusTransitions
+        {
+            public static readonly Dictionary<TaskStatuseEnums, TaskStatuseEnums[]> Allowed =
+                new()
+                {
+            { TaskStatuseEnums.Draft,     [TaskStatuseEnums.Active, TaskStatuseEnums.Cancelled] },
+            { TaskStatuseEnums.Active,    [TaskStatuseEnums.Completed, TaskStatuseEnums.Cancelled] },
+            { TaskStatuseEnums.Completed, [] },
+            { TaskStatuseEnums.Cancelled, [] }
+                };
+        }
+
+
+
+
+        public DomainResponseModel SetNewStatus(
+    TaskStatuseEnums newStatus,
+    int modifiedUser)
+        {
+            var currentStatus = (TaskStatuseEnums)TasksStatusId;
+
+            if (currentStatus == newStatus)
+                return DomainResponseModel.Fail("NoChangesDetected");
+
+            if (!TaskStatusTransitions.Allowed.TryGetValue(
+                    currentStatus,
+                    out var allowedStatuses))
+            {
+                return DomainResponseModel.Fail("InvalidStatus");
+            }
+
+            if (!allowedStatuses.Contains(newStatus))
+                return DomainResponseModel.Fail("InvalidStatusTransition");
+
+            TasksStatusId = (int)newStatus;
+
+            ModifiedDate = DateTime.UtcNow;
+            ModifiedUser = modifiedUser;
+
+            return DomainResponseModel.Success();
+        }
+
+
     }
 }

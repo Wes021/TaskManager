@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using AutoMapper;
+using Microsoft.Extensions.Localization;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
 using TaskManager.SharedLayer.RequestModels.Tasks;
@@ -15,6 +16,7 @@ namespace Tasks.Tasks.Domain.Services.Services
         IProjectLookupService projectLookupService, ITasksRepository _tasksRepository,
         ICurrentUserService _currentUser, ITaskStatusRepository _taskStatusRepository,
         ITasksModuleUoW _tasksModuleUoW, IUsersTasks _usersTasks, IProjectLookupService _projectLookupService
+        , IMapper _mapper
         ) : ITasksService
 
     {
@@ -119,6 +121,61 @@ namespace Tasks.Tasks.Domain.Services.Services
             };
         }
 
+        public async Task<ResponseModel<TaskInfoDetails>> GetTaskById(int TaskId)
+        {
+            var TaskDetails = await _tasksRepository.GetTaskById(TaskId);
+
+            var projects = await _projectLookupService
+    .GetProjectById(TaskDetails.ProjectId);
+
+            var MappedData = _mapper.Map<TaskInfoDetails>(TaskDetails);
+            MappedData.ProjectName = projects.Data.Name;
+            MappedData.TaskMembers = _mapper.Map<List<TaskMembersDto>>(await userLookupService.GetUsersByIdsAsync(TaskDetails.Members.Select(x => x.UserId).ToList()));
+
+
+
+            return new ResponseModel<TaskInfoDetails>
+            {
+                Success = true,
+                Data = MappedData,
+                Message = _localizer["DataRetunedSuccssefully"]
+            };
+        }
+
+        public async Task<ResponseModel<PagedResult<TaskInfoDto>>> GetTasksByProjectId(GetTasksRequest model, int ProjectId)
+        {
+            var tasksResult = await _tasksRepository.GetTasksByProjectIdAsync(model, ProjectId);
+
+            var projectIds = tasksResult.Items.Select(x => x.ProjectId).Distinct().ToList();
+
+            var projects = await _projectLookupService
+    .GetProjectsByIds(projectIds);
+
+            var projectLookup = projects.Data.ToDictionary(x => x.Id, x => x.Name);
+
+            foreach (var task in tasksResult.Items)
+            {
+                task.ProjectName =
+                    projectLookup.GetValueOrDefault(task.ProjectId);
+            }
+
+
+
+            return new ResponseModel<PagedResult<TaskInfoDto>>
+            {
+                Success = true,
+                Data = tasksResult,
+                Message = tasksResult != null
+        ? _localizer["DataRetunedSuccssefully"]
+        : _localizer["NoDataFound"]
+            };
+        }
+
+
+
+
+
+
         public async Task<ResponseModel<PagedResult<TaskInfoDto>>> GetTasksByUserId(GetTasksRequest model, int UserId)
         {
             var tasksResult = await _tasksRepository.GetTasksByUserIdAsync(model, UserId);
@@ -147,6 +204,34 @@ namespace Tasks.Tasks.Domain.Services.Services
         : _localizer["NoDataFound"]
             };
 
+        }
+
+        public async Task<ResponseModel<bool>> SetTaskStatus(UpdateTaskStatus model)
+        {
+            var task = await _tasksRepository.GetTaskById(model.TaskId);
+            var CurrectUser = _currentUser.UserId;
+            var StatusExists = await _taskStatusRepository.CheckTaskStatusExists(model.NewStatus);
+
+            if (StatusExists == false)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["TaskStatusDoesNotExist"]
+                };
+
+            if (task is null)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["TaskDoesNotExist"]
+                };
+
+
+
+
+            throw new NotImplementedException();
         }
     }
 }

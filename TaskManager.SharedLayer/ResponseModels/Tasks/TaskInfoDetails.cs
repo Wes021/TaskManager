@@ -11,7 +11,7 @@
 
         public DateTime DueDate { get; set; }
 
-        public string TasksStatus { get; set; }
+        public string TasksStatusName { get; set; }
 
         public int ProjectId { get; set; }
 

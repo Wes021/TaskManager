@@ -13,5 +13,10 @@ namespace Tasks.Tasks.Domain.IRepositories
         Task<bool> ExistsByTitleAsync(NewTaskRequestModel entity);
 
         Task<PagedResult<TaskInfoDto>> GetTasksByUserIdAsync(GetTasksRequest request, int UserId, Func<IQueryable<Tasks.Domain.Models.Tasks>, IQueryable<Tasks.Domain.Models.Tasks>>? include = null, bool isTracked = true);
+
+
+        Task<PagedResult<TaskInfoDto>> GetTasksByProjectIdAsync(GetTasksRequest request, int ProjectId, Func<IQueryable<Tasks.Domain.Models.Tasks>, IQueryable<Tasks.Domain.Models.Tasks>>? include = null, bool isTracked = true);
+
+        Task<Domain.Models.Tasks> GetTaskById(int TaskId, Func<IQueryable<Tasks.Domain.Models.Tasks>, IQueryable<Tasks.Domain.Models.Tasks>>? include = null, bool isTracked = true);
     }
 }

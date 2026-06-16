@@ -9,6 +9,11 @@ namespace Tasks.Tasks.Application.Handlers.IHandlers
     {
         Task<ResponseModel<bool>> AddNewTask(NewTaskRequestModel model);
 
-        Task<ResponseModel<PagedResult<TaskInfoDto>>> GetTasks(GetTasksRequest model);
+        Task<ResponseModel<PagedResult<TaskInfoDto>>> GetTasksByCurrentUserId(GetTasksRequest model);
+
+        Task<ResponseModel<PagedResult<TaskInfoDto>>> GetTasksByProjectID(GetTasksRequest model, int ProjectId);
+
+        Task<ResponseModel<TaskInfoDetails>> GetTaskById(int TaskId);
+
     }
 }

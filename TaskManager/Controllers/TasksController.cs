@@ -23,15 +23,40 @@ namespace TaskManager.Controllers
         }
 
         [Authorize]
-        [HttpGet("/api/v1/tasks")]
-        public async Task<IActionResult> GetTask([FromQuery] GetTasksRequest request)
+        [HttpGet("/api/v1/tasks/assigned-to-me")]
+        public async Task<IActionResult> GetUserTask([FromQuery] GetTasksRequest request)
         {
-            var result = await _tasksHandler.GetTasks(request);
+            var result = await _tasksHandler.GetTasksByCurrentUserId(request);
 
             if (!result.Success)
                 return Ok(result);
 
             return Ok(result);
         }
+
+        [Authorize]
+        [HttpGet("/api/v1/projects/{ProjectId}/tasks")]
+        public async Task<IActionResult> GetProjectTask([FromQuery] GetTasksRequest request, int ProjectId)
+        {
+            var result = await _tasksHandler.GetTasksByProjectID(request, ProjectId);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet("/api/v1/tasks/{Id}")]
+        public async Task<IActionResult> GetTaskById(int Id)
+        {
+            var result = await _tasksHandler.GetTaskById(Id);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
+
     }
 }

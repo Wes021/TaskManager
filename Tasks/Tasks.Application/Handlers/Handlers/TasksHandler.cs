@@ -84,9 +84,33 @@ namespace Tasks.Tasks.Application.Handlers.Handlers
             return response;
         }
 
+        public async Task<ResponseModel<TaskInfoDetails>> GetTaskById(int TaskId)
+        {
+            var currectUserRole = _currentUserService.Role;
+            var currentUserId = _currentUserService.UserId;
+            if (currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString() && currectUserRole != SystemEnums.UserType.Employee.ToString())
+                return new ResponseModel<TaskInfoDetails>
+                {
+                    Success = false,
+
+                    Message = _localizer["UserNotAllowed"]
+                };
+
+            if (TaskId <= 0)
+                return new ResponseModel<TaskInfoDetails>
+                {
+                    Success = false,
+
+                    Message = _localizer["InvalidRequest"]
+                };
+
+            var response = await _tasksService.GetTaskById(TaskId);
 
 
-        public async Task<ResponseModel<PagedResult<TaskInfoDto>>> GetTasks(GetTasksRequest model)
+            return response;
+        }
+
+        public async Task<ResponseModel<PagedResult<TaskInfoDto>>> GetTasksByCurrentUserId(GetTasksRequest model)
         {
             var currectUserRole = _currentUserService.Role;
             var currentUserId = _currentUserService.UserId;
@@ -108,6 +132,32 @@ namespace Tasks.Tasks.Application.Handlers.Handlers
 
 
             var project = await _tasksService.GetTasksByUserId(model, currentUserId);
+
+            return project;
+        }
+
+        public async Task<ResponseModel<PagedResult<TaskInfoDto>>> GetTasksByProjectID(GetTasksRequest model, int ProjectId)
+        {
+            var currectUserRole = _currentUserService.Role;
+
+            if (currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString())
+                return new ResponseModel<PagedResult<TaskInfoDto>>
+                {
+                    Success = false,
+
+                    Message = _localizer["UserNotAllowed"]
+                };
+
+            if (model == null)
+                return new ResponseModel<PagedResult<TaskInfoDto>>
+                {
+                    Success = false,
+
+                    Message = _localizer["InvalidRequest"]
+                };
+
+
+            var project = await _tasksService.GetTasksByProjectId(model, ProjectId);
 
             return project;
         }
