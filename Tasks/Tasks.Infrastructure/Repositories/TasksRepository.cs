@@ -30,7 +30,7 @@ namespace Tasks.Tasks.Infrastructure.Repositories
 
         public Task<Domain.Models.Tasks> GetTaskById(int TaskId, Func<IQueryable<Domain.Models.Tasks>, IQueryable<Domain.Models.Tasks>>? include = null, bool isTracked = true)
         {
-            IQueryable<Domain.Models.Tasks> query = _context.Task.Include(x => x.TasksStatus).Include(x => x.TaskAttachments).Include(x => x.Members);
+            IQueryable<Domain.Models.Tasks> query = _context.Task.Where(x => x.IsDeleted != true).Include(x => x.TasksStatus).Include(x => x.TaskAttachments).Include(x => x.Members);
 
             if (!isTracked)
                 query = query.AsNoTracking();
@@ -46,7 +46,7 @@ namespace Tasks.Tasks.Infrastructure.Repositories
 
         public async Task<PagedResult<TaskInfoDto>> GetTasksByProjectIdAsync(GetTasksRequest request, int ProjectId, Func<IQueryable<Domain.Models.Tasks>, IQueryable<Domain.Models.Tasks>>? include = null, bool isTracked = true)
         {
-            IQueryable<Domain.Models.Tasks> query = _context.Task.Where(x => x.ProjectId == ProjectId).Include(x => x.Members);
+            IQueryable<Domain.Models.Tasks> query = _context.Task.Where(x => x.ProjectId == ProjectId && x.IsDeleted != true).Include(x => x.Members);
 
             if (!isTracked)
                 query = query.AsNoTracking();
@@ -118,7 +118,7 @@ namespace Tasks.Tasks.Infrastructure.Repositories
 
         public async Task<PagedResult<TaskInfoDto>> GetTasksByUserIdAsync(GetTasksRequest request, int UserId, Func<IQueryable<Domain.Models.Tasks>, IQueryable<Domain.Models.Tasks>>? include = null, bool isTracked = true)
         {
-            IQueryable<Domain.Models.Tasks> query = _context.Task.Where(x => x.Members.Any(m => m.UserId == UserId));
+            IQueryable<Domain.Models.Tasks> query = _context.Task.Where(x => x.Members.Any(m => m.UserId == UserId) && x.IsDeleted != true);
 
             if (!isTracked)
                 query = query.AsNoTracking();

@@ -18,7 +18,14 @@ namespace Tasks.Tasks.Domain.Services.IServices
         Task<ResponseModel<TaskInfoDetails>> GetTaskById(int TaskId);
 
 
-        Task<ResponseModel<bool>> SetTaskStatus(UpdateTaskStatus model);
+        Task<ResponseModel<bool>> SetTaskStatus(int TaskId, UpdateTaskStatus model);
+
+
+        Task<ResponseModel<bool>> DeleteTask(int TaskId, DeleteTask model);
+
+        Task<ResponseModel<bool>> AddMembersToTask(AddMembersToCurrentTask model);
+
+        Task<ResponseModel<bool>> RemoveMembersFromTask(RemoveMembersFromCurrentTask model);
 
 
 

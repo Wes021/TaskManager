@@ -58,5 +58,57 @@ namespace TaskManager.Controllers
             return Ok(result);
         }
 
+        [Authorize]
+        [HttpPatch("/api/v1/tasks/{taskId}/Status")]
+        public async Task<IActionResult> UpdateTaskStatus(int taskId, [FromBody] UpdateTaskStatus request)
+        {
+
+            var result = await _tasksHandler.SetTaskStatus(taskId, request);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpDelete("/api/v1/tasks/{taskId}")]
+        public async Task<IActionResult> DeleteTask(int taskId, [FromBody] DeleteTask request)
+        {
+
+            var result = await _tasksHandler.DeleteTask(taskId, request);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
+
+
+        [Authorize]
+        [HttpPost("/api/v1/tasks/{taskId}/Members")]
+        public async Task<IActionResult> AddMembers(int taskId, [FromForm] AddMembersToCurrentTask request)
+        {
+            request.TaskId = taskId;
+            var result = await _tasksHandler.AddMembersToTask(request);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpDelete("/api/v1/tasks/{taskId}/Members")]
+        public async Task<IActionResult> RemoveMembers(int taskId, [FromForm] RemoveMembersFromCurrentTask request)
+        {
+            request.TaskId = taskId;
+            var result = await _tasksHandler.RemoveMembersFromTask(request);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
     }
 }

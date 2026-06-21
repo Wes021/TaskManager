@@ -189,8 +189,9 @@ namespace Tasks.Tasks.Domain.Models
                 {
             { TaskStatuseEnums.Draft,     [TaskStatuseEnums.Active, TaskStatuseEnums.Cancelled] },
             { TaskStatuseEnums.Active,    [TaskStatuseEnums.Completed, TaskStatuseEnums.Cancelled] },
-            { TaskStatuseEnums.Completed, [] },
-            { TaskStatuseEnums.Cancelled, [] }
+            { TaskStatuseEnums.Completed, [TaskStatuseEnums.Reopen] },
+            { TaskStatuseEnums.Cancelled, [TaskStatuseEnums.Active] },
+            { TaskStatuseEnums.Reopen, [TaskStatuseEnums.Completed] }
                 };
         }
 
@@ -218,8 +219,62 @@ namespace Tasks.Tasks.Domain.Models
 
             TasksStatusId = (int)newStatus;
 
-            ModifiedDate = DateTime.UtcNow;
+            ModifiedDate = DateTime.Now;
             ModifiedUser = modifiedUser;
+
+            return DomainResponseModel.Success();
+        }
+
+
+
+
+
+        public DomainResponseModel RemoveMembers(
+            List<int> userIds,
+            int modifiedUser)
+        {
+            var membersToRemove = Members
+                .Where(x =>
+                    userIds.Contains(x.UserId) &&
+                    !x.IsDeleted)
+                .ToList();
+
+            if (!membersToRemove.Any())
+            {
+                return DomainResponseModel
+                    .Fail("MembersNotFound");
+            }
+
+            foreach (var member in membersToRemove)
+            {
+                member.DeleteOrRemove(modifiedUser);
+            }
+
+            return DomainResponseModel.Success();
+        }
+
+
+
+
+        public DomainResponseModel RemoveAttachments(
+            List<int> attachementIds,
+            int modifiedUser)
+        {
+            var attachementsToRemove = TaskAttachments
+                .Where(x =>
+                    attachementIds.Contains(x.Id) &&
+                    !x.IsDeleted)
+                .ToList();
+
+            if (!attachementsToRemove.Any())
+            {
+                return DomainResponseModel.Success();
+            }
+
+            foreach (var attachements in attachementsToRemove)
+            {
+                attachements.Remove(modifiedUser);
+            }
 
             return DomainResponseModel.Success();
         }

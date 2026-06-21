@@ -15,6 +15,31 @@ namespace Tasks.Tasks.Application.Handlers.Handlers
         IFileManager _fileManager, ITasksService _tasksService
         ) : ITasksHandler
     {
+        public async Task<ResponseModel<bool>> AddMembersToTask(AddMembersToCurrentTask model)
+        {
+            if (model.TaskId <= 0 || model.MembersModels.MemberIds.Count <= 0)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+
+                    Message = _localizer["InvalidRequest"]
+                };
+
+            if (_currentUserService.Role !=
+                SystemEnums.UserType.ManagerAndLeader.ToString())
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["UserNotAllowed"]
+                };
+
+
+            var response = await _tasksService.AddMembersToTask(model);
+
+            return response;
+        }
+
         public async Task<ResponseModel<bool>> AddNewTask(NewTaskRequestModel model)
         {
             if (model == null)
@@ -80,6 +105,33 @@ namespace Tasks.Tasks.Application.Handlers.Handlers
 
 
             var response = await _tasksService.AddNewTask(model, model.MembersModel, FilesResponse.Data);
+
+            return response;
+        }
+
+        public async Task<ResponseModel<bool>> DeleteTask(int taskId, DeleteTask model)
+        {
+            if (model == null || taskId <= 0 || model.IsDeleted == false)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["InvalidRequest"]
+                };
+
+            var currectUserRole = _currentUserService.Role;
+
+            if (currectUserRole != SystemEnums.UserType.Employee.ToString() && currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString())
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["UserNotAllowed"]
+                };
+
+
+
+            var response = await _tasksService.DeleteTask(taskId, model);
 
             return response;
         }
@@ -160,6 +212,60 @@ namespace Tasks.Tasks.Application.Handlers.Handlers
             var project = await _tasksService.GetTasksByProjectId(model, ProjectId);
 
             return project;
+        }
+
+        public async Task<ResponseModel<bool>> RemoveMembersFromTask(RemoveMembersFromCurrentTask model)
+        {
+            if (model.TaskId <= 0 || model.MembersModels.MemberIds.Count <= 0)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+
+                    Message = _localizer["InvalidRequest"]
+                };
+
+            if (_currentUserService.Role !=
+                SystemEnums.UserType.ManagerAndLeader.ToString())
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["UserNotAllowed"]
+                };
+
+
+            var response = await _tasksService.RemoveMembersFromTask(model);
+
+            return response;
+        }
+
+        public async Task<ResponseModel<bool>> SetTaskStatus(int taskId, UpdateTaskStatus model)
+        {
+
+            if (model == null || model.NewStatus <= 0 || taskId <= 0 || model.NewStatus <= 0)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["InvalidRequest"]
+                };
+
+            var currectUserRole = _currentUserService.Role;
+
+            if (currectUserRole != SystemEnums.UserType.Employee.ToString() && currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString())
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["UserNotAllowed"]
+                };
+
+
+
+
+            var response = await _tasksService.SetTaskStatus(taskId, model);
+
+            return response;
         }
     }
 }

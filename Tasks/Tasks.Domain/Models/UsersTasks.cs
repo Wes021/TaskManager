@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using TaskManager.SharedLayer.Interfaces;
 
 namespace Tasks.Tasks.Domain.Models
@@ -32,14 +27,29 @@ namespace Tasks.Tasks.Domain.Models
 
         internal UsersTasks(int taskId, int userId, int? createdUser)
         {
-            
+
             TasksId = taskId;
             UserId = userId;
             CreatedUser = createdUser;
-            
+
             CreatedDate = DateTime.Now;
             IsDeleted = false;
             IsActive = true;
         }
+
+
+
+        internal void DeleteOrRemove(int modifiedUser)
+        {
+            IsDeleted = true;
+
+            IsActive = false;
+
+            ModifiedDate = DateTime.UtcNow;
+
+            ModifiedUser = modifiedUser;
+        }
+
+
     }
 }

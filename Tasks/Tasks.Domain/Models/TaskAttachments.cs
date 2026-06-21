@@ -45,5 +45,19 @@ namespace Tasks.Tasks.Domain.Models
             IsActive = true;
 
         }
+
+
+
+        internal void Remove(int modifiedUser)
+        {
+            IsDeleted = true;
+
+            IsActive = false;
+
+            ModifiedDate = DateTime.UtcNow;
+
+            ModifiedUser = modifiedUser;
+        }
+
     }
 }

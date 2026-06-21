@@ -9,6 +9,7 @@ using TaskManager.SharedLayer.ResponseModels.Tasks;
 using Tasks.Tasks.Domain.IRepositories;
 using Tasks.Tasks.Domain.IUnitOfWork;
 using Tasks.Tasks.Domain.Services.IServices;
+using static TaskManager.SharedLayer.Enums.SystemEnums;
 
 namespace Tasks.Tasks.Domain.Services.Services
 {
@@ -20,6 +21,61 @@ namespace Tasks.Tasks.Domain.Services.Services
         ) : ITasksService
 
     {
+        public async Task<ResponseModel<bool>> AddMembersToTask(AddMembersToCurrentTask model)
+        {
+            var task = await _tasksRepository.GetTaskById(model.TaskId);
+
+            if (task is null)
+            {
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["TaskNotFoundOrDeactivated"]
+                };
+            }
+
+
+            var IsValidUsers = (await userLookupService.GetUsersByIdsAsync(model.MembersModels.MemberIds)).Where(x => x.IsDeleted || x.IsActive == false);
+
+            if (IsValidUsers.Any())
+            {
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["OneOrMoreUsersAreNotValid"]
+                };
+            }
+
+
+            var addMembersResult = task.AddMembersToTask(model.MembersModels.MemberIds, _currentUser.UserId);
+
+
+
+            if (!addMembersResult.Succeeded)
+            {
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = addMembersResult.Error
+                };
+            }
+
+
+
+            await _tasksModuleUoW.SaveChangesAsync();
+
+            return new ResponseModel<bool>
+            {
+                Success = true,
+                Message = _localizer["MembersAddedSuccessfully"]
+            };
+        }
+
+
+
         public async Task<ResponseModel<bool>> AddNewTask(NewTaskRequestModel model, AddMembersToTask MembersModel, List<FileHandlerResponse> fileHandlerResponses)
         {
             var projectInfo = await projectLookupService.GetProjectById(model.ProjectId);
@@ -121,9 +177,73 @@ namespace Tasks.Tasks.Domain.Services.Services
             };
         }
 
+        public async Task<ResponseModel<bool>> DeleteTask(int TaskId, DeleteTask model)
+        {
+            var task = await _tasksRepository.GetTaskById(TaskId);
+            var CurrectUser = _currentUser.UserId;
+
+
+
+            if (task is null)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["TaskDoesNotExist"]
+                };
+
+            var Taskresult = task.SetIsDeleted(model.IsDeleted, CurrectUser);
+            var TaskMembersResult = task.RemoveMembers(task.Members.Where(x => x.TasksId == task.Id).Select(x => x.UserId).ToList(), CurrectUser);
+            var TaskAttachemnetResult = task.RemoveAttachments(task.TaskAttachments.Where(x => x.TasksId == task.Id).Select(x => x.Id).ToList(), CurrectUser);
+
+            if (!Taskresult.Succeeded)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer[Taskresult.Error]
+                };
+
+            if (!TaskMembersResult.Succeeded)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer[TaskMembersResult.Error]
+                };
+
+            if (!TaskAttachemnetResult.Succeeded)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer[TaskAttachemnetResult.Error]
+                };
+
+            await _tasksModuleUoW.SaveChangesAsync();
+
+            return new ResponseModel<bool>
+            {
+                Success = true,
+                Data = true,
+                Message = _localizer["TaskDeletedSuccessfully"]
+            };
+        }
+
         public async Task<ResponseModel<TaskInfoDetails>> GetTaskById(int TaskId)
         {
             var TaskDetails = await _tasksRepository.GetTaskById(TaskId);
+
+            if (TaskDetails == null)
+            {
+                return new ResponseModel<TaskInfoDetails>
+                {
+                    Success = true,
+
+                    Message = _localizer["NoTaskWasFound"]
+                };
+            }
+
 
             var projects = await _projectLookupService
     .GetProjectById(TaskDetails.ProjectId);
@@ -173,9 +293,6 @@ namespace Tasks.Tasks.Domain.Services.Services
 
 
 
-
-
-
         public async Task<ResponseModel<PagedResult<TaskInfoDto>>> GetTasksByUserId(GetTasksRequest model, int UserId)
         {
             var tasksResult = await _tasksRepository.GetTasksByUserIdAsync(model, UserId);
@@ -206,9 +323,9 @@ namespace Tasks.Tasks.Domain.Services.Services
 
         }
 
-        public async Task<ResponseModel<bool>> SetTaskStatus(UpdateTaskStatus model)
+        public async Task<ResponseModel<bool>> SetTaskStatus(int TaskId, UpdateTaskStatus model)
         {
-            var task = await _tasksRepository.GetTaskById(model.TaskId);
+            var task = await _tasksRepository.GetTaskById(TaskId);
             var CurrectUser = _currentUser.UserId;
             var StatusExists = await _taskStatusRepository.CheckTaskStatusExists(model.NewStatus);
 
@@ -229,9 +346,80 @@ namespace Tasks.Tasks.Domain.Services.Services
                 };
 
 
+            var status = (TaskStatuseEnums)model.NewStatus;
+
+            var result = task.SetNewStatus(status, CurrectUser);
 
 
-            throw new NotImplementedException();
+            if (!result.Succeeded)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer[result.Error]
+                };
+
+            await _tasksModuleUoW.SaveChangesAsync();
+
+            return new ResponseModel<bool>
+            {
+                Success = true,
+                Data = true,
+                Message = _localizer["TaskUpdatedSuccessfully"]
+            };
+        }
+
+        public async Task<ResponseModel<bool>> RemoveMembersFromTask(RemoveMembersFromCurrentTask model)
+        {
+            var task = await _tasksRepository.GetTaskById(model.TaskId);
+
+            if (task is null)
+            {
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["TaskNotFoundOrDeactivated"]
+                };
+            }
+
+
+            var IsValidUsers = (await userLookupService.GetUsersByIdsAsync(model.MembersModels.MemberIds)).Where(x => x.IsDeleted || x.IsActive == false);
+
+            if (IsValidUsers.Any())
+            {
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["OneOrMoreUsersAreNotValid"]
+                };
+            }
+
+
+            var addMembersResult = task.RemoveMembers(model.MembersModels.MemberIds, _currentUser.UserId);
+
+
+
+            if (!addMembersResult.Succeeded)
+            {
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = addMembersResult.Error
+                };
+            }
+
+
+
+            await _tasksModuleUoW.SaveChangesAsync();
+
+            return new ResponseModel<bool>
+            {
+                Success = true,
+                Message = _localizer["MembersRemovedSuccessfully"]
+            };
         }
     }
 }

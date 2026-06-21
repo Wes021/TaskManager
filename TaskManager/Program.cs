@@ -5,6 +5,7 @@ using Projects.Projects.Domain.Services.Services;
 using System.Security.Claims;
 using System.Text;
 using TaskManager.SharedLayer.Interfaces;
+using TaskManager.SharedLayer.Middleware;
 using Tasks.Tasks.Domain.Services.Services; // Add this using directive
 
 
@@ -105,6 +106,7 @@ namespace TaskManager
             }
 
 
+            app.UseMiddleware<GlobalExceptionMiddleware>();
 
             app.UseHttpsRedirection();
             app.UseAuthentication();

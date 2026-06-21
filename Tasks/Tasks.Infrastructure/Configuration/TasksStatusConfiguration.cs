@@ -32,6 +32,13 @@ namespace Tasks.Tasks.Infrastructure.Configuration
             new TasksStatus
             {
                 Id = 4,
+                Name = "Reopen",
+
+                IsDeleted = false
+            },
+            new TasksStatus
+            {
+                Id = 5,
                 Name = "Cancelled",
 
                 IsDeleted = false
