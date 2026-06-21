@@ -28,10 +28,11 @@ namespace Projects
 
             //Serives
             services.AddScoped<ITasksService, TasksService>();
+            services.AddScoped<ITaskComments, TaskComments>();
 
 
             //Handlers
-            services.AddScoped<ITasksHandler, TasksHandler>();
+            services.AddScoped<ITaskCommentsHandler, TaskCommentsHandler>();
 
 
 

@@ -42,6 +42,9 @@ namespace Tasks.Tasks.Domain.Models
         public List<UsersTasks> Members { get; private set; } = [];
 
 
+        public List<TaskComments> TaskComments { get; private set; } = [];
+
+
 
         public GenericDomainResponseModel<List<int>> AddMembersToTask(
       List<int> userIds,
@@ -75,7 +78,36 @@ namespace Tasks.Tasks.Domain.Models
                 Error = "UsersAddedSuccessfully"
 
             };
+
         }
+
+
+
+        public GenericDomainResponseModel<bool> AddCommentsToTask(int taskId, string text, int createdUser)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return new GenericDomainResponseModel<bool>
+                {
+                    Succeeded = false,
+                    Error = "CommentTextRequired"
+                };
+            }
+
+
+
+            TaskComments.Add(new TaskComments(taskId, text, createdUser));
+
+
+            return new GenericDomainResponseModel<bool>
+            {
+                Succeeded = true,
+                Error = "CommentAddedSuccessfully"
+
+            };
+        }
+
+
 
 
 
