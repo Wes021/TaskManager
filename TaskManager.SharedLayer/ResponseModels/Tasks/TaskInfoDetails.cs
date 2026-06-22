@@ -26,5 +26,7 @@
         public List<TaskAttachmentsDto> TaskAttachments { get; set; }
 
         public List<TaskMembersDto> TaskMembers { get; set; }
+
+        public List<TaskCommentsDto> TaskComments { get; set; }
     }
 }

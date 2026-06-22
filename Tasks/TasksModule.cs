@@ -32,6 +32,7 @@ namespace Projects
 
 
             //Handlers
+            services.AddScoped<ITasksHandler, TasksHandler>();
             services.AddScoped<ITaskCommentsHandler, TaskCommentsHandler>();
 
 

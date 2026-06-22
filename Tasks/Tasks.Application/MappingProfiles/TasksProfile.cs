@@ -21,6 +21,8 @@ namespace Tasks.Tasks.Application.MappingProfiles
 
             CreateMap<UserLookupDto, TaskMembersDto>();
 
+            CreateMap<TaskComments, TaskCommentsDto>();
+
         }
 
     }

@@ -30,7 +30,7 @@ namespace Tasks.Tasks.Infrastructure.Repositories
 
         public Task<Domain.Models.Tasks> GetTaskById(int TaskId, Func<IQueryable<Domain.Models.Tasks>, IQueryable<Domain.Models.Tasks>>? include = null, bool isTracked = true)
         {
-            IQueryable<Domain.Models.Tasks> query = _context.Task.Where(x => x.IsDeleted != true).Include(x => x.TasksStatus).Include(x => x.TaskAttachments).Include(x => x.Members);
+            IQueryable<Domain.Models.Tasks> query = _context.Task.Where(x => x.IsDeleted != true).Include(x => x.TasksStatus).Include(x => x.TaskAttachments.Where(att => !att.IsDeleted)).Include(x => x.Members.Where(me => !me.IsDeleted)).Include(x => x.TaskComments.Where(com => !com.IsDeleted));
 
             if (!isTracked)
                 query = query.AsNoTracking();

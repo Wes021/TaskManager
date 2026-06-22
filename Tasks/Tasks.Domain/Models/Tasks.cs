@@ -107,6 +107,35 @@ namespace Tasks.Tasks.Domain.Models
             };
         }
 
+        public GenericDomainResponseModel<bool> RemoveCommentsToTask(int commentId, int modifiedUser)
+        {
+
+            var commentToRemove = TaskComments
+                .Where(c => !c.IsDeleted && c.IsActive && c.CreatedUser == modifiedUser && c.Id == commentId).FirstOrDefault();
+
+
+
+            if (commentToRemove is null || commentToRemove.IsDeleted == true)
+            {
+                return new GenericDomainResponseModel<bool>
+                {
+                    Succeeded = false,
+                    Error = "CommentDoesNotExists"
+                };
+            }
+
+
+
+            commentToRemove.RemoveComment(modifiedUser);
+
+
+            return new GenericDomainResponseModel<bool>
+            {
+                Succeeded = true,
+                Error = "CommentRemovedSuccessfully"
+            };
+        }
+
 
 
 

@@ -126,5 +126,19 @@ namespace TaskManager.Controllers
 
             return Ok(result);
         }
+
+
+        [Authorize]
+        [HttpDelete("/api/v1/tasks/{taskId}/comment/{commentId}")]
+        public async Task<IActionResult> DeleteComment(int taskId, int commentId)
+        {
+
+            var result = await _taskComments.DeleteComment(commentId, taskId);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
     }
 }

@@ -33,5 +33,17 @@ namespace Tasks.Tasks.Domain.Models
             TasksId = taskId;
             CreatedUser = createdUser;
         }
+
+
+        internal void RemoveComment(int modifiedUser)
+        {
+            IsDeleted = true;
+
+            IsActive = false;
+
+            ModifiedDate = DateTime.Now;
+
+            ModifiedUser = modifiedUser;
+        }
     }
 }

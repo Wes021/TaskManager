@@ -38,5 +38,30 @@ namespace Tasks.Tasks.Application.Handlers.Handlers
             return response;
 
         }
+
+        public async Task<ResponseModel<bool>> DeleteComment(int commentId, int TaskId)
+        {
+            if (TaskId <= 0 || commentId <= 0)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+
+                    Message = _localizer["InvalidRequest"]
+                };
+
+            if (_currentUserService.Role !=
+                SystemEnums.UserType.ManagerAndLeader.ToString() || _currentUserService.Role !=
+                SystemEnums.UserType.Employee.ToString())
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["UserNotAllowed"]
+                };
+
+            var response = await _taskComments.DeleteComment(commentId, TaskId);
+
+            return response;
+        }
     }
 }

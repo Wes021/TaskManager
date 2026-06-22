@@ -251,7 +251,7 @@ namespace Tasks.Tasks.Domain.Services.Services
             var MappedData = _mapper.Map<TaskInfoDetails>(TaskDetails);
             MappedData.ProjectName = projects.Data.Name;
             MappedData.TaskMembers = _mapper.Map<List<TaskMembersDto>>(await userLookupService.GetUsersByIdsAsync(TaskDetails.Members.Select(x => x.UserId).ToList()));
-
+            MappedData.TaskComments = _mapper.Map<List<TaskCommentsDto>>(TaskDetails.TaskComments);
 
 
             return new ResponseModel<TaskInfoDetails>
