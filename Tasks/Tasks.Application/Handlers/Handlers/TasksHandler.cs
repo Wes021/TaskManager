@@ -2,7 +2,8 @@
 using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
-using TaskManager.SharedLayer.RequestModels.Tasks;
+using TaskManager.SharedLayer.RequestModels.Tasks.MembersModel;
+using TaskManager.SharedLayer.RequestModels.Tasks.TasksModels;
 using TaskManager.SharedLayer.ResponseModel;
 using TaskManager.SharedLayer.ResponseModels;
 using TaskManager.SharedLayer.ResponseModels.Tasks;

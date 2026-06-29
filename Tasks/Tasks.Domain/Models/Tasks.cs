@@ -43,6 +43,7 @@ namespace Tasks.Tasks.Domain.Models
 
 
         public List<TaskComments> TaskComments { get; private set; } = [];
+        public List<TaskHistory> TaskHistory { get; private set; } = [];
 
 
         public GenericDomainResponseModel<Tasks> Update(string title, string description,
@@ -367,6 +368,14 @@ namespace Tasks.Tasks.Domain.Models
 
             return DomainResponseModel.Success();
         }
+
+
+
+
+
+
+
+
 
 
     }

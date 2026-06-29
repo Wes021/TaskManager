@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Localization;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
-using TaskManager.SharedLayer.RequestModels.Tasks;
+using TaskManager.SharedLayer.RequestModels.Tasks.CommentsModel;
 using TaskManager.SharedLayer.ResponseModel;
 using Tasks.Tasks.Domain.IRepositories;
 using Tasks.Tasks.Domain.IUnitOfWork;

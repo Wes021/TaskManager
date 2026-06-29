@@ -1,4 +1,4 @@
-﻿namespace TaskManager.SharedLayer.RequestModels.Tasks
+﻿namespace TaskManager.SharedLayer.RequestModels.Tasks.CommentsModel
 {
     public class AddNewComment
     {

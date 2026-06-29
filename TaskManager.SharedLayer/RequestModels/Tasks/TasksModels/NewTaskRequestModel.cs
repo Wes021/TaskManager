@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace TaskManager.SharedLayer.RequestModels.Tasks
+namespace TaskManager.SharedLayer.RequestModels.Tasks.TasksModels
 {
     public class NewTaskRequestModel
     {

@@ -1,4 +1,4 @@
-﻿using TaskManager.SharedLayer.RequestModels.Tasks;
+﻿using TaskManager.SharedLayer.RequestModels.Tasks.CommentsModel;
 using TaskManager.SharedLayer.ResponseModel;
 
 namespace Tasks.Tasks.Domain.Services.IServices

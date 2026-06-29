@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TaskManager.SharedLayer.RequestModels.Tasks;
+using TaskManager.SharedLayer.RequestModels.Tasks.TasksModels;
 using TaskManager.SharedLayer.ResponseModels;
 using TaskManager.SharedLayer.ResponseModels.Tasks;
 using Tasks.Tasks.Domain.IRepositories;

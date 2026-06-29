@@ -1,4 +1,6 @@
-﻿namespace TaskManager.SharedLayer.RequestModels.Tasks
+﻿using TaskManager.SharedLayer.RequestModels.Tasks.AttachmentModels;
+
+namespace TaskManager.SharedLayer.RequestModels.Tasks.TasksModels
 {
     public class AddNewTaksDTO
     {
