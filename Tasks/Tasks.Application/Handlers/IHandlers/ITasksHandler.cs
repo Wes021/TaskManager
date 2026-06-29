@@ -20,6 +20,10 @@ namespace Tasks.Tasks.Application.Handlers.IHandlers
 
         Task<ResponseModel<bool>> DeleteTask(int taskId, DeleteTask model);
 
+        Task<ResponseModel<bool>> UpdateTask(int taskId, UpdateTaskInfo model);
+
+
+
         Task<ResponseModel<bool>> AddMembersToTask(AddMembersToCurrentTask model);
 
         Task<ResponseModel<bool>> RemoveMembersFromTask(RemoveMembersFromCurrentTask model);

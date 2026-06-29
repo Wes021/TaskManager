@@ -140,5 +140,19 @@ namespace TaskManager.Controllers
 
             return Ok(result);
         }
+
+
+        [Authorize]
+        [HttpPut("/api/v1/tasks/{taskId}")]
+        public async Task<IActionResult> UpdateTask(int taskId, [FromForm] UpdateTaskInfo model)
+        {
+            var result = await _tasksHandler.UpdateTask(taskId, model);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
+
     }
 }

@@ -28,6 +28,12 @@ namespace Tasks.Tasks.Infrastructure.Repositories
                 .AnyAsync(x => x.Title == entity.Title && x.IsDeleted != true);
         }
 
+        public async Task<bool> ExistsByTitleForUpdateAsync(int TaskId, UpdateTaskInfo entity)
+        {
+            return await _context.Task.AsNoTracking()
+                .AnyAsync(x => x.Title == entity.Title && x.IsDeleted != true && x.Id != TaskId);
+        }
+
         public Task<Domain.Models.Tasks> GetTaskById(int TaskId, Func<IQueryable<Domain.Models.Tasks>, IQueryable<Domain.Models.Tasks>>? include = null, bool isTracked = true)
         {
             IQueryable<Domain.Models.Tasks> query = _context.Task.Where(x => x.IsDeleted != true).Include(x => x.TasksStatus).Include(x => x.TaskAttachments.Where(att => !att.IsDeleted)).Include(x => x.Members.Where(me => !me.IsDeleted)).Include(x => x.TaskComments.Where(com => !com.IsDeleted));

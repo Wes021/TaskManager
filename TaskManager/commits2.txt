@@ -1,0 +1,438 @@
+commit 1895d4de90a11d3872ce93d15a11a6cbf0ab7fec
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Mon Jun 22 22:33:44 2026 +0300
+
+    Add comment management feature with delete functionality
+    
+    This commit introduces a new feature for managing comments on tasks, including a `DeleteComment` method across various classes. Key updates include:
+    
+    - Addition of a `TaskComments` property in `TaskInfoDetails` to hold comments.
+    - New HTTP DELETE endpoint in `TasksController` for deleting comments.
+    - Logic for comment deletion in `TaskCommentsHandler`, with user permission validation.
+    - Updates to `ITaskCommentsHandler` and `ITaskComments` interfaces to include the `DeleteComment` method.
+    - Enhancements to the `TaskComments` model to mark comments as deleted.
+    - New methods in the `Tasks` model for handling comment removal.
+    - Updates in `TasksService` and `TasksRepository` to ensure proper mapping and retrieval of comments.
+    - Introduction of new request and response models for structured comment data handling.
+    
+    These changes improve the task management system's functionality, allowing users to effectively manage comments with appropriate checks in place.
+
+commit eeb722a4aafa42a07ddc4970b1da06200c4ecde6
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Sun Jun 21 22:38:30 2026 +0300
+
+    Add task comments functionality and related models
+    
+    - Updated `TasksController` to handle task comments with a new endpoint.
+    - Introduced `TaskComments` entity in the database schema.
+    - Enhanced `Tasks` model to include a list of comments and a method for adding them.
+    - Created migration `AddTasksComments` for the new comments table.
+    - Implemented `TaskCommentsHandler` for comment logic and validation.
+    - Defined `ITaskCommentsHandler` interface for consistent comment handling.
+    - Created `TaskComments` class to represent individual comments.
+    - Added `ITaskComments` interface for managing task comments.
+    - Developed `TaskComments` service for comment management.
+    - Introduced `AddNewComment` request model for structured comment submissions.
+
+commit b268b9b98d57a9aded7c4bbe2e2bcabc7c646cfb
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Sun Jun 21 21:58:26 2026 +0300
+
+    Refactor task management and enhance error handling
+    
+    - Removed unused `using` directives from `ProjectStatus.cs` and `UsersTasks.cs`.
+    - Updated `TaskStatuseEnums` in `SystemEnums.cs` to replace `Cancelled` with `Reopen`.
+    - Modified `UpdateTaskStatus` to include a `NewStatus` property.
+    - Added methods in `TasksController.cs` for task status updates, deletions, and member management with authorization.
+    - Introduced `GlobalExceptionMiddleware` for centralized error handling.
+    - Created new request models: `AddMembersToCurrentTask`, `DeleteTask`, and `RemoveMembersFromCurrentTask`.
+    - Implemented migration `EditTheInfoInTheTasksStatus` to update task statuses.
+    - Enhanced `TasksService` with methods for member management and task status updates, including validation.
+    - Updated `TasksRepository` to exclude deleted tasks in queries.
+    - Added methods in the `Tasks` model for managing members and attachments.
+    - Improved `TasksHandler` with logic for member management and task status updates, ensuring role checks.
+
+commit f826f59a031ab264ab583009217928e7810bb061
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Tue Jun 16 22:19:50 2026 +0300
+
+    Add task status management and retrieval features
+    
+    - Introduced `TaskStatuseEnums` in `SystemEnums.cs` for task statuses.
+    - Renamed `TasksStatus` to `TasksStatusName` in `TaskInfoDetails.cs`.
+    - Updated `TasksController` to include methods for retrieving tasks by user and project ID.
+    - Enhanced `TasksHandler` with role checks and new retrieval methods.
+    - Modified `ITasksHandler` and `ITasksRepository` interfaces to support new task retrieval methods.
+    - Added methods in `Tasks.cs` for managing task status transitions.
+    - Updated `ITasksService` to include new task retrieval and status methods.
+    - Implemented new methods in `TasksService` and `TasksRepository` for task management.
+    - Removed unnecessary project references in `Tasks.csproj`.
+    - Created `UpdateTaskStatus.cs` for task status update requests.
+    - Added `TasksProfile.cs` for AutoMapper configurations related to tasks.
+
+commit de2a78d816b9fd76bb849edac0f019ace4271a71
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Tue Jun 16 18:26:14 2026 +0300
+
+    Enhance response message in TasksService
+    
+    Updated the response in `TasksService.cs` to provide a clearer message based on the presence of data in `tasksResult`. The return statement now checks for null and returns either a success message or a "No Data Found" message, improving the clarity of the API response.
+
+commit 66afec6dc01836577626cc1756a22e1b3e8ab373
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Sun Jun 14 22:12:38 2026 +0300
+
+    Add project and task retrieval features
+    
+    - Implemented `GetProjectsByIdsAsync` in `IProjectsRepository` and corresponding service methods.
+    - Enhanced `TasksController` with a new endpoint for task retrieval, including authorization.
+    - Updated repository and service interfaces to support user-specific task retrieval.
+    - Added new DTOs for task-related data transfer.
+    - Created migration to seed initial task statuses.
+
+commit ccbceb7235be827e38e57b50c60f5de15f2d211e
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Sun Jun 14 22:12:04 2026 +0300
+
+    Update .gitignore and overhaul appsettings.json
+    
+    - Added `MigrationBackup/` and `appsettings.json` to .gitignore.
+    - Removed all configuration settings from `appsettings.json`, including logging, allowed hosts, connection strings, and JWT settings.
+
+commit 8701374c9751423e4350e08bcfae1001fb8f660b
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Sat Jun 13 20:53:22 2026 +0300
+
+    Refactor task management and file handling components
+    
+    - Updated `IProjectMemberRepository` to streamline method signatures.
+    - Modified `IFileManager` to accept `IFormFile` for file uploads.
+    - Added `FileSize` property to `FileHandlerResponse`.
+    - Restructured `TasksHandler` for improved task creation and file handling.
+    - Updated interfaces (`ITasksHandler`, `ITasksRepository`, `ITasksService`) to use `NewTaskRequestModel`.
+    - Enhanced `FileManager` for better file path handling.
+    - Created `NewTaskRequestModel` for task creation data encapsulation.
+    - Implemented `TasksController` for managing task-related HTTP requests.
+    - Introduced `IUsersTasks` interface and `UsersTasks` class for user-task management.
+
+commit a44149f6ad8f0ef730c7499c36b13c85dee6ff06
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Sat Jun 13 20:52:34 2026 +0300
+
+    Update .gitignore to exclude additional files
+    
+    Added `FodyWeavers.xsd` and `TaskManager/Uploads` to
+    the .gitignore file to prevent unnecessary files from
+    being tracked in the repository.
+
+commit a9f9198d384db703a632aa233da49f113d7dea48
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Sat Jun 13 20:27:36 2026 +0300
+
+    Finished the Add task api, handled the files, and created the task aggregate
+
+commit 4e342dc2dabc8341e8553c3ccfc70e811b4a00c3
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Thu Jun 11 23:56:18 2026 +0300
+
+    Enhance task management and project lookup features
+    
+    - Updated `ProjectMember.cs` to set `ModifiedUser`.
+    - Added package references in `TaskManager.SharedLayer.csproj`.
+    - Registered `IProjectLookupService` in `Program.cs`.
+    - Restructured properties in `TaskAttachments.cs` and added constructors.
+    - Changed `TaskAttachments` in `Tasks.cs` to a list and added methods for managing members and attachments.
+    - Modified `UsersTasks.cs` to include constructors for initialization.
+    - Updated `Tasks.csproj` with a new package reference and removed folder references.
+    - Introduced `ProjectLookupService` for retrieving project info.
+    - Added new interfaces and classes for file handling and task management.
+    - Created `TasksHandler` and `ITasksHandler` for task operations.
+    - Updated `ITasksRepository` and `ITasksService` with task addition methods.
+    - Implemented `FileManager` for file uploads and validations.
+    - Enhanced `TasksService` with logic for adding tasks and validating projects.
+    - Implemented `TasksRepository` for adding tasks to the database.
+
+commit 5972ce181e0e2057a997f0bac825eb63b9bc7e1f
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Thu Jun 4 21:41:44 2026 +0300
+
+    Add tasks module and update database schema
+    
+    - Implemented `AddTasksModule` in `DependencyInjection.cs`.
+    - Removed `ProjectTasks.cs` and its associated class.
+    - Added `ProjectId` and `TaskAttachments` reference in `Tasks.cs`.
+    - Updated `TasksDbContext.cs` to include new domain models and `DbSet` for `TaskAttachments`.
+    - Replaced `AddProjectsModule` with `AddTasksModule` in `TasksModule.cs`.
+    - Created migration `20260603175238_NewTasksAggregate` for new database schema.
+    - Generated designer file for the new migration.
+    - Created migration `20260604183517_EditTasksAggregate` to drop `ProjectTasks` and add `ProjectId` to `Task`.
+    - Updated `TasksDbContextModelSnapshot.cs` to reflect new database structure.
+
+commit 35faa3ca730b09bfe0ae99c843f43f147d759d5f
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Wed Jun 3 20:34:07 2026 +0300
+
+    Add Tasks project with domain models and configurations
+    
+    This commit introduces a new "Tasks" project to the solution,
+    removes the empty `Class1.cs` file, and creates the
+    `Tasks.csproj` file targeting .NET 9.0 with necessary
+    package references. Multiple domain model classes have
+    been added, including `ProjectTasks`, `TaskAttachments`,
+    `Tasks`, `TasksStatus`, and `UsersTasks`, all implementing
+    entity and auditing interfaces. A new `TasksDbContext`
+    class is included to manage the database context, along
+    with a `TasksModule` for service registration.
+    References to the new project have been updated in
+    `TaskManager.csproj` and `Tasks.csproj` to ensure
+    proper dependencies.
+
+commit 55f805789387c116dc076ce13df5ab64eebf54db
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Mon May 25 14:36:28 2026 +0300
+
+    Enhance project member management and validation
+    
+    - Added new methods `AddMembers` and `RemoveMembers` in `Project.cs` for managing project members with improved validation.
+    - Introduced checks for project attribute validity, including end date and deletion status.
+    - Updated `ProjectMember` constructor to be internal and modified member addition logic.
+    - Refactored `AddMembersToProject` in `ProjectService.cs` to include eager loading of members and utilize the new `AddMembers` method.
+    - Overall improvements to error handling and code maintainability in the project management system.
+
+commit 19232abaf1bf92333aafae1c13c1789ca982c420
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Sun May 24 20:30:14 2026 +0300
+
+    Enhance user and project member data handling
+    
+    - Updated `UserLookupDto` to include `UserName`, `Email`, `phonenumber`, `IsActive`, and `IsDeleted`.
+    - Modified `ProjectsDbContextModelSnapshot` to adjust table definitions and primary keys.
+    - Created mapping between `UserLookupDto` and `ProjectMembersDto` in `ProjectsProfile`.
+    - Changed `IProjectMemberRepository` to use `AddRange` for batch additions and updated method signatures.
+    - Refined `ProjectMember` class to include an `Id` property and updated removal logic.
+    - Enhanced user assignment checks in `ProjectService`.
+    - Updated project file structure and added new migration files for `ProjectMember` table management.
+    - Introduced `ProjectMembersDto` for better representation of project member data.
+
+commit 26e272260063383cdc93797443afe5783cfeec78
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Sat May 23 23:34:25 2026 +0300
+
+    Enhance identity and project management modules
+    
+    - Added user role retrieval service in LoginHandler.
+    - Updated IdentityDbContext to apply configurations from assembly.
+    - Seeded roles and project statuses in AppDbContext and ProjectsDbContext.
+    - Improved role checking logic in ProjectHandler for user permissions.
+    - Introduced method for adding project members in IProjectMemberRepository.
+    - Refactored member management methods in Project.cs.
+    - Updated ProjectService to utilize new member addition logic.
+    - Added new configurations for roles and project statuses.
+    - Created/updated migration files for schema changes and seeding.
+    - Refactored ProjectMember model for better clarity and functionality.
+    - Introduced new API endpoints for adding/removing project members.
+
+commit 89cd89f5a698a823eaf2b447c38a40eddcfc31f6
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Sat May 23 14:46:09 2026 +0300
+
+    Enhance project management features and validations
+    
+    Updated ProjectHandler to include new dependencies and methods for managing project members. Refactored validation logic across several methods to improve error handling and user feedback. Renamed repository methods for consistency and added new DTO for member removal. Updated interfaces to reflect these changes.
+
+commit 9ab3d400f08462e5a569f4d21d3c6a010738acfc
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Fri May 22 23:16:33 2026 +0300
+
+    Enhance ProjectMember management and repository structure
+    
+    Added properties to ProjectMember for better tracking, including AssignedBy, AssignedDate, IsDeleted, and ModifiedUser. Updated Project entity to include a Members navigation property. Introduced AddMembers and RemoveMembers methods in Project class for managing project members. Created IProjectMemberRepository interface and implemented it in ProjectMemberRepository for data access. Added migration files to update the database schema and introduced AddProjectMembersDto for member addition data. Updated ProjectService to ensure only authorized users can add members.
+
+commit a99a713c36f7191d3a4f08d5bac6d5321df86de6
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Fri May 22 15:20:03 2026 +0300
+
+    Enhance user and project management functionality
+    
+    - Updated `UsersHandlers` to include user repository and localization support, improving user existence checks and error messaging.
+    - Simplified error handling in `ManageUserService` for non-existent users.
+    - Added new methods in `ProjectHandler` for project retrieval and updates.
+    - Updated `IProjectHandler` and `IProjectService` interfaces to reflect new project update capabilities.
+    - Implemented project status and information updates in `ProjectService` with appropriate role checks.
+    - Modified API routes in `IdentityController` for versioning.
+    - Added new endpoint in `ProjectsController` for updating project information.
+    - Introduced `UpdateProjectInfo` class to structure project update details.
+
+commit 9e488a5e7377fd9ce6969827aad1ccd38de84b9c
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Fri May 8 23:02:09 2026 +0300
+
+    Add Update method for project management
+    
+    Introduced a new `Update` method in the `Projects.Projects.Domain.Models` namespace within `Project.cs`. This method allows for updating project details with validation checks for `managerId`, `statusId`, and `modifiedUser`. It ensures that the `endDate` is not before the `startDate` and returns appropriate success or failure responses based on the validation results.
+
+commit ac5c1c68fc068cdeb5bf3ecc5ad831b9d38dee20
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Fri May 8 22:47:52 2026 +0300
+
+    Enhance project and user management functionality
+    
+    Updated UserLookupDto with IsActive and IsDeleted properties.
+    Added methods for project deletion, retrieval by ID, and status updates in ProjectHandler and related interfaces.
+    Implemented new logic in ProjectService and ProjectsRepository for handling project queries.
+    Modified controllers to align with new API routes and added AutoMapper configurations for project DTOs.
+    Created UpdateProjectStatus class to manage project status updates.
+
+commit 929500487500c8d0bff1b98d67cf9b4e5fcd7500
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Fri May 8 19:11:32 2026 +0300
+
+    Enhance user and project management functionalities
+    
+    - Added `GetUsersByIdsAsync` to `IUserRepository` for bulk user retrieval.
+    - Updated JWT expiration handling in `JwtService` for improved flexibility.
+    - Implemented `GetProjectsAsync` methods across relevant interfaces and services for project retrieval with pagination and filtering.
+    - Introduced `UserLookupService` and `UserLookupDto` for streamlined user data access.
+    - Created `GetProjectsRequest` and `ProjectInfoDto` classes to encapsulate project request parameters and project data structure.
+    - Adjusted JWT validation settings and updated configuration for expiration time.
+
+commit 9749941ceafa89c36026f2500e3514c6a45a8fe6
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Tue May 5 22:16:17 2026 +0300
+
+    Enhance project date validation and error handling
+    
+    - Updated end date validation in Project.cs to allow end date equal to start date.
+    - Added error handling in ProjectService.cs for project creation failures.
+    - Included authorization directive in ProjectsController.cs.
+    - Applied [Authorize] attribute to AddProject method for security.
+
+commit 49c84324df800a15194afb583436e6aa7a5feecf
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Tue May 5 22:03:45 2026 +0300
+
+    Refactor database contexts for identity and projects
+    
+    Replaced `AppDbContext` with `IdentityDbContext` for identity-related entities. Updated repositories and unit of work classes to use the new context. Introduced `ProjectsDbContext` for project-related entities and updated corresponding repositories. Added new migrations for the project schema and modified DTOs and controllers for improved data handling. Adjusted dependency injection in `Program.cs` to reflect the new contexts.
+
+commit 999270a82dc973714161af017cc3c415ef5f3bbc
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Sat May 2 21:44:11 2026 +0300
+
+    Add Projects module with project management features
+    
+    This commit introduces a new "Projects" module, including
+    classes, interfaces, and methods for managing projects.
+    The RequestModels namespace has been updated to include
+    Identity and Projects, improving organization. References
+    to TaskManager.SharedLayer.RequestModels have been
+    modified to focus on identity-related requests.
+    
+    The CurrentUserService interface has been relocated and
+    integrated into the dependency injection setup. The
+    solution file has been updated to include the new
+    Projects project, along with necessary build
+    configuration adjustments.
+    
+    New DTOs such as CreateProjectDto and AddNewUserDTO
+    have been added to facilitate data handling. The
+    ProjectsController has been created to manage HTTP
+    requests related to projects, enhancing the modularity
+    and functionality of the application while maintaining
+    existing identity features.
+
+commit 1b708f064582b891383519dce1beb7f40ac859ba
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Fri May 1 21:42:04 2026 +0300
+
+    Implement user status management features
+    
+    Added methods for deleting and updating user status in `UsersHandlers.cs` and updated the `IUsersHandlers` interface accordingly. Modified `GetUserAsync` to return users directly. Introduced `SetIsActive` and `SetIsDeleted` methods in the `User` class for status management. Enhanced `ResponseModel` to include error handling and added new endpoints in `IdentityController.cs` for user status updates and deletions. Created `SystemEnums` for user types and defined `UpdateUserStatus` and `DomainResponseModel` classes for better response handling.
+
+commit 72c913148def9b1841b255679791c51e5686c6ee
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Thu Apr 30 22:43:34 2026 +0300
+
+    Add user management features and role handling
+    
+    This commit introduces a new user management feature, including methods for adding users and checking role existence. Key changes include:
+    
+    - Added `AddUserAsync` method in `UsersHandlers.cs` for user creation.
+    - Updated `IUsersHandlers` interface to include the new method.
+    - Introduced mapping for `AddNewUserDTO` to `User` in `IdentityProfile.cs`.
+    - Modified `IUserRepository` to include a method for adding users.
+    - Set default values for `IsDeleted` and `IsActive` in `User.cs`, and added a static `Create` method for user instantiation.
+    - Enhanced `ManageUserService` to implement user addition logic with checks for uniqueness and role existence.
+    - Updated `UserRepository` to include a method for adding users to the database.
+    - Registered new `RoleRepository` and `IIdentityMouduleUoW` services in `IdentityModule.cs`.
+    - Modified `IdentityController.cs` to add endpoints for user management.
+    - Introduced `IRoleRepository` and `RoleRepository` for role management functionality.
+    
+    These changes significantly improve user management capabilities in the application.
+
+commit 22ac3c424ddbb6166392dde7a4d735d4e0596db9
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Thu Apr 30 20:17:07 2026 +0300
+
+    Add Unit of Work interface and implementation
+    
+    Introduces the `IIdentityMouduleUoW` interface with a
+    `SaveChangesAsync` method for asynchronous saving.
+    Implements the `IdentityMouduleUoW` class that uses
+    `AppDbContext` to perform save operations.
+
+commit a15b1fd23d4bf83f2e569c14a33509467d5e3dbd
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Tue Apr 28 22:54:44 2026 +0300
+
+    Add user management features and phone number support, started an api for adding a new user(partially finished).
+    
+    - Updated IUserRepository to include CheckUserExistsAsync.
+    - Added phonenumber property to User model.
+    - Introduced AddUser method in IManageUserService.
+    - Implemented AddUser in ManageUserService to check user uniqueness.
+    - Enhanced UserRepository with CheckUserExistsAsync method.
+    - Updated AppDbContextModelSnapshot for schema changes.
+    - Created migration to add phonenumber column and remove LastModifiedUserType.
+    - Added AddNewUserDTO for new user data encapsulation.
+
+commit 4884e0007901cbd981cd6591f59c7ca763cbef2c
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Tue Apr 28 22:13:37 2026 +0300
+
+    Integrate AutoMapper and implement JWT authentication
+    
+    This commit introduces AutoMapper for object mapping and adds new services and handlers for user management. Key changes include:
+    
+    - Updated `LoginHandler` to use `IMapper` and `JwtTokenData` for token generation.
+    - Extended `IUserRepository` with methods for user retrieval by ID and pagination.
+    - Modified `IJwtService` to accept `JwtTokenData` for token generation.
+    - Added `ProfileHandler`, `UsersHandlers`, and their interfaces for user profile and listing functionalities.
+    - Introduced `CurrentUserService` to manage user context and claims.
+    - Created `ManageUserService` for user management operations.
+    - Added new request and response models for user-related operations.
+    - Defined mapping configurations in `IdentityProfile`.
+    - Updated `IdentityController` with new endpoints for user management.
+    - Configured JWT authentication and Swagger documentation in `Program.cs`.
+    - Updated `appsettings.json` with a new JWT key and audience settings.
+    - Updated project files to include necessary package references.
+    
+    These changes enhance user management capabilities and improve code organization.
+
+commit 5fe84ba38e54761220a69306abee5ea36788d3dc
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Mon Apr 20 22:54:37 2026 +0300
+
+    Finished the login api
+
+commit 878bd299074de3cbc5ea329ede8a135afa20b91a
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Mon Apr 20 21:47:42 2026 +0300
+
+    Add project files.
+
+commit 71930e09c6dee8f9bf1873f64026c0987e151901
+Author: Wes021 <122152471+Wes021@users.noreply.github.com>
+Date:   Mon Apr 20 21:47:39 2026 +0300
+
+    Add .gitattributes and .gitignore.

@@ -267,5 +267,32 @@ namespace Tasks.Tasks.Application.Handlers.Handlers
 
             return response;
         }
+
+        public async Task<ResponseModel<bool>> UpdateTask(int taskId, UpdateTaskInfo model)
+        {
+            if (model == null || string.IsNullOrEmpty(model.Title) || string.IsNullOrEmpty(model.Description) || taskId <= 0 || model.DueDate == null)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["InvalidRequest"]
+                };
+
+            var currectUserRole = _currentUserService.Role;
+
+            if (currectUserRole != SystemEnums.UserType.Employee.ToString() && currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString())
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["UserNotAllowed"]
+                };
+
+            var response = await _tasksService.UpdateTask(taskId, model);
+
+            return response;
+
+
+        }
     }
 }

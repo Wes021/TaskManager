@@ -45,6 +45,34 @@ namespace Tasks.Tasks.Domain.Models
         public List<TaskComments> TaskComments { get; private set; } = [];
 
 
+        public GenericDomainResponseModel<Tasks> Update(string title, string description,
+            DateTime dueDate, int? modifiedUser)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+                return GenericDomainResponseModel<Tasks>.Fail("TitleRequired");
+
+            if (string.IsNullOrWhiteSpace(description))
+                return GenericDomainResponseModel<Tasks>.Fail("DescriptionRequired");
+
+
+
+            var task = new Tasks
+            {
+                Title = title,
+                Description = description,
+                DueDate = dueDate,
+
+                ModifiedDate = DateTime.Now,
+                ModifiedUser = modifiedUser,
+                IsDeleted = false,
+                IsActive = true
+
+            };
+
+            return GenericDomainResponseModel<Tasks>.Success(this);
+
+        }
+
 
         public GenericDomainResponseModel<List<int>> AddMembersToTask(
       List<int> userIds,

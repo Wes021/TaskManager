@@ -20,6 +20,7 @@ namespace Tasks.Tasks.Domain.Services.Services
         , IMapper _mapper
         ) : ITasksService
 
+
     {
         public async Task<ResponseModel<bool>> AddMembersToTask(AddMembersToCurrentTask model)
         {
@@ -365,7 +366,7 @@ namespace Tasks.Tasks.Domain.Services.Services
             {
                 Success = true,
                 Data = true,
-                Message = _localizer["TaskUpdatedSuccessfully"]
+                Message = _localizer["TaskStatusUpdatedSuccessfully"]
             };
         }
 
@@ -420,6 +421,53 @@ namespace Tasks.Tasks.Domain.Services.Services
                 Success = true,
                 Message = _localizer["MembersRemovedSuccessfully"]
             };
+        }
+
+        public async Task<ResponseModel<bool>> UpdateTask(int TaskId, UpdateTaskInfo model)
+        {
+
+            var task = await _tasksRepository.GetTaskById(TaskId);
+
+            if (task is null)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["TaskDoesNotExist"]
+                };
+
+
+
+            if (await _tasksRepository.ExistsByTitleForUpdateAsync(TaskId, model))
+
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Message = "TitleAlreadyExists"
+                };
+
+            var result = task.Update(model.Title, model.Description, model.DueDate, _currentUser.UserId);
+
+
+
+            if (!result.Succeeded)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer[result.Error]
+                };
+
+            await _tasksModuleUoW.SaveChangesAsync();
+
+
+            return new ResponseModel<bool>
+            {
+                Success = true,
+                Data = true,
+                Message = _localizer["TaskUpdatedSuccessfully"]
+            };
+
         }
     }
 }

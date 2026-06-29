@@ -28,6 +28,10 @@ namespace Tasks.Tasks.Domain.Services.IServices
         Task<ResponseModel<bool>> RemoveMembersFromTask(RemoveMembersFromCurrentTask model);
 
 
+        Task<ResponseModel<bool>> UpdateTask(int TaskId, UpdateTaskInfo model);
+
+
+
 
     }
 }
