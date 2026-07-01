@@ -1,13 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Module.Identity.Domain.Services.IServices;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using TaskManager.SharedLayer.ResponseModels;
 
 namespace Module.Identity.Domain.Services.Services
@@ -21,9 +17,10 @@ namespace Module.Identity.Domain.Services.Services
 
             new Claim(ClaimTypes.NameIdentifier, userInfoDTO.Id.ToString()),
             new Claim(ClaimTypes.Role, userInfoDTO.Role),
-            
+            new Claim(ClaimTypes.Name, userInfoDTO.FullName)
+
         };
-          
+
 
 
             var key = new SymmetricSecurityKey(

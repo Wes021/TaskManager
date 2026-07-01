@@ -1,11 +1,5 @@
-﻿using Identity.Identity.Domain.Services.IServices;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using TaskManager.SharedLayer.Interfaces;
 
 namespace Identity.Identity.Domain.Services.Services
@@ -40,8 +34,18 @@ namespace Identity.Identity.Domain.Services.Services
         public string? Email =>
             User.FindFirst(ClaimTypes.Email)?.Value;
 
+
+        public string? Name =>
+            User.FindFirst(ClaimTypes.Name)?.Value;
+
+
         public IEnumerable<string> Roles =>
             User.FindAll(ClaimTypes.Role).Select(x => x.Value);
+
+
+
+
+
     }
 }
 

@@ -13,9 +13,19 @@ namespace Tasks.Tasks.Domain.Models
         public int? CreatedUser { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public int? ModifiedUser { get; set; }
-        public bool IsDeleted { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public bool IsActive { get; set; } = true;
 
         private TaskHistory() { }
+
+
+
+        internal TaskHistory(int createdUser, string actionDetails)
+        {
+            CreatedUser = createdUser;
+            ActionDetails = actionDetails;
+            CreatedDate = DateTime.Now;
+
+        }
     }
 }

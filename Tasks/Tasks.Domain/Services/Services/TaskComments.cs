@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Localization;
+using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
 using TaskManager.SharedLayer.RequestModels.Tasks.CommentsModel;
+using TaskManager.SharedLayer.RequestModels.Tasks.TaskHistory;
 using TaskManager.SharedLayer.ResponseModel;
 using Tasks.Tasks.Domain.IRepositories;
 using Tasks.Tasks.Domain.IUnitOfWork;
@@ -14,7 +16,7 @@ namespace Tasks.Tasks.Domain.Services.Services
         IProjectLookupService projectLookupService, ITasksRepository _tasksRepository,
         ICurrentUserService _currentUser, ITaskStatusRepository _taskStatusRepository,
         ITasksModuleUoW _tasksModuleUoW, IUsersTasks _usersTasks, IProjectLookupService _projectLookupService
-        , IMapper _mapper) : ITaskComments
+        , IMapper _mapper, ITaskHistory _taskHistory) : ITaskComments
     {
         public async Task<ResponseModel<bool>> AddNewComment(int TaskId, AddNewComment model)
         {
@@ -56,7 +58,7 @@ namespace Tasks.Tasks.Domain.Services.Services
 
 
             await _tasksModuleUoW.SaveChangesAsync();
-
+            await _taskHistory.AddNewHistory(task.Id, new AddTaskHistoryDTO { actionDetails = $"{SystemEnums.TaskHistoryActions.AddedNewComment}" });
             return new ResponseModel<bool>
             {
                 Success = true,
@@ -117,7 +119,7 @@ namespace Tasks.Tasks.Domain.Services.Services
 
 
             await _tasksModuleUoW.SaveChangesAsync();
-
+            await _taskHistory.AddNewHistory(task.Id, new AddTaskHistoryDTO { actionDetails = $"{SystemEnums.TaskHistoryActions.DeletedAComment}" });
             return new ResponseModel<bool>
             {
                 Success = true,

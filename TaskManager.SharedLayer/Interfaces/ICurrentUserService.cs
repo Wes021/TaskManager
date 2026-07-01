@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TaskManager.SharedLayer.Interfaces
+﻿namespace TaskManager.SharedLayer.Interfaces
 {
     public interface ICurrentUserService
     {
@@ -13,6 +7,8 @@ namespace TaskManager.SharedLayer.Interfaces
         int UserId { get; }
 
         string UserName { get; }
+
+        string Name { get; }
 
         string Role { get; }
 

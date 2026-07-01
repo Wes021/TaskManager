@@ -1,4 +1,4 @@
-﻿using TaskManager.SharedLayer.RequestModels.TaskHistory;
+﻿using TaskManager.SharedLayer.RequestModels.Tasks.TaskHistory;
 using TaskManager.SharedLayer.ResponseModel;
 
 namespace Tasks.Tasks.Domain.Services.IServices

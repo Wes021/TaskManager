@@ -46,6 +46,27 @@ namespace Tasks.Tasks.Domain.Models
         public List<TaskHistory> TaskHistory { get; private set; } = [];
 
 
+
+        public GenericDomainResponseModel<bool> AddNewHistory(int createdUser, string actionDetails)
+        {
+            if (string.IsNullOrWhiteSpace(actionDetails))
+                return GenericDomainResponseModel<bool>.Fail("ActionRequired");
+
+            if (createdUser <= 0)
+                return GenericDomainResponseModel<bool>.Fail("UserIdInvalid");
+
+            TaskHistory.Add(new TaskHistory(createdUser, actionDetails));
+
+
+            return new GenericDomainResponseModel<bool>
+            {
+                Succeeded = true
+
+            };
+
+        }
+
+
         public GenericDomainResponseModel<Tasks> Update(string title, string description,
             DateTime dueDate, int? modifiedUser)
         {
@@ -130,8 +151,7 @@ namespace Tasks.Tasks.Domain.Models
 
             return new GenericDomainResponseModel<bool>
             {
-                Succeeded = true,
-                Error = "CommentAddedSuccessfully"
+                Succeeded = true
 
             };
         }
@@ -183,7 +203,7 @@ namespace Tasks.Tasks.Domain.Models
             return new GenericDomainResponseModel<List<int>>
             {
                 Succeeded = true,
-                Error = "AttachemnetsAddedSuccseefully"
+
 
             };
         }

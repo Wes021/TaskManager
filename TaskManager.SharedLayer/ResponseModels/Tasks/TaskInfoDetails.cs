@@ -1,4 +1,6 @@
-﻿namespace TaskManager.SharedLayer.ResponseModels.Tasks
+﻿using TaskManager.SharedLayer.RequestModels.Tasks.TaskHistory;
+
+namespace TaskManager.SharedLayer.ResponseModels.Tasks
 {
     public class TaskInfoDetails
     {
@@ -28,5 +30,7 @@
         public List<TaskMembersDto> TaskMembers { get; set; }
 
         public List<TaskCommentsDto> TaskComments { get; set; }
+
+        public List<TaskHistoryDTO> TaskHistory { get; set; }
     }
 }

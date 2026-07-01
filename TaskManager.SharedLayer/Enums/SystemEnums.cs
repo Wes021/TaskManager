@@ -27,8 +27,18 @@
             Completed = 3,
             Reopen = 4,
             Cancelled = 5
+        }
 
-
+        public enum TaskHistoryActions
+        {
+            CreatedNewTask,
+            UpdatedTheTask,
+            AddedNewMembers,
+            RemovedMember,
+            UpdatedTheStatus,
+            DeletedTheTask,
+            AddedNewComment,
+            DeletedAComment
         }
     }
 }

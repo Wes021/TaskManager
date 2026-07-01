@@ -18,7 +18,7 @@ namespace Tasks.Tasks.Infrastructure.Repositories
             await _context.TaskHistory.AddAsync(entity);
 
             return entity;
-            throw new NotImplementedException();
+
         }
     }
 }

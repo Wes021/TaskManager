@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Localization;
+using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
 using TaskManager.SharedLayer.RequestModels.Tasks.MembersModel;
+using TaskManager.SharedLayer.RequestModels.Tasks.TaskHistory;
 using TaskManager.SharedLayer.RequestModels.Tasks.TasksModels;
 using TaskManager.SharedLayer.ResponseModel;
 using TaskManager.SharedLayer.ResponseModels;
@@ -18,7 +20,7 @@ namespace Tasks.Tasks.Domain.Services.Services
         IProjectLookupService projectLookupService, ITasksRepository _tasksRepository,
         ICurrentUserService _currentUser, ITaskStatusRepository _taskStatusRepository,
         ITasksModuleUoW _tasksModuleUoW, IUsersTasks _usersTasks, IProjectLookupService _projectLookupService
-        , IMapper _mapper
+        , IMapper _mapper, ITaskHistory _taskHistory
         ) : ITasksService
 
 
@@ -66,8 +68,15 @@ namespace Tasks.Tasks.Domain.Services.Services
             }
 
 
-
+            model.MembersModels.MemberIds.ToString();
             await _tasksModuleUoW.SaveChangesAsync();
+
+            await _taskHistory.AddNewHistory(
+    task.Id,
+    new AddTaskHistoryDTO
+    {
+        actionDetails = $"{SystemEnums.TaskHistoryActions.AddedNewMembers}"
+    });
 
             return new ResponseModel<bool>
             {
@@ -171,6 +180,8 @@ namespace Tasks.Tasks.Domain.Services.Services
 
             await _tasksModuleUoW.SaveChangesAsync();
 
+            await _taskHistory.AddNewHistory(newTask.Id, new AddTaskHistoryDTO { actionDetails = $"{SystemEnums.TaskHistoryActions.AddedNewMembers}" });
+
             return new ResponseModel<bool>
             {
                 Success = true,
@@ -223,7 +234,7 @@ namespace Tasks.Tasks.Domain.Services.Services
                 };
 
             await _tasksModuleUoW.SaveChangesAsync();
-
+            await _taskHistory.AddNewHistory(task.Id, new AddTaskHistoryDTO { actionDetails = $"{SystemEnums.TaskHistoryActions.DeletedTheTask}" });
             return new ResponseModel<bool>
             {
                 Success = true,
@@ -254,6 +265,32 @@ namespace Tasks.Tasks.Domain.Services.Services
             MappedData.ProjectName = projects.Data.Name;
             MappedData.TaskMembers = _mapper.Map<List<TaskMembersDto>>(await userLookupService.GetUsersByIdsAsync(TaskDetails.Members.Select(x => x.UserId).ToList()));
             MappedData.TaskComments = _mapper.Map<List<TaskCommentsDto>>(TaskDetails.TaskComments);
+            var userIds = TaskDetails.TaskHistory
+    .Where(x => x.CreatedUser.HasValue)
+    .Select(x => x.CreatedUser.Value)
+    .Distinct()
+    .ToList();
+
+
+            var users = await userLookupService.GetUsersByIdsAsync(userIds);
+
+
+            var usersDictionary = users
+                .ToDictionary(x => x.Id, x => x.FullName);
+
+
+            MappedData.TaskHistory = TaskDetails.TaskHistory
+                .Select(x => new TaskHistoryDTO
+                {
+                    FullName = x.CreatedUser.HasValue &&
+                               usersDictionary.ContainsKey(x.CreatedUser.Value)
+                        ? usersDictionary[x.CreatedUser.Value]
+                        : null,
+
+                    ActionDetails = x.ActionDetails
+                })
+                .ToList();
+
 
 
             return new ResponseModel<TaskInfoDetails>
@@ -362,7 +399,7 @@ namespace Tasks.Tasks.Domain.Services.Services
                 };
 
             await _tasksModuleUoW.SaveChangesAsync();
-
+            await _taskHistory.AddNewHistory(task.Id, new AddTaskHistoryDTO { actionDetails = $"{SystemEnums.TaskHistoryActions.UpdatedTheStatus}" });
             return new ResponseModel<bool>
             {
                 Success = true,
@@ -416,7 +453,7 @@ namespace Tasks.Tasks.Domain.Services.Services
 
 
             await _tasksModuleUoW.SaveChangesAsync();
-
+            await _taskHistory.AddNewHistory(task.Id, new AddTaskHistoryDTO { actionDetails = $"{SystemEnums.TaskHistoryActions.RemovedMember}" });
             return new ResponseModel<bool>
             {
                 Success = true,
@@ -460,7 +497,7 @@ namespace Tasks.Tasks.Domain.Services.Services
                 };
 
             await _tasksModuleUoW.SaveChangesAsync();
-
+            await _taskHistory.AddNewHistory(task.Id, new AddTaskHistoryDTO { actionDetails = $"{SystemEnums.TaskHistoryActions.UpdatedTheTask}" });
 
             return new ResponseModel<bool>
             {

@@ -23,12 +23,14 @@ namespace Projects
             services.AddScoped<ITaskStatusRepository, TaskStatusRepository>();
             services.AddScoped<ITasksModuleUoW, TasksModuleUoW>();
             services.AddScoped<IUsersTasks, UsersTasks>();
+            services.AddScoped<ITasksHistoryRepository, TaskHistoryRepository>();
 
 
 
             //Serives
             services.AddScoped<ITasksService, TasksService>();
             services.AddScoped<ITaskComments, TaskComments>();
+            services.AddScoped<ITaskHistory, TaskHistory>();
 
 
             //Handlers

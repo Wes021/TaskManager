@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using TaskManager.SharedLayer.RequestModels.Identity;
+using TaskManager.SharedLayer.RequestModels.Tasks.TaskHistory;
 using TaskManager.SharedLayer.ResponseModels.Tasks;
 using Tasks.Tasks.Domain.Models;
 
@@ -22,6 +23,8 @@ namespace Tasks.Tasks.Application.MappingProfiles
             CreateMap<UserLookupDto, TaskMembersDto>();
 
             CreateMap<TaskComments, TaskCommentsDto>();
+
+            CreateMap<TaskHistory, TaskHistoryDTO>();
 
         }
 
