@@ -464,7 +464,7 @@ namespace Tasks.Tasks.Domain.Services.Services
         public async Task<ResponseModel<bool>> UpdateTask(int TaskId, UpdateTaskInfo model)
         {
 
-            var task = await _tasksRepository.GetTaskById(TaskId);
+            var task = await _tasksRepository.GetTaskById(TaskId, null, true);
 
             if (task is null)
                 return new ResponseModel<bool>

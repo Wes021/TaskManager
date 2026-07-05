@@ -67,8 +67,11 @@ namespace Tasks.Tasks.Domain.Models
         }
 
 
-        public GenericDomainResponseModel<Tasks> Update(string title, string description,
-            DateTime dueDate, int? modifiedUser)
+        public GenericDomainResponseModel<Tasks> Update(
+      string title,
+      string description,
+      DateTime dueDate,
+      int? modifiedUser)
         {
             if (string.IsNullOrWhiteSpace(title))
                 return GenericDomainResponseModel<Tasks>.Fail("TitleRequired");
@@ -76,23 +79,14 @@ namespace Tasks.Tasks.Domain.Models
             if (string.IsNullOrWhiteSpace(description))
                 return GenericDomainResponseModel<Tasks>.Fail("DescriptionRequired");
 
+            Title = title;
+            Description = description;
+            DueDate = dueDate;
 
-
-            var task = new Tasks
-            {
-                Title = title,
-                Description = description,
-                DueDate = dueDate,
-
-                ModifiedDate = DateTime.Now,
-                ModifiedUser = modifiedUser,
-                IsDeleted = false,
-                IsActive = true
-
-            };
+            ModifiedDate = DateTime.UtcNow;
+            ModifiedUser = modifiedUser;
 
             return GenericDomainResponseModel<Tasks>.Success(this);
-
         }
 
 
