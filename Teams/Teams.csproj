@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Teams.Application\Handlers\" />
+    <Folder Include="Teams.Application\MappingProfiles\" />
+    <Folder Include="Teams.Domain\IRepository\" />
+    <Folder Include="Teams.Domain\IUnitOfWork\" />
+    <Folder Include="Teams.Domain\Models\" />
+    <Folder Include="Teams.Domain\Services\" />
+    <Folder Include="Teams.Infrastructure\Configuration\" />
+    <Folder Include="Teams.Infrastructure\UnitOfWork\" />
+    <Folder Include="Teams.Infrastructure\Repositories\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>
