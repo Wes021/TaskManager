@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Localization;
 using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
@@ -13,7 +14,7 @@ using Tasks.Tasks.Domain.Services.IServices;
 namespace Tasks.Tasks.Application.Handlers.Handlers
 {
     public class TasksHandler(ICurrentUserService _currentUserService, IStringLocalizer<SharedResource> _localizer,
-        IFileManager _fileManager, ITasksService _tasksService
+        IFileManager _fileManager, ITasksService _tasksService, IConfiguration _configuration
         ) : ITasksHandler
     {
         public async Task<ResponseModel<bool>> AddMembersToTask(AddMembersToCurrentTask model)
@@ -51,13 +52,13 @@ namespace Tasks.Tasks.Application.Handlers.Handlers
                     Message = _localizer["InvalidRequest"]
                 };
 
+            var minMembers = _configuration.GetValue<int>("TaskSettings:MinimumMembers");
 
-            if (model.MembersModel.MemberIds.Count < 1 && model.TaskStatus != 2)
+            if (model.MembersModel.MemberIds.Count < minMembers && model.TaskStatus != (int)SystemEnums.TaskStatuseEnums.Active)
             {
                 return new ResponseModel<bool>
                 {
                     Success = false,
-
                     Message = _localizer["AtLeastOneMemberMustBeAddedToTask"]
                 };
             }
@@ -76,11 +77,11 @@ namespace Tasks.Tasks.Application.Handlers.Handlers
 
 
             var FilesResponse = new ResponseModel<List<FileHandlerResponse>>();
-
+            var MaxFiles = _configuration.GetValue<int>("FileStorageSettings:MaxAllowedFiles");
             if (model.Files?.Any() == true)
             {
 
-                if (model.Files.Count > 3)
+                if (model.Files.Count > MaxFiles)
                 {
                     return new ResponseModel<bool>
                     {

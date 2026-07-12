@@ -247,6 +247,9 @@ namespace Tasks.Tasks.Domain.Services.Services
         {
             var TaskDetails = await _tasksRepository.GetTaskById(TaskId);
 
+
+
+
             if (TaskDetails == null)
             {
                 return new ResponseModel<TaskInfoDetails>
@@ -256,6 +259,19 @@ namespace Tasks.Tasks.Domain.Services.Services
                     Message = _localizer["NoTaskWasFound"]
                 };
             }
+
+
+
+            if (!(TaskDetails.Members.Any(m => m.IsDeleted == false && m.UserId == _currentUser.UserId)))
+            {
+                return new ResponseModel<TaskInfoDetails>
+                {
+                    Success = true,
+
+                    Message = _localizer["NoTaskWasFound"]
+                };
+            }
+
 
 
             var projects = await _projectLookupService

@@ -155,6 +155,15 @@ namespace Projects.Projects.Domain.Services.Services
                 };
             }
 
+            if (!(project.Members.Any(m => m.IsDeleted == false && m.UserId == _currentUserService.UserId)))
+            {
+                return new ResponseModel<ProjectInfoDto>
+                {
+                    Success = false,
+                    Message = _localizer["ProjectNotFound"]
+                };
+            }
+
             var managerTask = await
                 _userLookupService.GetUserByIdAsync(project.ManagerId);
 

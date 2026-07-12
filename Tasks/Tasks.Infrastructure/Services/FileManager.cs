@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.ResponseModel;
 using TaskManager.SharedLayer.ResponseModels.Tasks;
@@ -9,14 +10,14 @@ namespace Tasks.Tasks.Infrastructure.Services
     public class FileManager : IFileManager
     {
         private readonly IWebHostEnvironment _environment;
-
+        private readonly IConfiguration _configuration;
         public FileManager(IWebHostEnvironment environment)
         {
             _environment = environment ?? throw new ArgumentNullException(nameof(environment));
         }
         public ResponseModel<List<FileHandlerResponse>> FileHandlerService(List<IFormFile> model)
         {
-            var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+            var uploadFolder = _configuration["FileStorage:UploadFolder"];
 
             if (!Directory.Exists(uploadFolder))
                 Directory.CreateDirectory(uploadFolder);
@@ -25,9 +26,12 @@ namespace Tasks.Tasks.Infrastructure.Services
 
             foreach (var file in model)
             {
-                const long MaxFileSize = 5 * 1024 * 1024;
+                var maxFileSizeMB = _configuration.GetValue<int>(
+    "FileStorage:MaxFileSizeMB");
 
-                if (file.Length > MaxFileSize)
+                var maxFileSize = maxFileSizeMB * 1024 * 1024;
+
+                if (file.Length > maxFileSize)
 
                     return new ResponseModel<List<FileHandlerResponse>>
                     {
@@ -37,7 +41,9 @@ namespace Tasks.Tasks.Infrastructure.Services
 
                     };
 
-                var allowedExtensions = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
+                var allowedExtensions = _configuration
+    .GetSection("FileStorage:AllowedExtensions")
+    .Get<string[]>();
 
                 var extension = Path.GetExtension(file.FileName)
                     .ToLowerInvariant();
@@ -63,12 +69,11 @@ namespace Tasks.Tasks.Infrastructure.Services
                 var newFileName = $"{Guid.NewGuid()}{extension}";
 
                 var relativePath = Path.Combine(
-                    _environment.WebRootPath,
-                    "Uploads",
-                    newFileName);
+    uploadFolder,
+    newFileName);
 
                 var physicalPath = Path.Combine(
-                    Directory.GetCurrentDirectory(),
+                    _environment.ContentRootPath,
                     relativePath);
 
                 using (var stream = new FileStream(physicalPath, FileMode.Create))
