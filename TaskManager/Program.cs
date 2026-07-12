@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Middleware;
-using Tasks.Tasks.Domain.Services.Services; // Add this using directive
+using Tasks.Tasks.Infrastructure.Services;
 
 
 namespace TaskManager

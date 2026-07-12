@@ -1,13 +1,19 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.ResponseModel;
 using TaskManager.SharedLayer.ResponseModels.Tasks;
 
-namespace Tasks.Tasks.Domain.Services.Services
+namespace Tasks.Tasks.Infrastructure.Services
 {
     public class FileManager : IFileManager
     {
+        private readonly IWebHostEnvironment _environment;
 
+        public FileManager(IWebHostEnvironment environment)
+        {
+            _environment = environment ?? throw new ArgumentNullException(nameof(environment));
+        }
         public ResponseModel<List<FileHandlerResponse>> FileHandlerService(List<IFormFile> model)
         {
             var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
@@ -55,7 +61,11 @@ namespace Tasks.Tasks.Domain.Services.Services
                     };
 
                 var newFileName = $"{Guid.NewGuid()}{extension}";
-                var relativePath = Path.Combine("Uploads", newFileName);
+
+                var relativePath = Path.Combine(
+                    _environment.WebRootPath,
+                    "Uploads",
+                    newFileName);
 
                 var physicalPath = Path.Combine(
                     Directory.GetCurrentDirectory(),
@@ -83,8 +93,5 @@ namespace Tasks.Tasks.Domain.Services.Services
 
             };
         }
-
-
-
     }
 }
