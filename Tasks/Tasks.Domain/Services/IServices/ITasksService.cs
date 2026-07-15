@@ -32,6 +32,8 @@ namespace Tasks.Tasks.Domain.Services.IServices
         Task<ResponseModel<bool>> UpdateTask(int TaskId, UpdateTaskInfo model);
 
 
+        Task<ResponseModel<bool>> DeleteTasksByProjectId(int ProjectId);
+
 
 
     }

@@ -523,5 +523,11 @@ namespace Tasks.Tasks.Domain.Services.Services
             };
 
         }
+
+        public Task<ResponseModel<bool>> DeleteTasksByProjectId(int ProjectId)
+        {
+
+            throw new NotImplementedException();
+        }
     }
 }

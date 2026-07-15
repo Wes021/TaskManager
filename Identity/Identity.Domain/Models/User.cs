@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
-using TaskManager.SharedLayer.Interfaces;
+﻿using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.ResponseModels;
 
 namespace Identity.Identity.Domain.Models
@@ -25,6 +18,7 @@ namespace Identity.Identity.Domain.Models
         public int RoleId { get; set; }
         public Role Role { get; set; }
 
+        public List<GeneratedOTP> GeneratedOTP { get; private set; } = [];
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public int? CreatedUser { get; set; }
@@ -32,6 +26,54 @@ namespace Identity.Identity.Domain.Models
         public int? ModifiedUser { get; set; }
 
         private User() { }
+
+
+
+        public GenericDomainResponseModel<bool> AddNewOtp(int userId, string hashedOtp, int createdUser, DateTime expiresAt)
+        {
+            if (string.IsNullOrWhiteSpace(hashedOtp))
+            {
+                return new GenericDomainResponseModel<bool>
+                {
+                    Succeeded = false,
+                    Error = "CommentTextRequired"
+                };
+            }
+
+
+            if (userId <= 0)
+            {
+                return new GenericDomainResponseModel<bool>
+                {
+                    Succeeded = false,
+                    Error = "CommentTextRequired"
+                };
+            }
+
+            if (createdUser <= 0)
+            {
+                return new GenericDomainResponseModel<bool>
+                {
+                    Succeeded = false,
+                    Error = "CommentTextRequired"
+                };
+            }
+
+            GeneratedOTP.Add(new GeneratedOTP(userId, hashedOtp, createdUser, expiresAt));
+
+            return new GenericDomainResponseModel<bool>
+            {
+                Succeeded = true
+
+            };
+
+        }
+
+
+
+
+
+
 
 
         public static User Create(string userName, string email, string password, string fullName, int roleId, int createdUser, string phonenumber)
@@ -46,7 +88,7 @@ namespace Identity.Identity.Domain.Models
                 phonenumber = phonenumber.Trim().Replace(" ", ""),
                 CreatedUser = createdUser,
                 CreatedDate = DateTime.Now,
-                
+
 
             };
         }
@@ -92,12 +134,22 @@ namespace Identity.Identity.Domain.Models
         public bool CanLogin()
        => !IsDeleted && IsActive;
 
+        public bool IsAccountDeleted()
+       => !IsDeleted;
+
+
+        public bool IsAccountActive()
+       => IsActive;
+
+
+
+
         public bool HasRole()
             => Role != null;
 
 
 
-   
+
 
 
 

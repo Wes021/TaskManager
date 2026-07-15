@@ -3,11 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Module.Identity.Domain.IRepositories;
 
 using Module.Identity.Infrastructure.DbSettings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaskManager.SharedLayer.RequestModels.Identity;
 using TaskManager.SharedLayer.ResponseModels;
 
@@ -32,7 +27,20 @@ namespace Module.Identity.Infrastructure.Repositories
         {
             return await _context.Users
         .AsNoTracking()
-        .AnyAsync(x => x.UserName == request.UserName || x.Email == request.Email || x.phonenumber == request.phonenumber );
+        .AnyAsync(x => x.UserName == request.UserName || x.Email == request.Email || x.phonenumber == request.phonenumber);
+        }
+
+        public async Task<User?> GetByEmail(string email, Func<IQueryable<User>, IQueryable<User>>? include = null, bool isTracked = true)
+        {
+            IQueryable<User> query = _context.Users;
+
+            if (!isTracked)
+                query = query.AsNoTracking();
+
+            if (include != null)
+                query = include(query);
+
+            return await query.FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<User?> GetById(int Id, Func<IQueryable<User>, IQueryable<User>>? include = null, bool isTracked = true)
