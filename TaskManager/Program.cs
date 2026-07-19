@@ -2,8 +2,10 @@ using Identity.Identity.Domain.Services.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Projects.Projects.Domain.Services.Services;
+using Resend;
 using System.Security.Claims;
 using System.Text;
+using TaskManager.SharedLayer.Immplementaion;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Middleware;
 using Tasks.Tasks.Infrastructure.Services;
@@ -17,6 +19,11 @@ namespace TaskManager
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            builder.Services.AddResend(options =>
+            {
+                options.ApiToken = builder.Configuration["ResendEmaillAPI:ApiKey"]!;
+            });
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -27,6 +34,9 @@ namespace TaskManager
             builder.Services.AddScoped<IProjectLookupService, ProjectLookupService>();
             builder.Services.AddScoped<IFileManager, FileManager>();
 
+            builder.Services.AddHttpClient<ResendClient>();
+            builder.Services.AddTransient<IResend, ResendClient>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>

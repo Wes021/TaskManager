@@ -26,16 +26,20 @@ namespace Identity.Identity.Domain.Models
         private GeneratedOTP() { }
 
 
-        internal GeneratedOTP(int userId, string hashedOtp, int createdUser, DateTime expiresAt)
+        public static GeneratedOTP Create(int userId, string hashedOtp, int createdUser, DateTime expiresAt)
         {
-            UserId = userId;
-            HashedOTP = hashedOtp;
-            Attempts = 0;
-            CreatedDate = DateTime.Now;
-            CreatedUser = createdUser;
-            IsDeleted = false;
-            IsActive = false;
-            ExpiresAt = expiresAt;
+            return new GeneratedOTP
+            {
+                UserId = userId,
+                HashedOTP = hashedOtp,
+                Attempts = 0,
+                CreatedDate = DateTime.Now,
+                CreatedUser = createdUser,
+                IsDeleted = false,
+                IsActive = false,
+                ExpiresAt = expiresAt
+            };
+
 
         }
 

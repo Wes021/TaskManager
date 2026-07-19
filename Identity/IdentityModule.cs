@@ -14,11 +14,6 @@ using Module.Identity.Domain.Services.IServices;
 using Module.Identity.Domain.Services.Services;
 using Module.Identity.Infrastructure.DbSettings;
 using Module.Identity.Infrastructure.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaskManager.SharedLayer.Interfaces;
 
 namespace Identity
@@ -31,14 +26,17 @@ namespace Identity
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IIdentityMouduleUoW, IdentityMouduleUoW>();
-            
+            services.AddScoped<IGeneratedOTPRepository, GeneratedOTPRepository>();
+
 
             //Serives
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IJwtService, JwtService>();
-           // services.AddScoped<ICurrentUserService, CurrentUserService>();
+            // services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IManageUserService, ManageUserService>();
             services.AddScoped<IUserLookupService, UserLookupService>();
+            services.AddScoped<IGenerateOtpService, GenerateOtpService>();
+            services.AddScoped<IOtpService, OtpService>();
 
             //Handlers
             services.AddScoped<ILoginHandler, LoginHandler>();
