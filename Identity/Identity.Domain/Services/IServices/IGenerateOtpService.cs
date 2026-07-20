@@ -1,5 +1,6 @@
 ﻿using TaskManager.SharedLayer.RequestModels.Identity;
 using TaskManager.SharedLayer.ResponseModel;
+using TaskManager.SharedLayer.ResponseModels;
 
 namespace Identity.Identity.Domain.Services.IServices
 {
@@ -8,7 +9,7 @@ namespace Identity.Identity.Domain.Services.IServices
         Task<ResponseModel<bool>> GenerateNewOtp(SendNewOtpDto model);
 
 
-        Task<ResponseModel<bool>> ValidateOtp(SendNewOtpDto model);
+        Task<ResponseModel<OtpResponseDto>> ValidateOtp(ValidateOTPDto model);
 
 
     }

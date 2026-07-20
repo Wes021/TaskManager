@@ -42,6 +42,7 @@ namespace Identity
             services.AddScoped<ILoginHandler, LoginHandler>();
             services.AddScoped<IProfileHandler, ProfileHandler>();
             services.AddScoped<IUsersHandlers, UsersHandlers>();
+            services.AddScoped<IOTPHandler, OTPHandler>();
 
 
             services.AddDbContext<IdentityDbContext>(options =>

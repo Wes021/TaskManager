@@ -5,11 +5,13 @@ using Identity.Identity.Domain.Services.IServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Module.Identity.Domain.IRepositories;
+using Module.Identity.Domain.Services.IServices;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
 using TaskManager.SharedLayer.RequestModels;
 using TaskManager.SharedLayer.RequestModels.Identity;
 using TaskManager.SharedLayer.ResponseModel;
+using TaskManager.SharedLayer.ResponseModels;
 
 
 namespace Identity.Identity.Domain.Services.Services
@@ -17,7 +19,7 @@ namespace Identity.Identity.Domain.Services.Services
     public class GenerateOtpService(IIdentityMouduleUoW _UoW, IEmailService _emailService,
         IGeneratedOTPRepository _generatedOTPRepository, IUserRepository _userRepository,
         IStringLocalizer<SharedResource> _localizer, IOtpService _otpService, IConfiguration _configuration,
-        ICurrentUserService _currentUserService) : IGenerateOtpService
+        ICurrentUserService _currentUserService, IJwtService _jwtService) : IGenerateOtpService
 
     {
 
@@ -47,6 +49,7 @@ namespace Identity.Identity.Domain.Services.Services
             var NewOtp = GeneratedOTP.Create(user.Id, HashedOTP.Data, user.Id, DateTime.Now.AddSeconds(_configuration.GetValue<int>("OtpSettings:OtpExpireInSecounds")));
 
             await _generatedOTPRepository.Add(NewOtp);
+
             await _UoW.SaveChangesAsync();
 
             var EmailResponse = await _emailService.SendEmail(new SendEmailRequest
@@ -64,7 +67,7 @@ namespace Identity.Identity.Domain.Services.Services
             if (!EmailResponse.Success)
                 return new ResponseModel<bool>
                 {
-                    Success = true,
+                    Success = false,
                     Message = _localizer["EmailFaildToSend"]
                 };
 
@@ -76,9 +79,46 @@ namespace Identity.Identity.Domain.Services.Services
             };
         }
 
-        public Task<ResponseModel<bool>> ValidateOtp(SendNewOtpDto model)
+        public async Task<ResponseModel<OtpResponseDto>> ValidateOtp(ValidateOTPDto model)
         {
-            throw new NotImplementedException();
+            var user = await _userRepository.GetByEmail(model.Email, null, false);
+
+            if (user is null)
+                return new ResponseModel<OtpResponseDto> { Success = false, Message = _localizer["UserNotFound"] };
+
+            if (!user.IsAccountDeleted())
+                return new ResponseModel<OtpResponseDto> { Success = false, Message = _localizer["SomthingWentWrong"] };
+
+            if (!user.IsAccountActive())
+                return new ResponseModel<OtpResponseDto> { Success = false, Message = _localizer["YourActounIsNotActive"] };
+
+            var HashedOtp = await _generatedOTPRepository.GetGeneratedOTPAsync(new GetOtpSearchDto { UserId = user.Id });
+
+            if (HashedOtp is null)
+                return new ResponseModel<OtpResponseDto> { Success = false, Message = _localizer["OtpIsWrongPleaseCheckAgainOrTryAgainLater"] };
+
+            var verificatonResult = await _otpService.VerifyOtp(model.OTP, HashedOtp.HashedOTP);
+
+            if (!verificatonResult.Data)
+            {
+
+                HashedOtp.Attempts++;
+                return new ResponseModel<OtpResponseDto> { Success = false, Message = _localizer["OtpIsWrongPleaseCheckAgainOrTryAgainLater"] };
+
+
+            }
+
+            HashedOtp.Attempts++;
+            HashedOtp.IsDeleted = true;
+            HashedOtp.IsActive = false;
+
+
+
+            return new ResponseModel<OtpResponseDto> { Data = new OtpResponseDto { resetToken = _jwtService.GenerateResetPasswordToken(user.Id) }, Success = true };
+
+
         }
+
+
     }
 }

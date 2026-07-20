@@ -10,6 +10,31 @@ namespace Module.Identity.Domain.Services.Services
 {
     public class JwtService(IConfiguration _config) : IJwtService
     {
+        public string GenerateResetPasswordToken(int userId)
+        {
+            var key = new SymmetricSecurityKey(
+      Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+
+            var credentials = new SigningCredentials(
+                key,
+                SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+        new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+        new Claim("purpose", "PasswordReset")
+    };
+
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(10),
+                signingCredentials: credentials);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
         public string GenerateToken(JwtTokenData userInfoDTO)
         {
             var claims = new List<Claim>

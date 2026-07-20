@@ -83,7 +83,7 @@ namespace TaskManager.Controllers
         }
 
 
-        [HttpPost("/api/v1/SendOtpTestAPI")]
+        [HttpPost("api/v1/auth/forgot-password/send-otp")]
         public async Task<IActionResult> SendOTPTest(SendNewOtpDto model)
         {
             var result = await _generateOtpService.GenerateNewOtp(model);

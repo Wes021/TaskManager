@@ -46,7 +46,7 @@ namespace Identity.Identity.Domain.Services.Services
 
         }
 
-        public async Task<ResponseModel<bool>> Verify(string OTP, string hashOtp)
+        public async Task<ResponseModel<bool>> VerifyOtp(string OTP, string hashOtp)
         {
             var computedHash = await OtpHasher(OTP);
 
@@ -57,8 +57,8 @@ namespace Identity.Identity.Domain.Services.Services
 
             return new ResponseModel<bool>
             {
-                Data = result,
-                Success = true
+                Data = result
+
             };
         }
     }

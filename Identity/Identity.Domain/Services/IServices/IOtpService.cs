@@ -13,6 +13,6 @@ namespace Identity.Identity.Domain.Services.IServices
         Task<ResponseModel<string>> OtpHasher(string otp);
 
 
-        Task<ResponseModel<bool>> Verify(string OTP, string hashOtp);
+        Task<ResponseModel<bool>> VerifyOtp(string OTP, string hashOtp);
     }
 }
