@@ -23,17 +23,12 @@ namespace Identity.Identity.Infrastructure.Repositories
             return entity;
         }
 
-        public async Task<GeneratedOTP?> GetGeneratedOTPAsync(GetOtpSearchDto model, Func<IQueryable<GeneratedOTP>, IQueryable<GeneratedOTP>>? include = null, bool isTracked = true)
+        public async Task<GeneratedOTP?> GetGeneratedOTPAsync(GetOtpSearchDto model)
         {
             IQueryable<GeneratedOTP> query = _context.GeneratedOTP;
 
-            if (!isTracked)
-                query = query.AsNoTracking();
 
-            if (include != null)
-                query = include(query);
-
-            return await query.FirstOrDefaultAsync(x => x.UserId == model.UserId && x.IsActive && !x.IsDeleted && x.Attempts == _configuration.GetValue<int>("OtpSettings:MaxAlowedAttempts") && x.ExpiresAt <= DateTime.Now.AddSeconds(_configuration.GetValue<int>("OtpSettings:OtpExpireInSecounds")));
+            return await query.FirstOrDefaultAsync(x => x.UserId == model.UserId && x.IsActive && !x.IsDeleted && x.Attempts < _configuration.GetValue<int>("OtpSettings:MaxAlowedAttempts") && x.ExpiresAt <= DateTime.Now.AddSeconds(_configuration.GetValue<int>("OtpSettings:OtpExpireInSecounds")));
 
 
         }

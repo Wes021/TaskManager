@@ -36,7 +36,7 @@ namespace Identity.Identity.Domain.Models
                 CreatedDate = DateTime.Now,
                 CreatedUser = createdUser,
                 IsDeleted = false,
-                IsActive = false,
+                IsActive = true,
                 ExpiresAt = expiresAt
             };
 

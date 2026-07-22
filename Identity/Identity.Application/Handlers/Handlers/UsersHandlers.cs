@@ -1,13 +1,7 @@
 ﻿using Identity.Identity.Application.Handlers.IHandlers;
 using Identity.Identity.Domain.Services.IServices;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Module.Identity.Domain.IRepositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaskManager.SharedLayer.Localizer;
 using TaskManager.SharedLayer.RequestModels.Identity;
 using TaskManager.SharedLayer.ResponseModel;
@@ -36,7 +30,7 @@ namespace Identity.Identity.Application.Handlers.Handlers
             var users = await _userService.DeleteUser(Id, model);
 
             return users;
-            
+
         }
 
         public async Task<ResponseModel<PagedResult<UserInfoDTO>>> GetUserAsync(GetUsersRequest model)
@@ -44,6 +38,12 @@ namespace Identity.Identity.Application.Handlers.Handlers
             var users = await _userService.GetUsers(model);
 
             return users;
+        }
+
+        public Task<ResponseModel<bool>> UpdateUserPassword(UpdateUserPassword model)
+        {
+            if (model.)
+                throw new NotImplementedException();
         }
 
         public async Task<ResponseModel<bool>> UpdateUserStatusAsync(int Id, UpdateUserStatus model)

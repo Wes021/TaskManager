@@ -132,6 +132,40 @@ namespace Identity.Identity.Domain.Models
             return DomainResponseModel.Success();
         }
 
+
+
+        public DomainResponseModel SetNewPassword(string newPassword, int modifiedUser)
+        {
+            if (IsDeleted == true)
+                return DomainResponseModel.Fail("CantMakeChangesForNonExistingAccount");
+
+            if (IsActive == false)
+                return DomainResponseModel.Fail("CantMakeChangesForDisabledAccount");
+
+            if (string.IsNullOrEmpty(newPassword))
+                return DomainResponseModel.Fail("PasswordIsRequired");
+
+            if (modifiedUser <= 0)
+                return DomainResponseModel.Fail("SomthingWentWrong");
+
+            if (Id != modifiedUser)
+                return DomainResponseModel.Fail("CantEditAnotherAccountPassword");
+
+
+
+            ModifiedDate = DateTime.UtcNow;
+            ModifiedUser = modifiedUser;
+
+            Password = newPassword;
+
+            return DomainResponseModel.Success();
+        }
+
+
+
+
+
+
         public bool CanLogin()
        => !IsDeleted && IsActive;
 

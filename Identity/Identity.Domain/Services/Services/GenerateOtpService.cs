@@ -103,6 +103,7 @@ namespace Identity.Identity.Domain.Services.Services
             {
 
                 HashedOtp.Attempts++;
+                await _UoW.SaveChangesAsync();
                 return new ResponseModel<OtpResponseDto> { Success = false, Message = _localizer["OtpIsWrongPleaseCheckAgainOrTryAgainLater"] };
 
 
@@ -112,9 +113,10 @@ namespace Identity.Identity.Domain.Services.Services
             HashedOtp.IsDeleted = true;
             HashedOtp.IsActive = false;
 
+            await _UoW.SaveChangesAsync();
 
 
-            return new ResponseModel<OtpResponseDto> { Data = new OtpResponseDto { resetToken = _jwtService.GenerateResetPasswordToken(user.Id) }, Success = true };
+            return new ResponseModel<OtpResponseDto> { Message = _localizer["OtpVerifiedSuccessfully"], Data = new OtpResponseDto { resetToken = _jwtService.GenerateResetPasswordToken(user.Id) }, Success = true };
 
 
         }

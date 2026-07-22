@@ -7,6 +7,6 @@ namespace Identity.Identity.Domain.IRepositories
     {
         Task<GeneratedOTP> Add(GeneratedOTP entity);
 
-        Task<GeneratedOTP?> GetGeneratedOTPAsync(GetOtpSearchDto email, Func<IQueryable<GeneratedOTP>, IQueryable<GeneratedOTP>>? include = null, bool isTracked = true);
+        Task<GeneratedOTP?> GetGeneratedOTPAsync(GetOtpSearchDto email);
     }
 }

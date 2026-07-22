@@ -7,11 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Module.Identity.Domain.IRepositories;
 using Module.Identity.Domain.Services.IServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
@@ -78,7 +73,7 @@ namespace Identity.Identity.Domain.Services.Services
             };
         }
 
-        
+
 
         public async Task<ResponseModel<PagedResult<UserInfoDTO>>> GetUsers(GetUsersRequest model)
         {
@@ -169,5 +164,26 @@ namespace Identity.Identity.Domain.Services.Services
 
         }
 
+        public async Task<ResponseModel<bool>> UpdateUserPassword(UpdateUserPassword model)
+        {
+            var user = await _user.GetByEmail(model.Email, null, true);
+
+            if (user is null)
+                return new ResponseModel<bool> { Success = false, Message = _localizer["UserNotFound"] };
+
+            if (!user.IsAccountDeleted())
+                return new ResponseModel<bool> { Success = false, Message = _localizer["SomthingWentWrong"] };
+
+            if (!user.IsAccountActive())
+                return new ResponseModel<bool> { Success = false, Message = _localizer["YourActounIsNotActive"] };
+
+
+
+            var newPassword = user.SetNewPassword(_passwordService.Hash(model.password), user.Id);
+
+            await _UoW.SaveChangesAsync();
+
+            return new ResponseModel<bool> { Success = true, Message = _localizer["PasswordUpdatedSuccessfully"] };
+        }
     }
 }
