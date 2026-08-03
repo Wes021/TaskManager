@@ -2,6 +2,7 @@
 using Identity.Identity.Domain.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using TaskManager.SharedLayer.RequestModels.Identity;
 
 namespace TaskManager.Controllers
@@ -12,6 +13,7 @@ namespace TaskManager.Controllers
     {
 
         [HttpPost("/api/v1/auth/login")]
+        [EnableRateLimiting("Login")]
         public async Task<IActionResult> Login(LoginModel model)
         {
             var result = await _loginHandler.Handle(model);
@@ -84,6 +86,7 @@ namespace TaskManager.Controllers
 
 
         [HttpPost("api/v1/auth/forgot-password/send-otp")]
+        [EnableRateLimiting("Otp")]
         public async Task<IActionResult> SendNewOTP(SendNewOtpDto model)
         {
             var result = await _generateOtpService.GenerateNewOtp(model);
@@ -95,9 +98,23 @@ namespace TaskManager.Controllers
         }
 
         [HttpPost("api/v1/auth/forgot-password/validate-otp")]
-        public async Task<IActionResult> ValidateOTPTest(ValidateOTPDto model)
+        [EnableRateLimiting("VerifyOtp")]
+        public async Task<IActionResult> ValidateOTP(ValidateOTPDto model)
         {
             var result = await _generateOtpService.ValidateOtp(model);
+
+            if (!result.Success)
+                return Ok(result);
+
+            return Ok(result);
+        }
+
+        [HttpPost("api/v1/auth/forgot-password/update-password")]
+        [EnableRateLimiting("UpdatePassword")]
+        [Authorize(Policy = Policies.ResetPassword)]
+        public async Task<IActionResult> ResetPassword(UpdateUserPassword model)
+        {
+            var result = await _userHnadler.UpdateUserPassword(model);
 
             if (!result.Success)
                 return Ok(result);

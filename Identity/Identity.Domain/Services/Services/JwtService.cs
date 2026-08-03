@@ -4,6 +4,7 @@ using Module.Identity.Domain.Services.IServices;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.ResponseModels;
 
 namespace Module.Identity.Domain.Services.Services
@@ -13,7 +14,7 @@ namespace Module.Identity.Domain.Services.Services
         public string GenerateResetPasswordToken(int userId)
         {
             var key = new SymmetricSecurityKey(
-      Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+      Encoding.UTF8.GetBytes(_config["ResetPasswordJwt:Key"]));
 
             var credentials = new SigningCredentials(
                 key,
@@ -21,15 +22,15 @@ namespace Module.Identity.Domain.Services.Services
 
             var claims = new[]
             {
-        new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-        new Claim("purpose", "PasswordReset")
+        new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+        new Claim("purpose", ((int)SystemEnums.PolicyKeywords.PasswordReset).ToString())
     };
 
             var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
+                issuer: _config["ResetPasswordJwt:Issuer"],
+                audience: _config["ResetPasswordJwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(10),
+                expires: DateTime.UtcNow.AddMinutes(double.Parse(_config["ResetPasswordJwt:ExpiresInMinutes"])),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

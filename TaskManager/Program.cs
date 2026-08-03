@@ -1,13 +1,16 @@
 using Identity.Identity.Domain.Services.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Projects.Projects.Domain.Services.Services;
 using Resend;
 using System.Security.Claims;
 using System.Text;
+using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.Immplementaion;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Middleware;
+using TaskManager.SharedLayer.RequestModels.Identity;
 using Tasks.Tasks.Infrastructure.Services;
 
 
@@ -75,7 +78,15 @@ namespace TaskManager
             //options.UseSqlServer(
 
             //    builder.Configuration.GetConnectionString("SqlCon")));
-
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Policies.ResetPassword, policy =>
+                {
+                    policy.RequireClaim(
+                        "purpose",
+                        ((int)SystemEnums.PolicyKeywords.PasswordReset).ToString());
+                });
+            });
 
 
             // JWT Settings
@@ -107,6 +118,57 @@ namespace TaskManager
 
             var app = builder.Build();
 
+
+
+            builder.Services.AddRateLimiter(options =>
+            {
+                options.AddSlidingWindowLimiter("Global", limiter =>
+                {
+                    limiter.PermitLimit = 100;
+                    limiter.Window = TimeSpan.FromMinutes(1);
+                    limiter.SegmentsPerWindow = 6;
+                    limiter.QueueLimit = 0;
+                });
+
+                // Login Rate Limiter policy
+                options.AddTokenBucketLimiter("Login", limiter =>
+                {
+                    limiter.TokenLimit = 5;
+                    limiter.TokensPerPeriod = 1;
+                    limiter.ReplenishmentPeriod = TimeSpan.FromSeconds(12);
+                    limiter.AutoReplenishment = true;
+                    limiter.QueueLimit = 0;
+                });
+
+                // OTP Rate Limiter policy
+                options.AddFixedWindowLimiter("Otp", limiter =>
+                {
+                    limiter.PermitLimit = 3;
+                    limiter.Window = TimeSpan.FromMinutes(10);
+                    limiter.QueueLimit = 0;
+                });
+
+                // OTP Rate Limiter policy
+                options.AddFixedWindowLimiter("VerifyOtp", limiter =>
+                {
+                    limiter.PermitLimit = 3;
+                    limiter.Window = TimeSpan.FromMinutes(10);
+                    limiter.QueueLimit = 0;
+                });
+
+                // Update Password Rate Limiter policy
+                options.AddFixedWindowLimiter("UpdatePassword", limiter =>
+                {
+                    limiter.PermitLimit = 3;
+                    limiter.Window = TimeSpan.FromMinutes(10);
+                    limiter.QueueLimit = 0;
+                });
+
+
+            });
+
+
+
             //Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -123,7 +185,13 @@ namespace TaskManager
             app.UseAuthorization();
 
 
-            app.MapControllers();
+
+
+
+            app.UseRateLimiter();
+
+            app.MapControllers()
+               .RequireRateLimiting("Global");
 
             app.Run();
         }

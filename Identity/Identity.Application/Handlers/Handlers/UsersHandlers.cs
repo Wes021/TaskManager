@@ -25,7 +25,8 @@ namespace Identity.Identity.Application.Handlers.Handlers
 
 
             if (user == null)
-                return new ResponseModel<bool> { Success = false, Message = _localizer["UserNotFound"] };
+                return new ResponseModel<bool> { Success = false, Message = _localizer["SomthingWentWrong"] };
+
 
             var users = await _userService.DeleteUser(Id, model);
 
@@ -40,10 +41,22 @@ namespace Identity.Identity.Application.Handlers.Handlers
             return users;
         }
 
-        public Task<ResponseModel<bool>> UpdateUserPassword(UpdateUserPassword model)
+        public async Task<ResponseModel<bool>> UpdateUserPassword(UpdateUserPassword model)
         {
-            if (model.)
-                throw new NotImplementedException();
+            if (model.ResetPasswordToken is null)
+                return new ResponseModel<bool> { Success = false, Message = _localizer["SomthingWentWrong"] };
+
+            if (model.password is null || model.ConfirmPassword is null)
+                return new ResponseModel<bool> { Success = false, Message = _localizer["PasswordAndConfirmPasswordAreRequired"] };
+
+            if (model.password != model.ConfirmPassword)
+                return new ResponseModel<bool> { Success = false, Message = _localizer["PasswordMustMatch"] };
+
+            var result = await _userService.UpdateUserPassword(model);
+
+            return result;
+
+
         }
 
         public async Task<ResponseModel<bool>> UpdateUserStatusAsync(int Id, UpdateUserStatus model)

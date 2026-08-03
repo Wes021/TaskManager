@@ -19,7 +19,7 @@ namespace Identity.Identity.Domain.Services.Services
     public class ManageUserService(IUserRepository _user, IStringLocalizer<SharedResource> _localizer,
         IPasswordService _passwordService, IRoleRepository _roleRepo,
         IMapper _mapper, ICurrentUserService _currentUserService,
-        IIdentityMouduleUoW _UoW) : IManageUserService
+        IIdentityMouduleUoW _UoW, IJwtService _jwtService) : IManageUserService
 
     {
         public async Task<ResponseModel<bool>> AddUser(AddNewUserDTO model)
@@ -166,20 +166,27 @@ namespace Identity.Identity.Domain.Services.Services
 
         public async Task<ResponseModel<bool>> UpdateUserPassword(UpdateUserPassword model)
         {
-            var user = await _user.GetByEmail(model.Email, null, true);
+            var user = _currentUserService.UserId;
 
-            if (user is null)
+            if (user <= 0)
                 return new ResponseModel<bool> { Success = false, Message = _localizer["UserNotFound"] };
 
-            if (!user.IsAccountDeleted())
+            var UserInfo = await _user.GetById(user, null, true);
+
+
+
+            if (UserInfo is null)
+                return new ResponseModel<bool> { Success = false, Message = _localizer["UserNotFound"] };
+
+            if (!UserInfo.IsAccountDeleted())
                 return new ResponseModel<bool> { Success = false, Message = _localizer["SomthingWentWrong"] };
 
-            if (!user.IsAccountActive())
+            if (!UserInfo.IsAccountActive())
                 return new ResponseModel<bool> { Success = false, Message = _localizer["YourActounIsNotActive"] };
 
 
 
-            var newPassword = user.SetNewPassword(_passwordService.Hash(model.password), user.Id);
+            var newPassword = UserInfo.SetNewPassword(_passwordService.Hash(model.password), UserInfo.Id);
 
             await _UoW.SaveChangesAsync();
 

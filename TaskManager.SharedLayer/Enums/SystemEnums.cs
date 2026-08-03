@@ -10,6 +10,13 @@
 
         }
 
+        public enum PolicyKeywords
+        {
+            PasswordReset = 1,
+
+
+        }
+
 
         public enum ProjectStatus
         {
@@ -40,5 +47,7 @@
             AddedNewComment,
             DeletedAComment
         }
+
+
     }
 }
