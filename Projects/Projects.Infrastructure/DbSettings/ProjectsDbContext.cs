@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Projects.Projects.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Module.Projects.Infrastructure.DbSettings
 {
@@ -32,5 +27,6 @@ namespace Module.Projects.Infrastructure.DbSettings
         public DbSet<Project> Project { get; set; }
         public DbSet<ProjectMember> ProjectMember { get; set; }
         public DbSet<ProjectStatus> ProjectStatus { get; set; }
+        public DbSet<ProjectMemberRole> ProjectMemberRole { get; set; }
     }
 }

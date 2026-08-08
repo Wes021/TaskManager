@@ -34,8 +34,8 @@ namespace Projects.Projects.Domain.Services.Services
                 };
             }
 
-            var managerTask = await
-                _userLookupService.GetUserByIdAsync(project.ManagerId);
+            // var managerTask = await
+            //     _userLookupService.GetUserByIdAsync(project.ManagerId);
 
             UserLookupDto? creatorTask = null;
 
@@ -50,7 +50,7 @@ namespace Projects.Projects.Domain.Services.Services
             var mappedData = _mapper.Map<ProjectInfoDto>(project);
             mappedData.ProjectMembers = _mapper.Map<List<ProjectMembersDto>>(MembersInfo);
 
-            mappedData.Manager = managerTask?.FullName;
+            // mappedData.Manager = managerTask?.FullName;
 
             if (creatorTask != null)
             {

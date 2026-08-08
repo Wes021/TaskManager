@@ -74,7 +74,7 @@ namespace Projects.Projects.Infrastructure.Repositories
                 Id = x.Id,
                 Name = x.Name,
                 Description = x.Description,
-                ManagerId = x.ManagerId,
+                //ManagerId = x.ManagerId,
                 CreatedDate = x.CreatedDate,
                 ModifiedDate = x.ModifiedDate,
                 StartDate = x.StartDate,

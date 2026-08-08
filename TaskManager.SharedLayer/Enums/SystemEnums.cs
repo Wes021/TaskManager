@@ -48,6 +48,12 @@
             DeletedAComment
         }
 
+        public enum ProjectMemberRole
+        {
+            Leader = 1,
+            Member = 2
+        }
+
 
     }
 }

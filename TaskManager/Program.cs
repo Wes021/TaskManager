@@ -116,8 +116,6 @@ namespace TaskManager
                 };
             });
 
-            var app = builder.Build();
-
 
 
             builder.Services.AddRateLimiter(options =>
@@ -166,6 +164,12 @@ namespace TaskManager
 
 
             });
+
+            var app = builder.Build();
+
+
+
+
 
 
 

@@ -1,11 +1,5 @@
-﻿using AutoMapper.Execution;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.ComponentModel.DataAnnotations;
+using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.ResponseModels;
 
@@ -22,7 +16,7 @@ namespace Projects.Projects.Domain.Models
         public DateTime StartDate { get; private set; }
         public DateTime? EndDate { get; private set; }
 
-        public int ManagerId { get; private set; }
+        //public int ManagerId { get; private set; }
 
         public ProjectStatus Status { get; private set; }
         public int StatusId { get; set; }
@@ -44,7 +38,7 @@ namespace Projects.Projects.Domain.Models
     string description,
     DateTime startDate,
     DateTime? endDate,
-    int managerId,
+
     int statusId,
     int createdUser)
         {
@@ -54,8 +48,7 @@ namespace Projects.Projects.Domain.Models
             if (string.IsNullOrWhiteSpace(description))
                 return GenericDomainResponseModel<Project>.Fail("DescriptionRequired");
 
-            if (managerId <= 0)
-                return GenericDomainResponseModel<Project>.Fail("InvalidManager");
+
 
             if (statusId <= 0)
                 return GenericDomainResponseModel<Project>.Fail("InvalidStatus");
@@ -74,7 +67,7 @@ namespace Projects.Projects.Domain.Models
                 Description = description.Trim(),
                 StartDate = startDate,
                 EndDate = endDate,
-                ManagerId = managerId,
+                //ManagerId = managerId,
                 StatusId = statusId,
                 CreatedUser = createdUser,
                 CreatedDate = DateTime.Now,
@@ -82,6 +75,9 @@ namespace Projects.Projects.Domain.Models
                 IsDeleted = false
             };
 
+            project.Members.Add(
+                      new ProjectMember(
+                         project.Id, createdUser, (int)SystemEnums.ProjectMemberRole.Leader, createdUser));
             return GenericDomainResponseModel<Project>.Success(project);
         }
 
@@ -91,13 +87,11 @@ namespace Projects.Projects.Domain.Models
      string description,
      DateTime startDate,
      DateTime? endDate,
-     int managerId,
+
      int statusId,
      int modifiedUser)
         {
-            if (managerId <= 0)
-                return GenericDomainResponseModel<Project>
-                    .Fail("InvalidManager");
+
 
             if (statusId <= 0)
                 return GenericDomainResponseModel<Project>
@@ -119,7 +113,7 @@ namespace Projects.Projects.Domain.Models
 
             EndDate = endDate;
 
-            ManagerId = managerId;
+
 
             StatusId = statusId;
 
@@ -173,7 +167,7 @@ namespace Projects.Projects.Domain.Models
 
         public GenericDomainResponseModel<List<int>> AddMembers(
       List<int> userIds,
-      int assignedBy)
+      int assignedBy, int MemberRole)
         {
             var duplicateIds = userIds
                 .Where(userId =>
@@ -200,6 +194,7 @@ namespace Projects.Projects.Domain.Models
                     new ProjectMember(
                         Id,
                         userId,
+                        MemberRole,
                         assignedBy));
             }
 

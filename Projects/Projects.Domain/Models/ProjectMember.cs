@@ -1,12 +1,5 @@
-﻿using AutoMapper.Execution;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using TaskManager.SharedLayer.Interfaces;
-using TaskManager.SharedLayer.ResponseModels;
 
 namespace Projects.Projects.Domain.Models
 {
@@ -17,6 +10,9 @@ namespace Projects.Projects.Domain.Models
         public int Id { get; set; }
         public int ProjectId { get; private set; }
         public Project Project { get; set; }
+
+        public int ProjectMemberRoleId { get; set; }
+        public ProjectMemberRole ProjectMemberRole { get; private set; }
 
         public int UserId { get; private set; }
 
@@ -37,6 +33,7 @@ namespace Projects.Projects.Domain.Models
         internal ProjectMember(
             int projectId,
             int userId,
+            int projectMemberRoleId,
             int assignedBy)
         {
             ProjectId = projectId;
@@ -48,6 +45,8 @@ namespace Projects.Projects.Domain.Models
             CreatedDate = DateTime.UtcNow;
 
             CreatedUser = assignedBy;
+
+            ProjectMemberRoleId = projectMemberRoleId;
 
             IsDeleted = false;
 
@@ -66,7 +65,7 @@ namespace Projects.Projects.Domain.Models
             ModifiedUser = modifiedUser;
         }
 
-      
+
 
 
 

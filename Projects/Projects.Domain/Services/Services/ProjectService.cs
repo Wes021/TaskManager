@@ -5,6 +5,7 @@ using Projects.Projects.Domain.IRepositories;
 using Projects.Projects.Domain.IUnitOfWork;
 using Projects.Projects.Domain.Models;
 using Projects.Projects.Domain.Services.IServices;
+using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
 using TaskManager.SharedLayer.RequestModels.Identity;
@@ -72,7 +73,7 @@ namespace Projects.Projects.Domain.Services.Services
                 model.Description,
                 model.StartDate,
                 model.EndDate,
-                _currentUserService.UserId,
+
                 model.StatusId,
                 _currentUserService.UserId);
 
@@ -103,7 +104,7 @@ namespace Projects.Projects.Domain.Services.Services
         public async Task<ResponseModel<bool>> DeleteProject(int ProjectId, UpdateProjectStatus model)
         {
 
-            var project = await _projectsRepository.GetProjectByIdAsync(ProjectId);
+            var project = await _projectsRepository.GetProjectByIdAsync(ProjectId, x => x.Include(x => x.Members), true);
             var currentUserId = _currentUserService.UserId;
 
 
@@ -115,6 +116,14 @@ namespace Projects.Projects.Domain.Services.Services
                     Message = _localizer["ProjectDoesNotExist"]
                 };
 
+
+            if (!(project.Members.Any(x => x.ProjectMemberRoleId == (int)SystemEnums.ProjectMemberRole.Leader)))
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["OnlyLeaderCanPerformThisAction"]
+                };
 
 
             var result = project.SetIsDeleted(model.IsDeleted, currentUserId);
@@ -164,8 +173,8 @@ namespace Projects.Projects.Domain.Services.Services
                 };
             }
 
-            var managerTask = await
-                _userLookupService.GetUserByIdAsync(project.ManagerId);
+            // var managerTask = await
+            //     _userLookupService.GetUserByIdAsync(project.ManagerId);
 
             UserLookupDto? creatorTask = null;
 
@@ -180,7 +189,7 @@ namespace Projects.Projects.Domain.Services.Services
             var mappedData = _mapper.Map<ProjectInfoDto>(project);
             mappedData.ProjectMembers = _mapper.Map<List<ProjectMembersDto>>(MembersInfo);
 
-            mappedData.Manager = managerTask?.FullName;
+            //mappedData.Manager = managerTask?.FullName;
 
             if (creatorTask != null)
             {
@@ -303,7 +312,7 @@ namespace Projects.Projects.Domain.Services.Services
 
 
 
-            var result = project.Update(model.Name, model.Description, model.StartDate, model.EndDate, model.ManagerId, model.StatusId, currentUserId);
+            var result = project.Update(model.Name, model.Description, model.StartDate, model.EndDate, model.StatusId, currentUserId);
 
 
 
@@ -331,12 +340,23 @@ namespace Projects.Projects.Domain.Services.Services
 
             var currentUserId = _currentUserService.UserId;
 
+
+
             if (project is null)
                 return new ResponseModel<bool>
                 {
                     Success = false,
                     Data = false,
                     Message = _localizer["ProjectDoesNotExist"]
+                };
+
+
+            if (!(project.Members.Any(x => x.UserId == currentUserId && x.ProjectMemberRoleId == (int)SystemEnums.ProjectMemberRole.Leader)))
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["OnlyLeaderCanAddOeditMembers"]
                 };
 
 
@@ -355,8 +375,8 @@ namespace Projects.Projects.Domain.Services.Services
 
 
 
-
-            var NewMembers = project.AddMembers(model.MemberIds, currentUserId);
+            // here it is passed as 1 or any sent value
+            var NewMembers = project.AddMembers(model.MemberIds, currentUserId, model.MemberRole);
 
             if (!NewMembers.Succeeded)
             {
@@ -386,7 +406,7 @@ namespace Projects.Projects.Domain.Services.Services
 
         public async Task<ResponseModel<bool>> RemoveMembersFromProject(int ProjectId, RemoveProjectMembersDto model)
         {
-            var project = await _projectsRepository.GetProjectByIdAsync(ProjectId);
+            var project = await _projectsRepository.GetProjectByIdAsync(ProjectId, x => x.Include(x => x.Members));
             var currentUserId = _currentUserService.UserId;
 
 
@@ -400,6 +420,15 @@ namespace Projects.Projects.Domain.Services.Services
                     Data = false,
                     Message = _localizer["ProjectDoesNotExist"]
                 };
+
+            if (!(project.Members.Any(x => x.UserId == currentUserId && x.ProjectMemberRoleId == (int)SystemEnums.ProjectMemberRole.Leader)))
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["OnlyLeaderCanAddOeditMembers"]
+                };
+
 
             var ProjectMembers = await _projectMemberRepository.GetAssignedUserIdsWithProjectIdAsync(ProjectId, model.MemberIds, true);
 
