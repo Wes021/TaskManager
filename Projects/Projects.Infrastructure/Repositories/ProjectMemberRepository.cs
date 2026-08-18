@@ -2,11 +2,6 @@
 using Module.Projects.Infrastructure.DbSettings;
 using Projects.Projects.Domain.IRepositories;
 using Projects.Projects.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Projects.Projects.Infrastructure.Repositories
 {
@@ -32,11 +27,19 @@ namespace Projects.Projects.Infrastructure.Repositories
             return entities;
         }
 
+        public async Task<ProjectMember?> GetAssignedUserIdAsync(int projectId, int userId)
+        {
+            return await _context.ProjectMember
+                .AsNoTracking()
+                .Where(x => x.UserId == userId && x.ProjectId == projectId)
+                .Include(x => x.ProjectMemberRole)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<List<ProjectMember>> GetAssignedUserIdsAsync(int projectId, List<int> userIds)
         {
             return await _context.ProjectMember
      .AsNoTracking()
-
      .Where(x =>
          userIds.Contains(x.UserId) &&
          x.ProjectId != projectId &&
@@ -63,7 +66,7 @@ x.IsActive == true
                 .ToListAsync();
         }
 
-        
+
 
         public async Task<ProjectMember> GetProjectByMemberIdAsync(int Id, Func<IQueryable<ProjectMember>, IQueryable<ProjectMember>>? include = null, bool isTracked = true)
         {

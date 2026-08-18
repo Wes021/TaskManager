@@ -24,7 +24,7 @@ namespace Projects.Projects.Domain.IRepositories
         Task<List<ProjectMember>> GetAssignedUserIdsWithProjectIdAsync(int projectId, List<int> userIds, bool isTracked = true);
 
 
-
+        Task<ProjectMember> GetAssignedUserIdAsync(int projectId, int userId);
 
 
 

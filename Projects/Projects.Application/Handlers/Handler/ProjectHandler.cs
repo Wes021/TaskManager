@@ -1,12 +1,6 @@
 ﻿using Microsoft.Extensions.Localization;
 using Projects.Projects.Application.Handlers.IHandler;
-using Projects.Projects.Domain.Models;
 using Projects.Projects.Domain.Services.IServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
@@ -136,7 +130,7 @@ namespace Projects.Projects.Application.Handlers.Handler
 
             var currectUserRole = _currentUserService.Role;
 
-            if (currectUserRole != SystemEnums.UserType.Admin.ToString() && currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString())
+            if (currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString())
                 return new ResponseModel<bool>
                 {
                     Success = false,
@@ -163,7 +157,7 @@ namespace Projects.Projects.Application.Handlers.Handler
 
             var currectUserRole = _currentUserService.Role;
 
-            if (currectUserRole != SystemEnums.UserType.Admin.ToString() && currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString())
+            if (currectUserRole != SystemEnums.UserType.ManagerAndLeader.ToString())
                 return new ResponseModel<bool>
                 {
                     Success = false,

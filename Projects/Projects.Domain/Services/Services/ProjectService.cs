@@ -5,7 +5,6 @@ using Projects.Projects.Domain.IRepositories;
 using Projects.Projects.Domain.IUnitOfWork;
 using Projects.Projects.Domain.Models;
 using Projects.Projects.Domain.Services.IServices;
-using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
 using TaskManager.SharedLayer.RequestModels.Identity;
@@ -19,7 +18,7 @@ namespace Projects.Projects.Domain.Services.Services
     public class ProjectService(IProjectsRepository _projectsRepository, IStringLocalizer<SharedResource> _localizer
         , IProjectStatusRepository _projectStatusRepository, ICurrentUserService _currentUserService,
         IProjectModuleUoW _projectModuleUoW, IMapper _mapper, IUserLookupService _userLookupService,
-        IProjectMemberRepository _projectMemberRepository) : IProjectService
+        IProjectMemberRepository _projectMemberRepository, IProjectAuthorizationService _projectAuthorizationService) : IProjectService
     {
         public async Task<ResponseModel<bool>> AddProject(CreateProjectDto model)
         {
@@ -116,14 +115,16 @@ namespace Projects.Projects.Domain.Services.Services
                     Message = _localizer["ProjectDoesNotExist"]
                 };
 
+            var IsLeader = await _projectAuthorizationService.IsLeaderAsync(project.Id, currentUserId);
 
-            if (!(project.Members.Any(x => x.ProjectMemberRoleId == (int)SystemEnums.ProjectMemberRole.Leader)))
+            if (!IsLeader)
                 return new ResponseModel<bool>
                 {
                     Success = false,
                     Data = false,
                     Message = _localizer["OnlyLeaderCanPerformThisAction"]
                 };
+
 
 
             var result = project.SetIsDeleted(model.IsDeleted, currentUserId);
@@ -164,14 +165,15 @@ namespace Projects.Projects.Domain.Services.Services
                 };
             }
 
-            if (!(project.Members.Any(m => m.IsDeleted == false && m.UserId == _currentUserService.UserId)))
-            {
+            var IsMember = await _projectAuthorizationService.IsMemberAsync(project.Id, _currentUserService.UserId);
+
+            if (!IsMember)
                 return new ResponseModel<ProjectInfoDto>
                 {
                     Success = false,
-                    Message = _localizer["ProjectNotFound"]
+                    Message = _localizer["UserIsNotMemberInProject"]
                 };
-            }
+
 
             // var managerTask = await
             //     _userLookupService.GetUserByIdAsync(project.ManagerId);
@@ -271,8 +273,15 @@ namespace Projects.Projects.Domain.Services.Services
                     Message = _localizer["ProjectDoesNotExist"]
                 };
 
+            var IsLeader = await _projectAuthorizationService.IsLeaderAsync(project.Id, currentUserId);
 
-
+            if (!IsLeader)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["OnlyLeaderCanPerformThisAction"]
+                };
             var result = project.SetIsActive(model.IsActive, currentUserId);
 
 
@@ -309,7 +318,15 @@ namespace Projects.Projects.Domain.Services.Services
                     Message = _localizer["ProjectDoesNotExist"]
                 };
 
+            var IsLeader = await _projectAuthorizationService.IsLeaderAsync(project.Id, currentUserId);
 
+            if (!IsLeader)
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = _localizer["OnlyLeaderCanPerformThisAction"]
+                };
 
 
             var result = project.Update(model.Name, model.Description, model.StartDate, model.EndDate, model.StatusId, currentUserId);
@@ -351,12 +368,14 @@ namespace Projects.Projects.Domain.Services.Services
                 };
 
 
-            if (!(project.Members.Any(x => x.UserId == currentUserId && x.ProjectMemberRoleId == (int)SystemEnums.ProjectMemberRole.Leader)))
+            var IsLeader = await _projectAuthorizationService.IsLeaderAsync(project.Id, currentUserId);
+
+            if (!IsLeader)
                 return new ResponseModel<bool>
                 {
                     Success = false,
                     Data = false,
-                    Message = _localizer["OnlyLeaderCanAddOeditMembers"]
+                    Message = _localizer["OnlyLeaderCanPerformThisAction"]
                 };
 
 
@@ -421,12 +440,15 @@ namespace Projects.Projects.Domain.Services.Services
                     Message = _localizer["ProjectDoesNotExist"]
                 };
 
-            if (!(project.Members.Any(x => x.UserId == currentUserId && x.ProjectMemberRoleId == (int)SystemEnums.ProjectMemberRole.Leader)))
+
+            var IsLeader = await _projectAuthorizationService.IsLeaderAsync(project.Id, currentUserId);
+
+            if (!IsLeader)
                 return new ResponseModel<bool>
                 {
                     Success = false,
                     Data = false,
-                    Message = _localizer["OnlyLeaderCanAddOeditMembers"]
+                    Message = _localizer["OnlyLeaderCanPerformThisAction"]
                 };
 
 
