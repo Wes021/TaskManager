@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Localization;
+using System.Text.Json;
 using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
 using TaskManager.SharedLayer.RequestModels.Tasks.CommentsModel;
-using TaskManager.SharedLayer.RequestModels.Tasks.TaskHistory;
 using TaskManager.SharedLayer.ResponseModel;
 using Tasks.Tasks.Domain.IRepositories;
 using Tasks.Tasks.Domain.IUnitOfWork;
@@ -58,7 +58,10 @@ namespace Tasks.Tasks.Domain.Services.Services
 
 
             await _tasksModuleUoW.SaveChangesAsync();
-            await _taskHistory.AddNewHistory(task.Id, new AddTaskHistoryDTO { actionDetails = $"{SystemEnums.TaskHistoryActions.AddedNewComment}" });
+            await _taskHistory.AddNewHistory(task.Id, SystemEnums.TaskHistoryAction.CommentAdded, JsonSerializer.Serialize(new
+            {
+                taskId = task.Id
+            }));
             return new ResponseModel<bool>
             {
                 Success = true,
@@ -119,7 +122,11 @@ namespace Tasks.Tasks.Domain.Services.Services
 
 
             await _tasksModuleUoW.SaveChangesAsync();
-            await _taskHistory.AddNewHistory(task.Id, new AddTaskHistoryDTO { actionDetails = $"{SystemEnums.TaskHistoryActions.DeletedAComment}" });
+            await _taskHistory.AddNewHistory(task.Id, SystemEnums.TaskHistoryAction.CommentDeleted, JsonSerializer.Serialize(new
+            {
+                taskId = task.Id,
+                commentId = commentId
+            }));
             return new ResponseModel<bool>
             {
                 Success = true,

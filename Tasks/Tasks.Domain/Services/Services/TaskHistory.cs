@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Localization;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
-using TaskManager.SharedLayer.RequestModels.Tasks.TaskHistory;
 using TaskManager.SharedLayer.ResponseModel;
 using Tasks.Tasks.Domain.IRepositories;
 using Tasks.Tasks.Domain.IUnitOfWork;
 using Tasks.Tasks.Domain.Services.IServices;
+using static TaskManager.SharedLayer.Enums.SystemEnums;
 
 namespace Tasks.Tasks.Domain.Services.Services
 {
@@ -13,7 +13,7 @@ namespace Tasks.Tasks.Domain.Services.Services
        ITasksRepository _tasksRepository, ITasksModuleUoW _tasksModuleUoW,
        ITasksHistoryRepository _tasksHistoryRepository, ICurrentUserService _currentUserService) : ITaskHistory
     {
-        public async Task<ResponseModel<bool>> AddNewHistory(int TaskId, AddTaskHistoryDTO model)
+        public async Task<ResponseModel<bool>> AddNewHistory(int TaskId, TaskHistoryAction action, string metaData)
         {
             var task = await _tasksRepository.GetTaskById(TaskId);
 
@@ -26,24 +26,7 @@ namespace Tasks.Tasks.Domain.Services.Services
                 };
 
 
-
-            //        var isMember = task.Members.Any(x =>
-            //x.UserId == _currentUserService.UserId &&
-            //!x.IsDeleted &&
-            //x.IsActive);
-
-
-            //        if (!isMember)
-            //        {
-            //            return new ResponseModel<bool>
-            //            {
-            //                Success = false,
-            //                Data = false,
-            //                Message = _localizer["UserIsNotInTask"]
-            //            };
-            //        }
-
-            var result = task.AddNewHistory(_currentUserService.UserId, model.actionDetails);
+            var result = task.AddNewHistory(TaskId, action, _currentUserService.UserId, metaData);
 
             if (!result.Succeeded)
             {

@@ -1,4 +1,5 @@
 ﻿using TaskManager.SharedLayer.Interfaces;
+using static TaskManager.SharedLayer.Enums.SystemEnums;
 
 namespace Tasks.Tasks.Domain.Models
 {
@@ -8,7 +9,9 @@ namespace Tasks.Tasks.Domain.Models
 
         public string ActionDetails { get; set; }
 
-
+        public int TaskId { get; set; }
+        public TaskHistoryAction Action { get; private set; }
+        public string? Metadata { get; private set; }
         public DateTime CreatedDate { get; set; }
         public int? CreatedUser { get; set; }
         public DateTime? ModifiedDate { get; set; }
@@ -18,14 +21,20 @@ namespace Tasks.Tasks.Domain.Models
 
         private TaskHistory() { }
 
-
-
-        internal TaskHistory(int createdUser, string actionDetails)
+        internal TaskHistory(
+        int taskId,
+        TaskHistoryAction action,
+        int createdUser,
+        string? metadata = null)
         {
+            TaskId = taskId;
+            Action = action;
             CreatedUser = createdUser;
-            ActionDetails = actionDetails;
-            CreatedDate = DateTime.Now;
-
+            CreatedDate = DateTime.UtcNow;
+            Metadata = metadata;
         }
+
+
+
     }
 }

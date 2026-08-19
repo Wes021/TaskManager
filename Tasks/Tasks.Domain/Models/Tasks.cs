@@ -47,15 +47,15 @@ namespace Tasks.Tasks.Domain.Models
 
 
 
-        public GenericDomainResponseModel<bool> AddNewHistory(int createdUser, string actionDetails)
+        public GenericDomainResponseModel<bool> AddNewHistory(int taskId, TaskHistoryAction action, int createdUser, string metaData)
         {
-            if (string.IsNullOrWhiteSpace(actionDetails))
+            if (string.IsNullOrWhiteSpace(metaData))
                 return GenericDomainResponseModel<bool>.Fail("ActionRequired");
 
             if (createdUser <= 0)
                 return GenericDomainResponseModel<bool>.Fail("UserIdInvalid");
 
-            TaskHistory.Add(new TaskHistory(createdUser, actionDetails));
+            TaskHistory.Add(new TaskHistory(taskId, action, createdUser, metaData));
 
 
             return new GenericDomainResponseModel<bool>

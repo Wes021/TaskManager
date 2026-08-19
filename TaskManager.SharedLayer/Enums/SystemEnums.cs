@@ -48,6 +48,25 @@
             DeletedAComment
         }
 
+        public enum TaskHistoryAction
+        {
+            Created = 1,
+            TaskUpdated = 2,
+            StatusChanged = 3,
+
+            MemberAdded = 4,
+            MemberRemoved = 5,
+
+            CommentAdded = 6,
+
+            AttachmentAdded = 7,
+            AttachmentRemoved = 8,
+            CommentDeleted = 9,
+            TaskDeleted = 10,
+            TaskAdded = 11,
+            StatusUpdated = 12
+        }
+
         public enum ProjectMemberRole
         {
             Leader = 1,

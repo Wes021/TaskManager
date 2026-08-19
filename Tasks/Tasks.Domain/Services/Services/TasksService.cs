@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Localization;
+using System.Text.Json;
 using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.Interfaces;
 using TaskManager.SharedLayer.Localizer;
@@ -72,11 +73,11 @@ namespace Tasks.Tasks.Domain.Services.Services
             await _tasksModuleUoW.SaveChangesAsync();
 
             await _taskHistory.AddNewHistory(
-    task.Id,
-    new AddTaskHistoryDTO
+    task.Id, TaskHistoryAction.MemberAdded, JsonSerializer.Serialize(new
     {
-        actionDetails = $"{SystemEnums.TaskHistoryActions.AddedNewMembers}"
-    });
+        UserIds = model.MembersModels.MemberIds
+
+    }));
 
             return new ResponseModel<bool>
             {
@@ -180,7 +181,7 @@ namespace Tasks.Tasks.Domain.Services.Services
 
             await _tasksModuleUoW.SaveChangesAsync();
 
-            await _taskHistory.AddNewHistory(newTask.Id, new AddTaskHistoryDTO { actionDetails = $"{SystemEnums.TaskHistoryActions.AddedNewMembers}" });
+            await _taskHistory.AddNewHistory(newTask.Id, SystemEnums.TaskHistoryAction.TaskAdded, null);
 
             return new ResponseModel<bool>
             {
@@ -234,7 +235,7 @@ namespace Tasks.Tasks.Domain.Services.Services
                 };
 
             await _tasksModuleUoW.SaveChangesAsync();
-            await _taskHistory.AddNewHistory(task.Id, new AddTaskHistoryDTO { actionDetails = $"{SystemEnums.TaskHistoryActions.DeletedTheTask}" });
+            await _taskHistory.AddNewHistory(task.Id, SystemEnums.TaskHistoryAction.TaskDeleted, null);
             return new ResponseModel<bool>
             {
                 Success = true,
@@ -381,6 +382,7 @@ namespace Tasks.Tasks.Domain.Services.Services
         public async Task<ResponseModel<bool>> SetTaskStatus(int TaskId, UpdateTaskStatus model)
         {
             var task = await _tasksRepository.GetTaskById(TaskId);
+            var OldStatus = task.TasksStatusId;
             var CurrectUser = _currentUser.UserId;
             var StatusExists = await _taskStatusRepository.CheckTaskStatusExists(model.NewStatus);
 
@@ -415,7 +417,11 @@ namespace Tasks.Tasks.Domain.Services.Services
                 };
 
             await _tasksModuleUoW.SaveChangesAsync();
-            await _taskHistory.AddNewHistory(task.Id, new AddTaskHistoryDTO { actionDetails = $"{SystemEnums.TaskHistoryActions.UpdatedTheStatus}" });
+            await _taskHistory.AddNewHistory(task.Id, SystemEnums.TaskHistoryAction.StatusUpdated, JsonSerializer.Serialize(new
+            {
+                OldStatus = OldStatus,
+                NewStatus = model.NewStatus
+            }));
             return new ResponseModel<bool>
             {
                 Success = true,
@@ -469,7 +475,10 @@ namespace Tasks.Tasks.Domain.Services.Services
 
 
             await _tasksModuleUoW.SaveChangesAsync();
-            await _taskHistory.AddNewHistory(task.Id, new AddTaskHistoryDTO { actionDetails = $"{SystemEnums.TaskHistoryActions.RemovedMember}" });
+            await _taskHistory.AddNewHistory(task.Id, SystemEnums.TaskHistoryAction.MemberRemoved, JsonSerializer.Serialize(new
+            {
+                UserIds = model.MembersModels.MemberIds
+            }));
             return new ResponseModel<bool>
             {
                 Success = true,
@@ -513,8 +522,7 @@ namespace Tasks.Tasks.Domain.Services.Services
                 };
 
             await _tasksModuleUoW.SaveChangesAsync();
-            await _taskHistory.AddNewHistory(task.Id, new AddTaskHistoryDTO { actionDetails = $"{SystemEnums.TaskHistoryActions.UpdatedTheTask}" });
-
+            await _taskHistory.AddNewHistory(task.Id, SystemEnums.TaskHistoryAction.TaskUpdated, null);
             return new ResponseModel<bool>
             {
                 Success = true,
