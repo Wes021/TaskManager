@@ -6,10 +6,10 @@ using Projects.Projects.Domain.Services.Services;
 using Resend;
 using System.Security.Claims;
 using System.Text;
+using TaskManager.Middleware;
 using TaskManager.SharedLayer.Enums;
 using TaskManager.SharedLayer.Immplementaion;
 using TaskManager.SharedLayer.Interfaces;
-using TaskManager.SharedLayer.Middleware;
 using TaskManager.SharedLayer.RequestModels.Identity;
 using Tasks.Tasks.Infrastructure.Services;
 
@@ -36,6 +36,7 @@ namespace TaskManager
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
             builder.Services.AddScoped<IProjectLookupService, ProjectLookupService>();
             builder.Services.AddScoped<IFileManager, FileManager>();
+            builder.Services.AddScoped<IProjectAuthorizationService, ProjectAuthorizationService>();
 
             builder.Services.AddHttpClient<ResendClient>();
             builder.Services.AddTransient<IResend, ResendClient>();
@@ -165,6 +166,10 @@ namespace TaskManager
 
             });
 
+
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddProblemDetails();
+
             var app = builder.Build();
 
 
@@ -182,7 +187,6 @@ namespace TaskManager
             }
 
 
-            app.UseMiddleware<GlobalExceptionMiddleware>();
 
             app.UseHttpsRedirection();
             app.UseAuthentication();

@@ -73,6 +73,11 @@
             Member = 2
         }
 
+        public enum NotificationType
+        {
+
+        }
+
 
     }
 }
