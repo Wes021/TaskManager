@@ -10,7 +10,7 @@ namespace Notification.Notification.Domain.Models
         public string Title { get; set; }
         public string Text { get; set; }
         public int UserId { get; set; }
-        public int TargetId { get; set; }
+        public int? TargetId { get; set; }
         public bool IsRead { get; set; }
         public DateTime? ReadDate { get; private set; }
         public NotificationType Type { get; set; }
@@ -23,7 +23,7 @@ namespace Notification.Notification.Domain.Models
 
 
 
-        public static GenericDomainResponseModel<Notifications> Create(string title, string text, int userId, int targetId, int createdUser
+        public static GenericDomainResponseModel<Notifications> Create(string title, string text, int userId, int? targetId, int createdUser
          )
         {
 
@@ -58,6 +58,47 @@ namespace Notification.Notification.Domain.Models
             return GenericDomainResponseModel<Notifications>.Success(task);
 
         }
+
+
+
+        public DomainResponseModel MarkAsRead()
+        {
+            if (IsRead)
+                return DomainResponseModel.Fail("NoChangesDetected");
+
+            IsRead = true;
+            ReadDate = DateTime.Now;
+
+
+            return DomainResponseModel.Success();
+        }
+
+
+        public DomainResponseModel MarkAsDeleted(int modifiedUser)
+        {
+            if (IsDeleted)
+                return DomainResponseModel.Fail("NoChangesDetected");
+
+            IsDeleted = true;
+            ModifiedDate = DateTime.Now;
+            ModifiedUser = modifiedUser;
+
+            return DomainResponseModel.Success();
+        }
+
+        public DomainResponseModel MarkAllAsRead()
+        {
+            if (IsRead)
+                return DomainResponseModel.Fail("NoChangesDetected");
+
+            IsRead = true;
+            ReadDate = DateTime.Now;
+
+
+            return DomainResponseModel.Success();
+        }
+
+
 
     }
 }
