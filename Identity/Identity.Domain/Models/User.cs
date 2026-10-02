@@ -29,49 +29,6 @@ namespace Identity.Identity.Domain.Models
 
 
 
-        //public GenericDomainResponseModel<bool> AddNewOtp(int userId, string hashedOtp, int createdUser, DateTime expiresAt)
-        //{
-        //    if (string.IsNullOrWhiteSpace(hashedOtp))
-        //    {
-        //        return new GenericDomainResponseModel<bool>
-        //        {
-        //            Succeeded = false,
-        //            Error = "OTPRequired"
-        //        };
-        //    }
-
-
-        //    if (userId <= 0)
-        //    {
-        //        return new GenericDomainResponseModel<bool>
-        //        {
-        //            Succeeded = false,
-        //            Error = "UserIdRequired"
-        //        };
-        //    }
-
-        //    if (createdUser <= 0)
-        //    {
-        //        return new GenericDomainResponseModel<bool>
-        //        {
-        //            Succeeded = false,
-        //            Error = "CreatedUserRequired"
-        //        };
-        //    }
-
-        //    GeneratedOTP.Add(new GeneratedOTP(userId, hashedOtp, createdUser, expiresAt));
-
-        //    return new GenericDomainResponseModel<bool>
-        //    {
-        //        Succeeded = true,
-        //        Data = new GeneratedOTP { }
-
-        //    };
-
-        //}
-
-
-
 
 
 
